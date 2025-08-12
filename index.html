@@ -44,23 +44,32 @@
         
         /* Drag and drop styles */
         .dragging {
-            opacity: 0.5;
-            transform: rotate(2deg);
+            opacity: 0.7;
+            transform: rotate(1deg) scale(1.02);
             z-index: 1000;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
         
         .drag-over {
             border: 2px dashed #3b82f6;
-            background-color: rgba(59, 130, 246, 0.1);
+            background-color: rgba(59, 130, 246, 0.15);
+            transform: scale(1.02);
         }
         
         .drag-item {
             cursor: grab;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
+            touch-action: none; /* Prevent scrolling while dragging */
         }
         
         .drag-item:active {
             cursor: grabbing;
+        }
+        
+        .drag-handle {
+            padding: 8px;
+            margin: -8px;
+            touch-action: none;
         }
         
         /* Smaller text and spacing for mobile */
@@ -309,6 +318,8 @@
             const [roundsPlayed, setRoundsPlayed] = useState(0);
             const [draggedItem, setDraggedItem] = useState(null);
             const [dragOverIndex, setDragOverIndex] = useState(null);
+            const [isDragging, setIsDragging] = useState(false);
+            const [touchStartY, setTouchStartY] = useState(null);
 
             useEffect(() => {
                 initializeGame();
@@ -376,11 +387,78 @@
                 setItems(newItems);
             };
 
-            // Drag and Drop handlers
+            // Enhanced touch and drag handlers
+            const handleTouchStart = (e, index) => {
+                if (gameState !== 'playing') return;
+                
+                setTouchStartY(e.touches[0].clientY);
+                setDraggedItem(index);
+                setIsDragging(false);
+                
+                // Haptic feedback on supported devices
+                if (navigator.vibrate) {
+                    navigator.vibrate(10);
+                }
+            };
+
+            const handleTouchMove = (e, index) => {
+                if (gameState !== 'playing' || draggedItem === null) return;
+                
+                e.preventDefault(); // Prevent scrolling
+                
+                const currentY = e.touches[0].clientY;
+                const startY = touchStartY;
+                
+                if (Math.abs(currentY - startY) > 10 && !isDragging) {
+                    setIsDragging(true);
+                    e.target.classList.add('dragging');
+                }
+                
+                if (isDragging) {
+                    // Find what item we're over
+                    const elements = document.elementsFromPoint(e.touches[0].clientX, currentY);
+                    const dragItem = elements.find(el => el.closest('.drag-item') && el.closest('.drag-item') !== e.target.closest('.drag-item'));
+                    
+                    if (dragItem) {
+                        const dragItemContainer = dragItem.closest('.drag-item');
+                        const allItems = Array.from(document.querySelectorAll('.drag-item'));
+                        const overIndex = allItems.indexOf(dragItemContainer);
+                        
+                        if (overIndex !== -1 && overIndex !== dragOverIndex) {
+                            setDragOverIndex(overIndex);
+                        }
+                    }
+                }
+            };
+
+            const handleTouchEnd = (e, index) => {
+                if (gameState !== 'playing') return;
+                
+                e.target.classList.remove('dragging');
+                
+                if (isDragging && draggedItem !== null && dragOverIndex !== null && draggedItem !== dragOverIndex) {
+                    moveItem(draggedItem, dragOverIndex);
+                    
+                    // Haptic feedback on successful drop
+                    if (navigator.vibrate) {
+                        navigator.vibrate(20);
+                    }
+                }
+                
+                setDraggedItem(null);
+                setDragOverIndex(null);
+                setIsDragging(false);
+                setTouchStartY(null);
+            };
+
+            // Desktop drag handlers (simplified)
             const handleDragStart = (e, index) => {
+                if (gameState !== 'playing') return;
+                
                 setDraggedItem(index);
                 e.dataTransfer.effectAllowed = 'move';
-                e.dataTransfer.setData('text/html', e.target.outerHTML);
+                e.dataTransfer.setData('text/html', '');
+                
                 setTimeout(() => {
                     e.target.classList.add('dragging');
                 }, 0);
@@ -402,16 +480,8 @@
                 setDragOverIndex(index);
             };
 
-            const handleDragLeave = (e) => {
-                // Only clear drag over if we're leaving the container entirely
-                if (!e.currentTarget.contains(e.relatedTarget)) {
-                    setDragOverIndex(null);
-                }
-            };
-
             const handleDrop = (e, dropIndex) => {
                 e.preventDefault();
-                e.target.classList.remove('drag-over');
                 
                 if (draggedItem !== null && draggedItem !== dropIndex) {
                     moveItem(draggedItem, dropIndex);
@@ -557,8 +627,10 @@
                                         onDragEnd={handleDragEnd}
                                         onDragOver={handleDragOver}
                                         onDragEnter={(e) => handleDragEnter(e, index)}
-                                        onDragLeave={handleDragLeave}
                                         onDrop={(e) => handleDrop(e, index)}
+                                        onTouchStart={(e) => handleTouchStart(e, index)}
+                                        onTouchMove={(e) => handleTouchMove(e, index)}
+                                        onTouchEnd={(e) => handleTouchEnd(e, index)}
                                     >
                                         <div className="flex items-center space-x-3">
                                             <div className="text-base font-bold text-gray-400 w-5">#{index + 1}</div>
