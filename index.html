@@ -41,6 +41,12 @@
         * {
             touch-action: manipulation;
         }
+
+        .no-scroll {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+        }
         
         /* Drag and drop styles */
         .dragging {
@@ -395,20 +401,24 @@
             const handleTouchMove = (e, index) => {
                 if (gameState !== 'playing' || draggedItem === null) return;
                 
-                e.preventDefault(); // Prevent scrolling
                 const touch = e.touches[0];
                 const deltaY = touch.clientY - touchStartY;
                 
                 // Start dragging after small movement to avoid accidental drags
-                if (Math.abs(deltaY) > 10) {
+                if (Math.abs(deltaY) > 10 && !isDragging) {
                     setIsDragging(true);
+                    lockScroll(); // Lock scrolling when dragging starts
+                }
+                
+                if (isDragging) {
+                    e.preventDefault(); // Prevent scrolling
                     
                     // Visual feedback
                     e.currentTarget.style.transform = `translateY(${deltaY}px) scale(1.02) rotate(1deg)`;
                     e.currentTarget.style.opacity = '0.8';
                     
                     // Calculate which item we're over
-                    const itemHeight = 40; // Updated for shorter tiles
+                    const itemHeight = 40;
                     const newIndex = Math.max(0, Math.min(items.length - 1, index + Math.round(deltaY / itemHeight)));
                     setDragOverIndex(newIndex);
                 }
@@ -431,10 +441,13 @@
                 setDraggedItem(null);
                 setDragOverIndex(null);
                 setIsDragging(false);
+
+                unlockScroll(); 
             };
 
             // Drag and Drop handlers (for desktop)
             const handleDragStart = (e, index) => {
+                lockScroll();
                 setDraggedItem(index);
                 e.dataTransfer.effectAllowed = 'move';
                 e.dataTransfer.setData('text/html', e.target.outerHTML);
@@ -447,6 +460,16 @@
                 e.target.classList.remove('dragging');
                 setDraggedItem(null);
                 setDragOverIndex(null);
+                unlockScroll();
+            };
+
+            // Scroll lock functions
+            const lockScroll = () => {
+                document.body.classList.add('no-scroll');
+            };
+            
+            const unlockScroll = () => {
+                document.body.classList.remove('no-scroll');
             };
 
             const handleDragOver = (e) => {
