@@ -75,6 +75,32 @@
         .compact-spacing {
             gap: 6px !important;
         }
+
+        /* Modal styles */
+        .modal-backdrop {
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .modal-content {
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
     </style>
 </head>
 <body class="mobile-optimized">
@@ -107,6 +133,21 @@
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                 <polyline points="22,4 12,14.01 9,11.01"></polyline>
+            </svg>
+        );
+
+        const HelpCircle = () => (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <point cx="12" cy="17"></point>
+            </svg>
+        );
+
+        const X = () => (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
         );
 
@@ -299,6 +340,65 @@
             }
         };
 
+        const RulesModal = ({ isOpen, onClose }) => {
+            if (!isOpen) return null;
+
+            return (
+                <div className="fixed inset-0 bg-black bg-opacity-50 modal-backdrop flex items-center justify-center z-50 p-4">
+                    <div className="bg-slate-800 rounded-lg modal-content max-w-sm w-full max-h-96 overflow-y-auto">
+                        <div className="p-4">
+                            <div className="flex justify-between items-center mb-4">
+                                <h2 className="text-lg font-bold text-white">How to Play</h2>
+                                <button 
+                                    onClick={onClose}
+                                    className="text-gray-400 hover:text-white p-1"
+                                >
+                                    <X />
+                                </button>
+                            </div>
+                            
+                            <div className="text-white space-y-3 text-sm">
+                                <div>
+                                    <h3 className="font-semibold text-blue-400 mb-1">🎯 Goal</h3>
+                                    <p className="text-gray-300">Put the items in correct order based on the category (population, distance, size, etc.)</p>
+                                </div>
+                                
+                                <div>
+                                    <h3 className="font-semibold text-purple-400 mb-1">📱 Controls</h3>
+                                    <ul className="text-gray-300 space-y-1 text-xs">
+                                        <li>• <strong>Drag & Drop:</strong> Press and drag items up/down</li>
+                                        <li>• <strong>Arrow Buttons:</strong> Use ↑/↓ buttons to move items</li>
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <h3 className="font-semibold text-green-400 mb-1">💯 Scoring</h3>
+                                    <ul className="text-gray-300 space-y-1 text-xs">
+                                        <li>• <strong>10 points</strong> per correct position</li>
+                                        <li>• <strong>+15 bonus</strong> for first/last positions</li>
+                                        <li>• <strong>+10 bonus</strong> for middle positions</li>
+                                        <li>• <strong>+50 bonus</strong> for perfect rounds!</li>
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <h3 className="font-semibold text-yellow-400 mb-1">🎮 Game Mode</h3>
+                                    <p className="text-gray-300">Endless rounds with random categories. Build your total score across multiple rounds!</p>
+                                </div>
+                            </div>
+                            
+                            <button 
+                                onClick={onClose}
+                                className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-semibold"
+                            >
+                                Got It!
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
         const RankingGame = () => {
             const [currentCategory, setCurrentCategory] = useState('planetsByDistance');
             const [items, setItems] = useState([]);
@@ -311,6 +411,7 @@
             const [dragOverIndex, setDragOverIndex] = useState(null);
             const [touchStartY, setTouchStartY] = useState(null);
             const [isDragging, setIsDragging] = useState(false);
+            const [showRules, setShowRules] = useState(false);
 
             useEffect(() => {
                 initializeGame();
@@ -571,139 +672,5 @@
 
             return (
                 <div className="max-w-md mx-auto bg-slate-900 text-white mobile-optimized">
-                    {/* Header */}
-                    <div className="bg-gradient-to-r from-purple-600 to-blue-600 compact-header">
-                        <div className="flex justify-between items-center mb-3">
-                            <h1 className="text-xl font-bold">Tessellate</h1>
-                            <div className="text-right">
-                                <div className="text-xs text-white/80">Total Score</div>
-                                <div className="text-lg font-bold">{totalScore}</div>
-                            </div>
-                        </div>
-                        
-                        <div className="flex justify-between items-center text-xs text-white/80 mb-3">
-                            <span>Round {roundsPlayed + 1}</span>
-                            <span>∞ Endless Mode</span>
-                        </div>
-                        
-                        {/* Current Category Display */}
-                        <div className="bg-white/20 backdrop-blur rounded p-2">
-                            <h3 className="text-sm font-semibold">{currentCategory && gameCategories[currentCategory] ? gameCategories[currentCategory].title : 'Loading...'}</h3>
-                        </div>
-                    </div>
-
-                    {/* Game Area */}
-                    <div className="p-3">
-                        <div className="mb-3 text-center">
-                            <p className="text-xs text-gray-400">Drag to reorder or use arrows. 10 points per correct position + bonuses!</p>
-                        </div>
-
-                        {/* Items List */}
-                        <div className="compact-spacing space-y-1">
-                            {items.map((item, index) => {
-                                const result = showResults ? getItemResult(item, index) : null;
-                                return (
-                                    <div 
-                                        key={item.name} 
-                                        className={`bg-slate-800 rounded-md compact-item flex items-center justify-between drag-item
-                                            ${result ? result.color + ' bg-opacity-20 border-l-4 border-' + result.color.replace('bg-', '') : ''}
-                                            ${dragOverIndex === index ? 'drag-over' : ''}`}
-                                        draggable={gameState === 'playing'}
-                                        onDragStart={(e) => handleDragStart(e, index)}
-                                        onDragEnd={handleDragEnd}
-                                        onDragOver={handleDragOver}
-                                        onDragEnter={(e) => handleDragEnter(e, index)}
-                                        onDragLeave={handleDragLeave}
-                                        onDrop={(e) => handleDrop(e, index)}
-                                        onTouchStart={(e) => handleTouchStart(e, index)}
-                                        onTouchMove={(e) => handleTouchMove(e, index)}
-                                        onTouchEnd={(e) => handleTouchEnd(e, index)}
-                                    >
-                                        <div className="flex items-center space-x-2">
-                                            <div className="text-sm font-bold text-gray-400 w-4">#{index + 1}</div>
-                                            <div>
-                                                <div className="text-xs font-medium leading-tight">{item.name}</div>
-                                                {showResults && (
-                                                    <div className="text-xs text-gray-400 leading-none">
-                                                        Correct: #{item.correctOrder}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                        
-                                        {gameState === 'playing' && (
-                                            <div className="flex flex-col space-y-1">
-                                                <button 
-                                                    onClick={() => moveItemWithArrow(index, 'up')}
-                                                    disabled={index === 0}
-                                                    className="p-0.5 bg-slate-700 rounded disabled:opacity-50 hover:bg-slate-600"
-                                                >
-                                                    <ChevronUp />
-                                                </button>
-                                                <button 
-                                                    onClick={() => moveItemWithArrow(index, 'down')}
-                                                    disabled={index === items.length - 1}
-                                                    className="p-0.5 bg-slate-700 rounded disabled:opacity-50 hover:bg-slate-600"
-                                                >
-                                                    <ChevronDown />
-                                                </button>
-                                            </div>
-                                        )}
-                                    </div>
-                                );
-                            })}
-                        </div>
-
-                        {/* Action Buttons */}
-                        <div className="mt-4 space-y-2">
-                            {gameState === 'playing' && (
-                                <button 
-                                    onClick={finishGame}
-                                    className="w-full bg-green-600 hover:bg-green-700 p-2 rounded-lg text-sm font-semibold flex items-center justify-center space-x-2"
-                                >
-                                    <CheckCircle />
-                                    <span>Submit Answer</span>
-                                </button>
-                            )}
-                            
-                            {gameState === 'finished' && (
-                                <div className="text-center space-y-3">
-                                    <div className="text-2xl font-bold text-green-400">{score} points</div>
-                                    
-                                    {/* Show bonuses */}
-                                    {calculateScore().bonuses.map((bonus, idx) => (
-                                        <div key={idx} className="text-xs text-yellow-400 font-semibold">
-                                            🎉 {bonus}
-                                        </div>
-                                    ))}
-                                    
-                                    <div className="text-sm text-gray-400">
-                                        {calculateScore().correctCount}/{items.length} correct positions
-                                    </div>
-                                    
-                                    <button 
-                                        onClick={nextRound}
-                                        className="w-full bg-blue-600 hover:bg-blue-700 p-2 rounded-lg text-sm font-semibold"
-                                    >
-                                        Next Round
-                                    </button>
-                                </div>
-                            )}
-
-                            <button 
-                                onClick={resetAllGames}
-                                className="w-full bg-slate-700 hover:bg-slate-600 p-2 rounded-lg text-xs flex items-center justify-center space-x-2"
-                            >
-                                <RotateCcw />
-                                <span>Reset Score</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            );
-        };
-
-        ReactDOM.render(<RankingGame />, document.getElementById('root'));
-    </script>
-</body>
-</html>
+                    {/* Rules Modal */}
+                    <Ru
