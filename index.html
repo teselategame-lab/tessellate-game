@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tessellate - Endless Ranking Game</title>
-    <meta name="description" content="Test your knowledge with Tessellate - the addictive ranking game. Order countries, movies, companies and more!">
+    <title>Rank Rush - Endless Ranking Game</title>
+    <meta name="description" content="Test your knowledge with Rank Rush - the addictive ranking game. Order countries, movies, companies and more!">
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -28,13 +28,14 @@
             -webkit-tap-highlight-color: transparent;
             user-select: none;
             overflow-x: hidden;
+            background: #ffffff;
         }
         
         .mobile-optimized {
             touch-action: manipulation;
             -webkit-overflow-scrolling: touch;
             min-height: 100vh;
-            min-height: 100dvh; /* For newer browsers */
+            min-height: 100dvh;
         }
         
         /* Prevent zoom on double tap */
@@ -50,14 +51,15 @@
         
         /* Drag and drop styles */
         .dragging {
-            opacity: 0.5;
-            transform: rotate(2deg);
+            opacity: 0.7;
+            transform: rotate(1deg) scale(1.02);
             z-index: 1000;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
         
         .drag-over {
-            border: 2px dashed #3b82f6;
-            background-color: rgba(59, 130, 246, 0.1);
+            border: 2px dashed #1e40af;
+            background-color: rgba(30, 64, 175, 0.1);
         }
         
         .drag-item {
@@ -69,17 +71,48 @@
             cursor: grabbing;
         }
         
-        /* Smaller text and spacing for mobile */
-        .compact-item {
-            padding: 8px 12px !important;
+        /* Spinner animation */
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
         }
         
-        .compact-header {
-            padding: 12px !important;
+        .spinner-wheel {
+            animation: spin 2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
         }
         
-        .compact-spacing {
-            gap: 6px !important;
+        .spinner-slow {
+            animation: spin 4s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+        
+        /* Category card animations */
+        .category-card {
+            transition: all 0.3s ease;
+        }
+        
+        .category-card.selected {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(251, 191, 36, 0.3);
+        }
+        
+        /* Items entrance animation */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .item-entrance {
+            animation: slideInUp 0.4s ease forwards;
         }
     </style>
 </head>
@@ -91,13 +124,13 @@
         
         // Lucide React icons as components
         const ChevronUp = () => (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="18,15 12,9 6,15"></polyline>
             </svg>
         );
         
         const ChevronDown = () => (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="6,9 12,15 18,9"></polyline>
             </svg>
         );
@@ -110,15 +143,23 @@
         );
         
         const CheckCircle = () => (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                 <polyline points="22,4 12,14.01 9,11.01"></polyline>
+            </svg>
+        );
+
+        const Zap = () => (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"></polygon>
             </svg>
         );
 
         const gameCategories = {
             planetsByDistance: {
                 title: "Planets by Distance from Sun",
+                description: "Closest to farthest",
+                icon: "🪐",
                 items: [
                     { name: "Mercury", value: 1 },
                     { name: "Venus", value: 2 },
@@ -131,7 +172,9 @@
                 ]
             },
             countriesByPopulation: {
-                title: "Countries by Population (2024)",
+                title: "Countries by Population",
+                description: "Most to least populated",
+                icon: "🌍",
                 items: [
                     { name: "China", value: 1412000000 },
                     { name: "India", value: 1408000000 },
@@ -155,6 +198,8 @@
             },
             usStatesByArea: {
                 title: "US States by Area",
+                description: "Largest to smallest",
+                icon: "🗺️",
                 items: [
                     { name: "Alaska", value: 663300 },
                     { name: "Texas", value: 268596 },
@@ -174,7 +219,9 @@
                 ]
             },
             moviesByBoxOffice: {
-                title: "Movies by Box Office (Worldwide)",
+                title: "Movies by Box Office",
+                description: "Highest to lowest grossing",
+                icon: "🎬",
                 items: [
                     { name: "Avatar (2009)", value: 2923706026 },
                     { name: "Avengers: Endgame", value: 2797501328 },
@@ -191,7 +238,9 @@
                 ]
             },
             stocksByMarketCap: {
-                title: "Companies by Market Cap (2024)",
+                title: "Companies by Market Cap",
+                description: "Most to least valuable",
+                icon: "💼",
                 items: [
                     { name: "Microsoft", value: 3000000000000 },
                     { name: "Apple", value: 2900000000000 },
@@ -207,6 +256,8 @@
             },
             elementsById: {
                 title: "Elements by Atomic Number",
+                description: "Lowest to highest number",
+                icon: "⚛️",
                 items: [
                     { name: "Hydrogen", value: 1 },
                     { name: "Helium", value: 2 },
@@ -223,21 +274,25 @@
                 ]
             },
             fastFoodChains: {
-                title: "Fast Food Chains by Global Revenue",
+                title: "Fast Food by Revenue",
+                description: "Highest to lowest revenue",
+                icon: "🍔",
                 items: [
-                    { name: "McDonald's", value: 23223000000 },
                     { name: "Starbucks", value: 32250000000 },
                     { name: "KFC", value: 27000000000 },
+                    { name: "McDonald's", value: 23223000000 },
+                    { name: "Domino's", value: 17800000000 },
                     { name: "Subway", value: 16100000000 },
                     { name: "Pizza Hut", value: 12000000000 },
-                    { name: "Domino's", value: 17800000000 },
-                    { name: "Burger King", value: 10200000000 },
                     { name: "Taco Bell", value: 11300000000 },
+                    { name: "Burger King", value: 10200000000 },
                     { name: "Dunkin'", value: 9200000000 }
                 ]
             },
             nbaTeamsByChampionships: {
-                title: "NBA Teams by Championships Won",
+                title: "NBA Teams by Championships",
+                description: "Most to least titles",
+                icon: "🏀",
                 items: [
                     { name: "Boston Celtics", value: 18 },
                     { name: "Los Angeles Lakers", value: 17 },
@@ -253,7 +308,9 @@
                 ]
             },
             techByFounded: {
-                title: "Tech Companies by Founding Year",
+                title: "Tech Companies by Founding",
+                description: "Oldest to newest",
+                icon: "💻",
                 items: [
                     { name: "IBM", value: 1911 },
                     { name: "HP", value: 1939 },
@@ -280,6 +337,8 @@
             },
             oceansByDepth: {
                 title: "Ocean Trenches by Depth",
+                description: "Deepest to shallowest",
+                icon: "🌊",
                 items: [
                     { name: "Mariana Trench", value: 11034 },
                     { name: "Tonga Trench", value: 10882 },
@@ -291,7 +350,9 @@
                 ]
             },
             spicesByHeat: {
-                title: "Peppers by Scoville Heat Units",
+                title: "Peppers by Heat Level",
+                description: "Hottest to mildest",
+                icon: "🌶️",
                 items: [
                     { name: "Carolina Reaper", value: 2200000 },
                     { name: "Trinidad Moruga Scorpion", value: 2009231 },
@@ -305,71 +366,90 @@
             }
         };
 
-        const RankingGame = () => {
-            const [currentCategory, setCurrentCategory] = useState('planetsByDistance');
+        const RankRushGame = () => {
+            const [currentCategory, setCurrentCategory] = useState(null);
             const [items, setItems] = useState([]);
-            const [gameState, setGameState] = useState('playing'); // playing, finished
-            const [score, setScore] = useState(0);
+            const [gameState, setGameState] = useState('ready'); // ready, spinning, playing, finished, hailMary, gameOver
+            const [points, setPoints] = useState(100);
+            const [roundScore, setRoundScore] = useState(0);
             const [showResults, setShowResults] = useState(false);
-            const [totalScore, setTotalScore] = useState(0);
-            const [roundsPlayed, setRoundsPlayed] = useState(0);
             const [draggedItem, setDraggedItem] = useState(null);
             const [dragOverIndex, setDragOverIndex] = useState(null);
             const [touchStartY, setTouchStartY] = useState(null);
             const [isDragging, setIsDragging] = useState(false);
+            const [isHailMary, setIsHailMary] = useState(false);
+            const [bonuses, setBonuses] = useState([]);
+            const [spinnerAngle, setSpinnerAngle] = useState(0);
 
             useEffect(() => {
-                initializeGame();
-            }, []);
-
-            const initializeGame = () => {
                 // Track analytics
                 if (typeof gtag !== 'undefined') {
                     gtag('event', 'game_start', {
-                        'custom_parameter': 'new_round'
+                        'custom_parameter': 'rank_rush'
                     });
                 }
+            }, []);
+
+            const spinWheel = () => {
+                if (points < 10 && !isHailMary) {
+                    // Trigger Hail Mary
+                    setIsHailMary(true);
+                    setGameState('spinning');
+                    startSpinAnimation();
+                    return;
+                }
                 
-                // Pick a random category
+                if (!isHailMary) {
+                    setPoints(points - 10); // Cost to spin
+                }
+                
+                setGameState('spinning');
+                startSpinAnimation();
+            };
+
+            const startSpinAnimation = () => {
+                // Animate spinner for 3 seconds
                 const categoryKeys = Object.keys(gameCategories);
-                const randomCategory = categoryKeys[Math.floor(Math.random() * categoryKeys.length)];
-                setCurrentCategory(randomCategory);
+                const finalCategory = categoryKeys[Math.floor(Math.random() * categoryKeys.length)];
                 
-                const category = gameCategories[randomCategory];
+                setSpinnerAngle(spinnerAngle + 1080 + Math.random() * 360); // Multiple spins
                 
-                // Pick 6 random items from the category (or all if less than 6)
-                const itemCount = Math.min(6, category.items.length);
+                setTimeout(() => {
+                    setCurrentCategory(finalCategory);
+                    initializeRound(finalCategory);
+                }, 3000);
+            };
+
+            const initializeRound = (categoryKey) => {
+                const category = gameCategories[categoryKey];
+                
+                // Pick 5 random items from the category
                 const shuffledItems = [...category.items].sort(() => Math.random() - 0.5);
-                const selectedItems = shuffledItems.slice(0, itemCount);
+                const selectedItems = shuffledItems.slice(0, 5);
                 
-                // Sort by value to get correct order, then assign correctOrder
+                // Determine correct order based on category
+                const isDescending = [
+                    'countriesByPopulation', 'moviesByBoxOffice', 'stocksByMarketCap',
+                    'fastFoodChains', 'nbaTeamsByChampionships', 'oceansByDepth', 'spicesByHeat', 'usStatesByArea'
+                ].includes(categoryKey);
+                
                 const sortedItems = [...selectedItems].sort((a, b) => {
-                    // For some categories, we want descending order (higher values first)
-                    if (randomCategory === 'countriesByPopulation' || 
-                        randomCategory === 'moviesByBoxOffice' || 
-                        randomCategory === 'stocksByMarketCap' ||
-                        randomCategory === 'fastFoodChains' ||
-                        randomCategory === 'nbaTeamsByChampionships' ||
-                        randomCategory === 'oceansByDepth' ||
-                        randomCategory === 'spicesByHeat') {
-                        return b.value - a.value; // Descending
-                    }
-                    return a.value - b.value; // Ascending
+                    return isDescending ? b.value - a.value : a.value - b.value;
                 });
                 
-                // Assign correct order based on sorted position
+                // Assign correct order and shuffle for display
                 const itemsWithOrder = sortedItems.map((item, index) => ({
                     ...item,
                     correctOrder: index + 1
                 }));
                 
-                // Shuffle again for display
                 const shuffledForDisplay = [...itemsWithOrder].sort(() => Math.random() - 0.5);
                 
                 setItems(shuffledForDisplay.map((item, index) => ({ ...item, currentOrder: index + 1 })));
                 setGameState('playing');
-                setScore(0);
+                setRoundScore(0);
                 setShowResults(false);
+                setBonuses([]);
             };
 
             const moveItem = (fromIndex, toIndex) => {
@@ -377,7 +457,6 @@
                 const [movedItem] = newItems.splice(fromIndex, 1);
                 newItems.splice(toIndex, 0, movedItem);
                 
-                // Update current orders
                 newItems.forEach((item, idx) => {
                     item.currentOrder = idx + 1;
                 });
@@ -393,7 +472,6 @@
                 setDraggedItem(index);
                 setIsDragging(false);
                 
-                // Add visual feedback immediately
                 e.currentTarget.style.transform = 'scale(1.02)';
                 e.currentTarget.style.zIndex = '1000';
             };
@@ -404,21 +482,18 @@
                 const touch = e.touches[0];
                 const deltaY = touch.clientY - touchStartY;
                 
-                // Start dragging after small movement to avoid accidental drags
                 if (Math.abs(deltaY) > 10 && !isDragging) {
                     setIsDragging(true);
-                    lockScroll(); // Lock scrolling when dragging starts
+                    lockScroll();
                 }
                 
                 if (isDragging) {
-                    e.preventDefault(); // Prevent scrolling
+                    e.preventDefault();
                     
-                    // Visual feedback
                     e.currentTarget.style.transform = `translateY(${deltaY}px) scale(1.02) rotate(1deg)`;
                     e.currentTarget.style.opacity = '0.8';
                     
-                    // Calculate which item we're over
-                    const itemHeight = 40;
+                    const itemHeight = 35;
                     const newIndex = Math.max(0, Math.min(items.length - 1, index + Math.round(deltaY / itemHeight)));
                     setDragOverIndex(newIndex);
                 }
@@ -427,7 +502,6 @@
             const handleTouchEnd = (e, index) => {
                 if (gameState !== 'playing') return;
                 
-                // Reset visual feedback
                 e.currentTarget.style.transform = '';
                 e.currentTarget.style.opacity = '';
                 e.currentTarget.style.zIndex = '';
@@ -436,21 +510,17 @@
                     moveItem(index, dragOverIndex);
                 }
                 
-                // Clean up state
                 setTouchStartY(null);
                 setDraggedItem(null);
                 setDragOverIndex(null);
                 setIsDragging(false);
-
                 unlockScroll(); 
             };
 
-            // Drag and Drop handlers (for desktop)
             const handleDragStart = (e, index) => {
                 lockScroll();
                 setDraggedItem(index);
                 e.dataTransfer.effectAllowed = 'move';
-                e.dataTransfer.setData('text/html', e.target.outerHTML);
                 setTimeout(() => {
                     e.target.classList.add('dragging');
                 }, 0);
@@ -463,7 +533,6 @@
                 unlockScroll();
             };
 
-            // Scroll lock functions
             const lockScroll = () => {
                 document.body.classList.add('no-scroll');
             };
@@ -500,7 +569,6 @@
                 setDragOverIndex(null);
             };
 
-            // Legacy arrow button handler (keeping as backup)
             const moveItemWithArrow = (index, direction) => {
                 const targetIndex = direction === 'up' ? index - 1 : index + 1;
                 if (targetIndex >= 0 && targetIndex < items.length) {
@@ -509,75 +577,96 @@
             };
 
             const calculateScore = () => {
-                let roundScore = 0;
+                let score = 0;
+                let earnedBonuses = [];
                 let correctPositions = 0;
-                let bonuses = [];
                 
                 items.forEach((item, index) => {
                     const currentPos = index + 1;
                     const correctPos = item.correctOrder;
                     
                     if (currentPos === correctPos) {
-                        roundScore += 10; // Base points for correct position
                         correctPositions++;
                         
-                        // First/Last bonus (positions 1 and 6)
-                        if (correctPos === 1 || correctPos === items.length) {
-                            roundScore += 15;
-                            bonuses.push(correctPos === 1 ? 'First Position Bonus!' : 'Last Position Bonus!');
-                        }
-                        
-                        // Middle bonus (positions 3 and 4 for 6 items)
-                        const middlePositions = items.length === 6 ? [3, 4] : [Math.ceil(items.length / 2)];
-                        if (middlePositions.includes(correctPos)) {
-                            roundScore += 10;
-                            bonuses.push('Middle Position Bonus!');
+                        // Top and bottom items are worth 10 points
+                        if (correctPos === 1) {
+                            score += 10;
+                            earnedBonuses.push('Top Position! +10');
+                        } else if (correctPos === 5) {
+                            score += 10;
+                            earnedBonuses.push('Bottom Position! +10');
+                        } else {
+                            // Middle items worth 5-15 points (random)
+                            const middlePoints = 5 + Math.floor(Math.random() * 11);
+                            score += middlePoints;
+                            earnedBonuses.push(`Middle Position! +${middlePoints}`);
                         }
                     }
                 });
                 
                 // Perfect round bonus
-                if (correctPositions === items.length) {
-                    roundScore += 50;
-                    bonuses.push('Perfect Round Bonus!');
+                if (correctPositions === 5) {
+                    score += 25;
+                    earnedBonuses.push('Perfect Round! +25');
                 }
                 
-                return { score: roundScore, bonuses, correctCount: correctPositions };
+                return { score, bonuses: earnedBonuses, correctCount: correctPositions };
             };
 
-            const finishGame = () => {
+            const finishRound = () => {
                 const result = calculateScore();
-                setScore(result.score);
-                setTotalScore(totalScore + result.score);
-                setRoundsPlayed(roundsPlayed + 1);
+                setRoundScore(result.score);
+                setBonuses(result.bonuses);
+                
+                if (isHailMary) {
+                    if (result.correctCount === 5) {
+                        // Hail Mary success
+                        setPoints(30);
+                        setIsHailMary(false);
+                        setBonuses([...result.bonuses, 'Hail Mary Success! +30 points']);
+                    } else {
+                        // Game over
+                        setGameState('gameOver');
+                        setShowResults(true);
+                        return;
+                    }
+                } else {
+                    setPoints(points + result.score);
+                }
+                
                 setGameState('finished');
                 setShowResults(true);
                 
                 // Track analytics
                 if (typeof gtag !== 'undefined') {
-                    gtag('event', 'game_complete', {
+                    gtag('event', 'round_complete', {
                         'score': result.score,
                         'correct_answers': result.correctCount,
-                        'category': currentCategory
+                        'category': currentCategory,
+                        'is_hail_mary': isHailMary
                     });
                 }
             };
 
             const nextRound = () => {
-                initializeGame(); // Just start a new random game
+                setGameState('ready');
+                setCurrentCategory(null);
+                setItems([]);
+                setShowResults(false);
             };
 
-            const resetAllGames = () => {
-                setTotalScore(0);
-                setRoundsPlayed(0);
-                initializeGame();
+            const resetGame = () => {
+                setPoints(100);
+                setIsHailMary(false);
+                setGameState('ready');
+                setCurrentCategory(null);
+                setItems([]);
+                setShowResults(false);
+                setRoundScore(0);
+                setBonuses([]);
                 
-                // Track analytics
                 if (typeof gtag !== 'undefined') {
-                    gtag('event', 'game_reset', {
-                        'final_score': totalScore,
-                        'rounds_played': roundsPlayed
-                    });
+                    gtag('event', 'game_reset');
                 }
             };
 
@@ -586,103 +675,195 @@
                 const correctPos = item.correctOrder;
                 const distance = Math.abs(currentPos - correctPos);
                 
-                if (distance === 0) return { status: 'perfect', color: 'bg-green-500' };
-                if (distance === 1) return { status: 'close', color: 'bg-yellow-500' };
-                if (distance === 2) return { status: 'okay', color: 'bg-orange-500' };
-                return { status: 'off', color: 'bg-red-500' };
+                if (distance === 0) return { status: 'perfect', color: 'bg-green-100 border-green-500 text-green-800' };
+                if (distance === 1) return { status: 'close', color: 'bg-yellow-100 border-yellow-500 text-yellow-800' };
+                return { status: 'off', color: 'bg-red-100 border-red-500 text-red-800' };
+            };
+
+            const canSpin = () => {
+                return gameState === 'ready' && (points >= 10 || (points < 10 && !isHailMary));
             };
 
             return (
-                <div className="max-w-md mx-auto bg-slate-900 text-white mobile-optimized">
+                <div className="max-w-sm mx-auto bg-white text-gray-900 mobile-optimized min-h-screen">
                     {/* Header */}
-                    <div className="bg-gradient-to-r from-purple-600 to-blue-600 compact-header">
-                        <div className="flex justify-between items-center mb-3">
-                            <h1 className="text-xl font-bold">Tessellate</h1>
+                    <div className="bg-gradient-to-r from-blue-900 to-blue-800 text-white p-3">
+                        <div className="flex justify-between items-center mb-2">
+                            <h1 className="text-xl font-bold">Rank Rush</h1>
                             <div className="text-right">
-                                <div className="text-xs text-white/80">Total Score</div>
-                                <div className="text-lg font-bold">{totalScore}</div>
+                                <div className="text-xs text-blue-200">Points</div>
+                                <div className="text-lg font-bold text-yellow-400">{points}</div>
                             </div>
                         </div>
                         
-                        <div className="flex justify-between items-center text-xs text-white/80 mb-3">
-                            <span>Round {roundsPlayed + 1}</span>
-                            <span>∞ Endless Mode</span>
-                        </div>
+                        {isHailMary && (
+                            <div className="bg-red-600 text-white text-center py-1 px-2 rounded text-xs font-bold mb-2">
+                                ⚡ HAIL MARY ROUND ⚡
+                            </div>
+                        )}
                         
-                        {/* Current Category Display */}
-                        <div className="bg-white/20 backdrop-blur rounded p-2">
-                            <h3 className="text-sm font-semibold">{currentCategory && gameCategories[currentCategory] ? gameCategories[currentCategory].title : 'Loading...'}</h3>
+                        <div className="text-xs text-blue-200 text-center">
+                            {gameState === 'ready' ? 'Spin to start a round!' : 
+                             gameState === 'spinning' ? 'Spinning...' :
+                             gameState === 'playing' ? 'Drag to reorder items!' :
+                             gameState === 'finished' ? 'Round complete!' :
+                             gameState === 'gameOver' ? 'Game Over!' : ''}
                         </div>
                     </div>
 
                     {/* Game Area */}
                     <div className="p-3">
-                        <div className="mb-3 text-center">
-                            <p className="text-xs text-gray-400">Drag to reorder or use arrows. 10 points per correct position + bonuses!</p>
-                        </div>
+                        {/* Spinner Section */}
+                        {gameState === 'ready' && (
+                            <div className="text-center mb-4">
+                                <div className="mb-4">
+                                    <h2 className="text-lg font-bold text-gray-800 mb-2">Ready to Spin?</h2>
+                                    <p className="text-sm text-gray-600 mb-3">
+                                        {isHailMary ? 
+                                            "This is your last chance! Get all 5 items perfect to earn 30 points and continue." :
+                                            "Each spin costs 10 points. Rank 5 items correctly to earn points back!"
+                                        }
+                                    </p>
+                                </div>
+                                
+                                <button 
+                                    onClick={spinWheel}
+                                    disabled={!canSpin()}
+                                    className={`w-full py-3 px-6 rounded-lg font-bold text-lg flex items-center justify-center space-x-2 ${
+                                        canSpin() 
+                                            ? 'bg-yellow-400 hover:bg-yellow-500 text-gray-900' 
+                                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                    }`}
+                                >
+                                    <Zap />
+                                    <span>{isHailMary ? 'Hail Mary Spin (FREE)' : `Spin Wheel (-10 pts)`}</span>
+                                </button>
+                            </div>
+                        )}
+
+                        {/* Spinner Animation */}
+                        {gameState === 'spinning' && (
+                            <div className="text-center mb-6">
+                                <div className="mb-4">
+                                    <div className="w-48 h-48 mx-auto relative bg-gray-100 rounded-full border-4 border-blue-900 overflow-hidden">
+                                        <div 
+                                            className="absolute inset-0 spinner-wheel"
+                                            style={{
+                                                background: `conic-gradient(${Object.entries(gameCategories).map((_, i) => 
+                                                    `hsl(${(i * 360) / Object.keys(gameCategories).length}, 70%, 60%) ${i * (360 / Object.keys(gameCategories).length)}deg ${(i + 1) * (360 / Object.keys(gameCategories).length)}deg`
+                                                ).join(', ')})`
+                                            }}
+                                        >
+                                            {Object.entries(gameCategories).map(([key, category], index) => (
+                                                <div 
+                                                    key={key}
+                                                    className="absolute flex items-center justify-center text-white font-bold text-xs"
+                                                    style={{
+                                                        transform: `rotate(${index * (360 / Object.keys(gameCategories).length) + (360 / Object.keys(gameCategories).length) / 2}deg)`,
+                                                        transformOrigin: '50% 100%',
+                                                        width: '100%',
+                                                        height: '50%',
+                                                        top: '0%',
+                                                        left: '0%'
+                                                    }}
+                                                >
+                                                    <span className="text-lg">{category.icon}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        {/* Spinner pointer */}
+                                        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1 w-0 h-0 border-l-4 border-r-4 border-b-8 border-l-transparent border-r-transparent border-b-yellow-400 z-10"></div>
+                                    </div>
+                                </div>
+                                <div className="text-blue-900 font-bold">Spinning the wheel...</div>
+                            </div>
+                        )}
+
+                        {/* Selected Category Display */}
+                        {currentCategory && gameState === 'playing' && (
+                            <div className="mb-4">
+                                <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-3 text-center">
+                                    <div className="text-2xl mb-1">{gameCategories[currentCategory].icon}</div>
+                                    <h3 className="font-bold text-blue-900">{gameCategories[currentCategory].title}</h3>
+                                    <p className="text-sm text-blue-700">{gameCategories[currentCategory].description}</p>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Instructions */}
+                        {gameState === 'playing' && (
+                            <div className="mb-3 text-center">
+                                <p className="text-xs text-gray-600">
+                                    Top/Bottom: 10 pts • Middle: 5-15 pts • Perfect: +25 bonus
+                                </p>
+                            </div>
+                        )}
 
                         {/* Items List */}
-                        <div className="compact-spacing space-y-1">
-                            {items.map((item, index) => {
-                                const result = showResults ? getItemResult(item, index) : null;
-                                return (
-                                    <div 
-                                        key={item.name} 
-                                        className={`bg-slate-800 rounded-md compact-item flex items-center justify-between drag-item
-                                            ${result ? result.color + ' bg-opacity-20 border-l-4 border-' + result.color.replace('bg-', '') : ''}
-                                            ${dragOverIndex === index ? 'drag-over' : ''}`}
-                                        draggable={gameState === 'playing'}
-                                        onDragStart={(e) => handleDragStart(e, index)}
-                                        onDragEnd={handleDragEnd}
-                                        onDragOver={handleDragOver}
-                                        onDragEnter={(e) => handleDragEnter(e, index)}
-                                        onDragLeave={handleDragLeave}
-                                        onDrop={(e) => handleDrop(e, index)}
-                                        onTouchStart={(e) => handleTouchStart(e, index)}
-                                        onTouchMove={(e) => handleTouchMove(e, index)}
-                                        onTouchEnd={(e) => handleTouchEnd(e, index)}
-                                    >
-                                        <div className="flex items-center space-x-2">
-                                            <div className="text-sm font-bold text-gray-400 w-4">#{index + 1}</div>
-                                            <div>
-                                                <div className="text-xs font-medium leading-tight">{item.name}</div>
-                                                {showResults && (
-                                                    <div className="text-xs text-gray-400 leading-none">
-                                                        Correct: #{item.correctOrder}
-                                                    </div>
-                                                )}
+                        {items.length > 0 && (
+                            <div className="space-y-1 mb-4">
+                                {items.map((item, index) => {
+                                    const result = showResults ? getItemResult(item, index) : null;
+                                    return (
+                                        <div 
+                                            key={item.name} 
+                                            className={`bg-white border-2 rounded-lg p-2 flex items-center justify-between drag-item item-entrance
+                                                ${result ? result.color : 'border-gray-200 hover:border-blue-300'}
+                                                ${dragOverIndex === index ? 'drag-over' : ''}`}
+                                            style={{ animationDelay: `${index * 0.1}s` }}
+                                            draggable={gameState === 'playing'}
+                                            onDragStart={(e) => handleDragStart(e, index)}
+                                            onDragEnd={handleDragEnd}
+                                            onDragOver={handleDragOver}
+                                            onDragEnter={(e) => handleDragEnter(e, index)}
+                                            onDragLeave={handleDragLeave}
+                                            onDrop={(e) => handleDrop(e, index)}
+                                            onTouchStart={(e) => handleTouchStart(e, index)}
+                                            onTouchMove={(e) => handleTouchMove(e, index)}
+                                            onTouchEnd={(e) => handleTouchEnd(e, index)}
+                                        >
+                                            <div className="flex items-center space-x-2 flex-1">
+                                                <div className="text-sm font-bold text-gray-500 w-5">#{index + 1}</div>
+                                                <div className="flex-1">
+                                                    <div className="text-sm font-medium leading-tight">{item.name}</div>
+                                                    {showResults && (
+                                                        <div className="text-xs text-gray-600 leading-none mt-1">
+                                                            Correct: #{item.correctOrder}
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
+                                            
+                                            {gameState === 'playing' && (
+                                                <div className="flex flex-col space-y-0.5">
+                                                    <button 
+                                                        onClick={() => moveItemWithArrow(index, 'up')}
+                                                        disabled={index === 0}
+                                                        className="p-1 bg-gray-100 rounded disabled:opacity-50 hover:bg-gray-200"
+                                                    >
+                                                        <ChevronUp />
+                                                    </button>
+                                                    <button 
+                                                        onClick={() => moveItemWithArrow(index, 'down')}
+                                                        disabled={index === items.length - 1}
+                                                        className="p-1 bg-gray-100 rounded disabled:opacity-50 hover:bg-gray-200"
+                                                    >
+                                                        <ChevronDown />
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
-                                        
-                                        {gameState === 'playing' && (
-                                            <div className="flex flex-col space-y-1">
-                                                <button 
-                                                    onClick={() => moveItemWithArrow(index, 'up')}
-                                                    disabled={index === 0}
-                                                    className="p-0.5 bg-slate-700 rounded disabled:opacity-50 hover:bg-slate-600"
-                                                >
-                                                    <ChevronUp />
-                                                </button>
-                                                <button 
-                                                    onClick={() => moveItemWithArrow(index, 'down')}
-                                                    disabled={index === items.length - 1}
-                                                    className="p-0.5 bg-slate-700 rounded disabled:opacity-50 hover:bg-slate-600"
-                                                >
-                                                    <ChevronDown />
-                                                </button>
-                                            </div>
-                                        )}
-                                    </div>
-                                );
-                            })}
-                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
 
                         {/* Action Buttons */}
-                        <div className="mt-4 space-y-2">
+                        <div className="space-y-2">
                             {gameState === 'playing' && (
                                 <button 
-                                    onClick={finishGame}
-                                    className="w-full bg-green-600 hover:bg-green-700 p-2 rounded-lg text-sm font-semibold flex items-center justify-center space-x-2"
+                                    onClick={finishRound}
+                                    className="w-full bg-green-600 hover:bg-green-700 text-white p-3 rounded-lg font-semibold flex items-center justify-center space-x-2"
                                 >
                                     <CheckCircle />
                                     <span>Submit Answer</span>
@@ -691,42 +872,80 @@
                             
                             {gameState === 'finished' && (
                                 <div className="text-center space-y-3">
-                                    <div className="text-2xl font-bold text-green-400">{score} points</div>
-                                    
-                                    {/* Show bonuses */}
-                                    {calculateScore().bonuses.map((bonus, idx) => (
-                                        <div key={idx} className="text-xs text-yellow-400 font-semibold">
-                                            🎉 {bonus}
+                                    <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-3">
+                                        <div className="text-2xl font-bold text-yellow-600 mb-1">+{roundScore} points</div>
+                                        
+                                        {bonuses.map((bonus, idx) => (
+                                            <div key={idx} className="text-sm text-green-600 font-medium">
+                                                🎉 {bonus}
+                                            </div>
+                                        ))}
+                                        
+                                        <div className="text-sm text-gray-600 mt-2">
+                                            {calculateScore().correctCount}/5 correct positions
                                         </div>
-                                    ))}
-                                    
-                                    <div className="text-sm text-gray-400">
-                                        {calculateScore().correctCount}/{items.length} correct positions
                                     </div>
                                     
                                     <button 
                                         onClick={nextRound}
-                                        className="w-full bg-blue-600 hover:bg-blue-700 p-2 rounded-lg text-sm font-semibold"
+                                        className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg font-semibold"
                                     >
                                         Next Round
                                     </button>
                                 </div>
                             )}
 
-                            <button 
-                                onClick={resetAllGames}
-                                className="w-full bg-slate-700 hover:bg-slate-600 p-2 rounded-lg text-xs flex items-center justify-center space-x-2"
-                            >
-                                <RotateCcw />
-                                <span>Reset Score</span>
-                            </button>
+                            {gameState === 'gameOver' && (
+                                <div className="text-center space-y-3">
+                                    <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4">
+                                        <div className="text-2xl font-bold text-red-600 mb-2">Game Over!</div>
+                                        <div className="text-sm text-gray-600 mb-3">
+                                            You couldn't get all 5 items perfect in your Hail Mary round.
+                                        </div>
+                                        <div className="text-lg font-bold text-gray-800">Final Score: {points} points</div>
+                                    </div>
+                                    
+                                    <button 
+                                        onClick={resetGame}
+                                        className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg font-semibold"
+                                    >
+                                        Play Again
+                                    </button>
+                                </div>
+                            )}
+
+                            {gameState !== 'gameOver' && (
+                                <button 
+                                    onClick={resetGame}
+                                    className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 p-2 rounded-lg text-sm flex items-center justify-center space-x-2"
+                                >
+                                    <RotateCcw />
+                                    <span>Reset Game</span>
+                                </button>
+                            )}
                         </div>
+
+                        {/* Game Rules */}
+                        {gameState === 'ready' && (
+                            <div className="mt-6 bg-gray-50 rounded-lg p-3">
+                                <h4 className="font-bold text-gray-800 mb-2">How to Play:</h4>
+                                <ul className="text-xs text-gray-600 space-y-1">
+                                    <li>• Start with 100 points</li>
+                                    <li>• Each spin costs 10 points</li>
+                                    <li>• Rank 5 items in correct order</li>
+                                    <li>• Top/Bottom correct: 10 points</li>
+                                    <li>• Middle correct: 5-15 points</li>
+                                    <li>• All correct: +25 bonus</li>
+                                    <li>• Under 10 points? Hail Mary round!</li>
+                                </ul>
+                            </div>
+                        )}
                     </div>
                 </div>
             );
         };
 
-        ReactDOM.render(<RankingGame />, document.getElementById('root'));
+        ReactDOM.render(<RankRushGame />, document.getElementById('root'));
     </script>
 </body>
 </html>
