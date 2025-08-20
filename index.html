@@ -55,26 +55,54 @@
             width: 100%;
         }
         
-        /* Drag and drop styles */
+        /* Enhanced drag and drop styles */
         .dragging {
-            opacity: 0.7;
-            transform: rotate(1deg) scale(1.02);
+            opacity: 0.9;
+            transform: rotate(2deg) scale(1.15);
             z-index: 1000;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+            border: 3px solid #fbbf24 !important;
+            background: linear-gradient(135deg, #fef3c7, #fbbf24) !important;
         }
         
         .drag-over {
-            border: 2px dashed #1e40af;
-            background-color: rgba(30, 64, 175, 0.1);
+            border: 2px dashed #1e40af !important;
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe) !important;
+            transform: scale(1.02);
         }
         
         .drag-item {
             cursor: grab;
             transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .drag-item::after {
+            content: "⋮⋮";
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 14px;
+            line-height: 0.8;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        
+        .drag-item:hover::after {
+            color: #6b7280;
+            opacity: 1;
         }
         
         .drag-item:active {
             cursor: grabbing;
+        }
+        
+        .drag-placeholder {
+            background: linear-gradient(135deg, #e0f2fe, #b3e5fc);
+            border: 2px dashed #0288d1;
+            opacity: 0.7;
         }
         
         /* Slot machine spinner animation */
@@ -391,7 +419,7 @@
             const [currentCategory, setCurrentCategory] = useState(null);
             const [items, setItems] = useState([]);
             const [gameState, setGameState] = useState('ready'); // ready, spinning, playing, finished, hailMary, gameOver
-            const [points, setPoints] = useState(100);
+            const [points, setPoints] = useState(50);
             const [roundScore, setRoundScore] = useState(0);
             const [showResults, setShowResults] = useState(false);
             const [draggedItem, setDraggedItem] = useState(null);
@@ -495,8 +523,16 @@
                 setDraggedItem(index);
                 setIsDragging(false);
                 
-                e.currentTarget.style.transform = 'scale(1.02)';
+                // Enhanced visual feedback
+                e.currentTarget.style.transform = 'scale(1.1) rotate(1deg)';
                 e.currentTarget.style.zIndex = '1000';
+                e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
+                e.currentTarget.style.border = '2px solid #fbbf24';
+                
+                // Add haptic feedback if available
+                if (navigator.vibrate) {
+                    navigator.vibrate(50);
+                }
             };
 
             const handleTouchMove = (e, index) => {
@@ -505,32 +541,82 @@
                 const touch = e.touches[0];
                 const deltaY = touch.clientY - touchStartY;
                 
-                if (Math.abs(deltaY) > 10 && !isDragging) {
+                if (Math.abs(deltaY) > 15 && !isDragging) {
                     setIsDragging(true);
                     lockScroll();
+                    
+                    // Add visual feedback to other items
+                    items.forEach((_, idx) => {
+                        const element = document.querySelector(`[data-item-index="${idx}"]`);
+                        if (element && idx !== index) {
+                            element.style.opacity = '0.6';
+                            element.style.background = 'linear-gradient(135deg, #f3f4f6, #e5e7eb)';
+                        }
+                    });
                 }
                 
                 if (isDragging) {
                     e.preventDefault();
                     
-                    e.currentTarget.style.transform = `translateY(${deltaY}px) scale(1.02) rotate(1deg)`;
-                    e.currentTarget.style.opacity = '0.8';
+                    // Enhanced dragging visual feedback
+                    e.currentTarget.style.transform = `translateY(${deltaY}px) scale(1.15) rotate(2deg)`;
+                    e.currentTarget.style.opacity = '0.9';
+                    e.currentTarget.style.background = 'linear-gradient(135deg, #fef3c7, #fbbf24)';
                     
-                    const itemHeight = 35;
+                    // Calculate and highlight drop zones
+                    const itemHeight = 40;
                     const newIndex = Math.max(0, Math.min(items.length - 1, index + Math.round(deltaY / itemHeight)));
-                    setDragOverIndex(newIndex);
+                    
+                    if (newIndex !== dragOverIndex) {
+                        // Clear previous highlights
+                        items.forEach((_, idx) => {
+                            const element = document.querySelector(`[data-item-index="${idx}"]`);
+                            if (element && idx !== index) {
+                                element.classList.remove('drag-over');
+                            }
+                        });
+                        
+                        // Highlight new drop zone
+                        if (newIndex !== index) {
+                            const targetElement = document.querySelector(`[data-item-index="${newIndex}"]`);
+                            if (targetElement) {
+                                targetElement.classList.add('drag-over');
+                            }
+                        }
+                        
+                        setDragOverIndex(newIndex);
+                    }
                 }
             };
 
             const handleTouchEnd = (e, index) => {
                 if (gameState !== 'playing') return;
                 
+                // Reset visual feedback for dragged item
                 e.currentTarget.style.transform = '';
                 e.currentTarget.style.opacity = '';
                 e.currentTarget.style.zIndex = '';
+                e.currentTarget.style.boxShadow = '';
+                e.currentTarget.style.border = '';
+                e.currentTarget.style.background = '';
+                
+                // Reset visual feedback for all other items
+                items.forEach((_, idx) => {
+                    const element = document.querySelector(`[data-item-index="${idx}"]`);
+                    if (element && idx !== index) {
+                        element.style.opacity = '';
+                        element.style.background = '';
+                        element.classList.remove('drag-over');
+                    }
+                });
                 
                 if (isDragging && dragOverIndex !== null && dragOverIndex !== index) {
                     moveItem(index, dragOverIndex);
+                    
+                    // Success feedback
+                    if (navigator.vibrate) {
+                        navigator.vibrate(100);
+                    }
                 }
                 
                 setTouchStartY(null);
@@ -679,7 +765,7 @@
             };
 
             const resetGame = () => {
-                setPoints(100);
+                setPoints(50);
                 setIsHailMary(false);
                 setGameState('ready');
                 setCurrentCategory(null);
@@ -708,7 +794,7 @@
             };
 
             return (
-                <div className="max-w-sm mx-auto bg-white text-gray-900 mobile-optimized min-h-screen">
+                <div className="max-w-xs mx-auto bg-white text-gray-900 mobile-optimized min-h-screen">
                     {/* Header */}
                     <div className="bg-gradient-to-r from-blue-900 to-blue-800 text-white p-3">
                         <div className="flex justify-between items-center mb-2">
@@ -835,6 +921,7 @@
                                     return (
                                         <div 
                                             key={item.name} 
+                                            data-item-index={index}
                                             className={`bg-white border-2 rounded-lg p-2 flex items-center justify-between drag-item item-entrance
                                                 ${result ? result.color : 'border-gray-200 hover:border-blue-300'}
                                                 ${dragOverIndex === index ? 'drag-over' : ''}`}
@@ -863,18 +950,20 @@
                                             </div>
                                             
                                             {gameState === 'playing' && (
-                                                <div className="flex flex-col space-y-0.5">
+                                                <div className="flex flex-col space-y-0.5 ml-2">
                                                     <button 
                                                         onClick={() => moveItemWithArrow(index, 'up')}
                                                         disabled={index === 0}
-                                                        className="p-1 bg-gray-100 rounded disabled:opacity-50 hover:bg-gray-200"
+                                                        className="p-1.5 bg-blue-100 hover:bg-blue-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                                        title="Move up"
                                                     >
                                                         <ChevronUp />
                                                     </button>
                                                     <button 
                                                         onClick={() => moveItemWithArrow(index, 'down')}
                                                         disabled={index === items.length - 1}
-                                                        className="p-1 bg-gray-100 rounded disabled:opacity-50 hover:bg-gray-200"
+                                                        className="p-1.5 bg-blue-100 hover:bg-blue-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                                        title="Move down"
                                                     >
                                                         <ChevronDown />
                                                     </button>
@@ -958,7 +1047,7 @@
                             <div className="mt-6 bg-gray-50 rounded-lg p-3">
                                 <h4 className="font-bold text-gray-800 mb-2">How to Play:</h4>
                                 <ul className="text-xs text-gray-600 space-y-1">
-                                    <li>• Start with 100 points</li>
+                                    <li>• Start with 50 points</li>
                                     <li>• Each spin costs 10 points</li>
                                     <li>• Rank 5 items in correct order</li>
                                     <li>• Top/Bottom correct: 10 points</li>
