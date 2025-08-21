@@ -1,4 +1,247 @@
-<!DOCTYPE html>
+{gameState === 'finished' && (
+                                <div className="text-center space-y-3">
+                                    <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-3">
+                                        <div className="text-2xl font-bold text-yellow-600 mb-1">+{roundScore} points</div>
+                                        
+                                        {bonuses.map((bonus, idx) => (
+                                            <div key={idx} className="text-sm text-green-600 font-medium">
+                                                🎉 {bonus}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+
+                        {/* Action Buttons */}
+                        <div className="space-y-2">
+                            {gameState === 'playing' && (
+                                <button 
+                                    onClick={finishRound}
+                                    className="w-full bg-green-600 hover:bg-green-700 text-white p-3 rounded-lg font-semibold flex items-center justify-center space-x-2"
+                                >
+                                    <CheckCircle />
+                                    <span>Submit Answer</span>
+                                </button>
+                            )}
+                            
+                            {gameState === 'finished' && (
+                                <div className="text-center space-y-3">
+                                    <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-3">
+                                        <div className="text-2xl font-bold text-yellow-600 mb-1">+{roundScore} points</div>
+                                        
+                                        {bonuses.map((bonus, idx) => (
+                                            <div key={idx} className="text-sm text-green-600 font-medium">
+                                                🎉 {bonus}
+                                            </div>
+                                        ))}
+                                        
+                                        <div className="text-sm text-gray-600 mt-2">
+                                            {calculateScore().correctCount}/5 correct positions
+                                            {calculateScore().correctCount <= 1 && (
+                                                <div className="text-red-600 font-bold">⚠️ Strike {strikes + 1}/3</div>
+                                            )}
+                                        </div>
+                                    </div>
+                                    
+                                    <button 
+                                        onClick={nextRound}
+                                        className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg font-semibold"
+                                    >
+                                        {currentRound >= 8 ? 'View Final Score' : 'Next Round'}
+                                    </button>
+                                </div>
+                            )}
+
+                            {gameState === 'gameOver' && (
+                                <div className="text-center space-y-3">
+                                    <div className="bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-200 rounded-lg p-4">
+                                        <div className="text-2xl font-bold text-purple-600 mb-2">
+                                            {currentRound >= 8 ? '🏆 Challenge Complete!' : '💥 Game Over!'}
+                                        </div>
+                                        
+                                        <div className="text-lg font-bold text-gray-800 mb-2">
+                                            Final Score: {currentScore}
+                                        </div>
+                                        
+                                        {currentScore > highScore ? (
+                                            <div className="text-green-600 font-bold text-sm mb-2">
+                                                🎉 NEW HIGH SCORE! 🎉
+                                            </div>
+                                        ) : highScore > 0 && (
+                                            <div className="text-gray-600 text-sm mb-2">
+                                                High Score: {highScore}
+                                            </div>
+                                        )}
+                                        
+                                        <div className="text-sm text-gray-600">
+                                            {currentRound >= 8 ? 
+                                                `Completed all 8 rounds with ${strikes} strikes` :
+                                                `Ended on round ${currentRound} with 3 strikes`
+                                            }
+                                        </div>
+                                    </div>
+                                    
+                                    <button 
+                                        onClick={resetGame}
+                                        className="w-full bg-green-600 hover:bg-green-700 text-white p-3 rounded-lg font-semibold"
+                                    >
+                                        Play Again
+                                    </button>
+                                </div>
+                            )}
+
+                            {gameState !== 'gameOver' && gameState !== 'ready' && (
+                                <button 
+                                    onClick={resetGame}
+                                    className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 p-2 rounded-lg text-sm flex items-center justify-center space-x-2"
+                                >
+                                    <RotateCcw />
+                                    <span>Reset Game</span>
+                                </button>
+                            )}
+                        </div>
+
+                        {/* Game Rules */}
+                        {gameState === 'ready' && currentRound === 1 && (
+                            <div className="mt-6 bg-gray-50 rounded-lg p-3">
+                                <h4 className="font-bold text-gray-800 mb-2">How to Play:</h4>
+                                <ul className="text-xs text-gray-600 space-y-1">
+                                    <li>• You have 8 rounds to build your score</li>
+                                    <li>• 3 strikes (0-1 correct) = game over</li>
+                                    <li>• Top/Bottom correct: 10 points</li>
+                                    <li>• Middle correct: 5-8 points</li>
+                                    <li>• Perfect round: +15 bonus + Peek power-up</li>
+                                    <li>• Round 8: Get all 5 correct to double your score!</li>
+                                    <li>• Peek power-up reveals 2 correct positions</li>
+                                </ul>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<RankRushGame />, document.getElementById('root'));Submit Answer</span>
+                                </button>
+                            )}
+                            
+                            {gameState === 'finished' && (
+                                <div className="text-center space-y-3">
+                                    <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-3">
+                                        <div className="text-2xl font-bold text-yellow-600 mb-1">+{roundScore} points</div>
+                                        
+                                        {bonuses.map((bonus, idx) => (
+                                            <div key={idx} className="text-sm text-green-600 font-medium">
+                                                🎉 {bonus}
+                                            </div>
+                                        ))}
+                                        
+                                        <div className="text-sm text-gray-600 mt-2">
+                                            {calculateScore().correctCount}/5 correct positions
+                                            {calculateScore().correctCount <= 1 && (
+                                                <div className="text-red-600 font-bold">⚠️ Strike {strikes + 1}/3</div>
+                                            )}
+                                        </div>
+                                    </div>
+                                    
+                                    <button 
+                                        onClick={nextRound}
+                                        className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg font-semibold"
+                                    >
+                                        {currentRound >= 8 ? 'View Final Score' : 'Next Round'}
+                                    </button>
+                                </div>
+                            )}
+
+                            {gameState === 'gameOver' && (
+                                <div className="text-center space-y-3">
+                                    <div className="bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-200 rounded-lg p-4">
+                                        <div className="text-2xl font-bold text-purple-600 mb-2">
+                                            {currentRound >= 8 ? '🏆 Challenge Complete!' : '💥 Game Over!'}
+                                        </div>
+                                        
+                                        <div className="text-lg font-bold text-gray-800 mb-2">
+                                            Final Score: {currentScore}
+                                        </div>
+                                        
+                                        {currentScore > highScore ? (
+                                            <div className="text-green-600 font-bold text-sm mb-2">
+                                                🎉 NEW HIGH SCORE! 🎉
+                                            </div>
+                                        ) : highScore > 0 && (
+                                            <div className="text-gray-600 text-sm mb-2">
+                                                High Score: {highScore}
+                                            </div>
+                                        )}
+                                        
+                                        <div className="text-sm text-gray-600">
+                                            {currentRound >= 8 ? 
+                                                `Completed all 8 rounds with ${strikes} strikes` :
+                                                `Ended on round ${currentRound} with 3 strikes`
+                                            }
+                                        </div>
+                                    </div>
+                                    
+                                    <button 
+                                        onClick={resetGame}
+                                        className="w-full bg-green-600 hover:bg-green-700 text-white p-3 rounded-lg font-semibold"
+                                    >
+                                        Play Again
+                                    </button>
+                                </div>
+                            )}
+
+                            {gameState !== 'gameOver' && gameState !== 'ready' && (
+                                <button 
+                                    onClick={resetGame}
+                                    className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 p-2 rounded-lg text-sm flex items-center justify-center space-x-2"
+                                >
+                                    <RotateCcw />
+                                    <span>Reset Game</span>
+                                </button>
+                            )}
+                        </div>
+
+                        {/* Game Rules */}
+                        {gameState === 'ready' && currentRound === 1 && (
+                            <div className="mt-6 bg-gray-50 rounded-lg p-3">
+                                <h4 className="font-bold text-gray-800 mb-2">How to Play:</h4>
+                                <ul className="text-xs text-gray-600 space-y-1">
+                                    <li>• You have 8 rounds to build your score</li>
+                                    <li>• 3 strikes (0-1 correct) = game over</li>
+                                    <li>• Top/Bottom correct: 10 points</li>
+                                    <li>• Middle correct: 5-8 points</li>
+                                    <li>• Perfect round: +15 bonus + Peek power-up</li>
+                                    <li>• Round 8: Get all 5 correct to double your score!</li>
+                                    <li>• Peek power-up reveals 2 correct positions</li>
+                                </ul>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+                                        ))}
+                                        
+                                        <div className="text-sm text-gray-600 mt-2">
+                                            {calculateScore().correctCount}/5 correct positions
+                                            {calculateScore().correctCount <= 1 && (
+                                                <div className="text-red-600 font-bold">⚠️ Strike {strikes + 1}/3</div>
+                                            )}
+                                        </div>
+                                    </div>
+                                    
+                                    <button 
+                                        onClick={nextRound}
+                                        className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg font-semibold"
+                                    >
+                                        {currentRound >= 8 ? 'View Final Score' : 'Next Round'}
+                                    </button>
+                                </div>
+                            )}
+
+                            {gameState === 'gameOver' && (
+                                <div className<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -10,6 +253,15 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- Google Analytics - Replace GA_MEASUREMENT_ID with your actual ID -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
+    
     <style>
         /* Custom styles for mobile optimization */
         body {
@@ -20,6 +272,8 @@
             user-select: none;
             overflow-x: hidden;
             background: #ffffff;
+            position: fixed;
+            width: 100%;
             height: 100vh;
             height: 100dvh;
         }
@@ -27,28 +281,10 @@
         .mobile-optimized {
             touch-action: manipulation;
             -webkit-overflow-scrolling: touch;
-            height: 100vh;
-            height: 100dvh;
+            min-height: 100vh;
+            min-height: 100dvh;
             overflow-y: auto;
             overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .game-container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            height: 100dvh;
-            max-height: 100vh;
-            max-height: 100dvh;
-        }
-        
-        .game-content {
-            flex: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
         }
         
         /* Prevent zoom on double tap */
@@ -286,6 +522,13 @@
                     { name: "Star Wars: The Force Awakens", value: 2071310218 },
                     { name: "Avengers: Infinity War", value: 2048359754 },
                     { name: "Spider-Man: No Way Home", value: 1921847111 },
+                    { name: "Jurassic World", value: 1672319444 },,
+                    { name: "The Lion King (2019)", value: 1656943394 },
+                    { name: "The Avengers", value: 1518815515 },
+                    { name: "Furious 7", value: 1515341399 },
+                    { name: "Top Gun: Maverick", value: 1488732821 }
+                ]
+            },
                     { name: "Jurassic World", value: 1672319444 },
                     { name: "The Lion King (2019)", value: 1656943394 },
                     { name: "The Avengers", value: 1518815515 },
@@ -442,6 +685,72 @@
                     { name: "Joe Biden", value: 46 }
                 ]
             },
+            usStatesByStatehood: {
+                title: "US States by Statehood Date",
+                description: "Oldest to newest",
+                icon: "🏛️",
+                items: [
+                    { name: "Delaware", value: 1787 },
+                    { name: "Pennsylvania", value: 1787 },
+                    { name: "New Jersey", value: 1787 },
+                    { name: "Georgia", value: 1788 },
+                    { name: "Connecticut", value: 1788 },
+                    { name: "Massachusetts", value: 1788 },
+                    { name: "Maryland", value: 1788 },
+                    { name: "South Carolina", value: 1788 },
+                    { name: "New Hampshire", value: 1788 },
+                    { name: "Virginia", value: 1788 },
+                    { name: "New York", value: 1788 },
+                    { name: "North Carolina", value: 1789 },
+                    { name: "Rhode Island", value: 1790 },
+                    { name: "Vermont", value: 1791 },
+                    { name: "Kentucky", value: 1792 },
+                    { name: "Tennessee", value: 1796 },
+                    { name: "Ohio", value: 1803 },
+                    { name: "California", value: 1850 },
+                    { name: "Alaska", value: 1959 },
+                    { name: "Hawaii", value: 1959 }
+                ]
+            },
+            majorWarsStartDate: {
+                title: "Major US Wars by Start Date",
+                description: "Oldest to most recent",
+                icon: "⚔️",
+                items: [
+                    { name: "Revolutionary War", value: 1775 },
+                    { name: "War of 1812", value: 1812 },
+                    { name: "Mexican-American War", value: 1846 },
+                    { name: "Civil War", value: 1861 },
+                    { name: "Spanish-American War", value: 1898 },
+                    { name: "World War I", value: 1917 },
+                    { name: "World War II", value: 1941 },
+                    { name: "Korean War", value: 1950 },
+                    { name: "Vietnam War", value: 1964 },
+                    { name: "Gulf War", value: 1991 },
+                    { name: "Afghanistan War", value: 2001 },
+                    { name: "Iraq War", value: 2003 }
+                ]
+            },
+            disneyMoviesByYear: {
+                title: "Disney Animated Movies by Release",
+                description: "Oldest to newest",
+                icon: "🏰",
+                items: [
+                    { name: "Snow White and the Seven Dwarfs", value: 1937 },
+                    { name: "Pinocchio", value: 1940 },
+                    { name: "Cinderella", value: 1950 },
+                    { name: "Sleeping Beauty", value: 1959 },
+                    { name: "The Little Mermaid", value: 1989 },
+                    { name: "Beauty and the Beast", value: 1991 },
+                    { name: "The Lion King", value: 1994 },
+                    { name: "Toy Story", value: 1995 },
+                    { name: "Mulan", value: 1998 },
+                    { name: "Finding Nemo", value: 2003 },
+                    { name: "Frozen", value: 2013 },
+                    { name: "Moana", value: 2016 },
+                    { name: "Encanto", value: 2021 }
+                ]
+            },
             gameConsolesByRelease: {
                 title: "Game Consoles by Release Date",
                 description: "Oldest to newest",
@@ -459,6 +768,134 @@
                     { name: "PlayStation 4", value: 2013 },
                     { name: "Nintendo Switch", value: 2017 },
                     { name: "PlayStation 5", value: 2020 }
+                ]
+            },
+            marvelMoviesMCU: {
+                title: "Marvel MCU Movies by Release",
+                description: "Release order (Phase 1-4)",
+                icon: "🦸",
+                items: [
+                    { name: "Iron Man", value: 1 },
+                    { name: "The Incredible Hulk", value: 2 },
+                    { name: "Iron Man 2", value: 3 },
+                    { name: "Thor", value: 4 },
+                    { name: "Captain America: The First Avenger", value: 5 },
+                    { name: "The Avengers", value: 6 },
+                    { name: "Guardians of the Galaxy", value: 10 },
+                    { name: "Avengers: Age of Ultron", value: 11 },
+                    { name: "Captain America: Civil War", value: 13 },
+                    { name: "Black Panther", value: 18 },
+                    { name: "Avengers: Infinity War", value: 19 },
+                    { name: "Avengers: Endgame", value: 22 },
+                    { name: "Spider-Man: Far From Home", value: 23 }
+                ]
+            },
+            videoGamesBySales: {
+                title: "Video Games by Total Sales",
+                description: "Highest to lowest sales",
+                icon: "🕹️",
+                items: [
+                    { name: "Minecraft", value: 300000000 },
+                    { name: "Grand Theft Auto V", value: 190000000 },
+                    { name: "Tetris (all versions)", value: 170000000 },
+                    { name: "Wii Sports", value: 82900000 },
+                    { name: "PUBG", value: 75000000 },
+                    { name: "Mario Kart 8 / Deluxe", value: 70000000 },
+                    { name: "Super Mario Bros.", value: 58000000 },
+                    { name: "Red Dead Redemption 2", value: 50000000 },
+                    { name: "Overwatch", value: 50000000 },
+                    { name: "The Witcher 3", value: 40000000 },
+                    { name: "Animal Crossing: New Horizons", value: 42000000 }
+                ]
+            },
+            romanNumeralsByValue: {
+                title: "Roman Numerals by Value",
+                description: "Smallest to largest",
+                icon: "🏛️",
+                items: [
+                    { name: "I", value: 1 },
+                    { name: "II", value: 2 },
+                    { name: "III", value: 3 },
+                    { name: "IV", value: 4 },
+                    { name: "V", value: 5 },
+                    { name: "VI", value: 6 },
+                    { name: "IX", value: 9 },
+                    { name: "X", value: 10 },
+                    { name: "L", value: 50 },
+                    { name: "C", value: 100 },
+                    { name: "D", value: 500 },
+                    { name: "M", value: 1000 }
+                ]
+            },
+            cookingMeasurements: {
+                title: "Cooking Measurements by Size",
+                description: "Smallest to largest",
+                icon: "🥄",
+                items: [
+                    { name: "1/4 teaspoon", value: 0.25 },
+                    { name: "1/2 teaspoon", value: 0.5 },
+                    { name: "1 teaspoon", value: 1 },
+                    { name: "1 tablespoon", value: 3 },
+                    { name: "1/4 cup", value: 12 },
+                    { name: "1/3 cup", value: 16 },
+                    { name: "1/2 cup", value: 24 },
+                    { name: "1 cup", value: 48 },
+                    { name: "1 pint", value: 96 },
+                    { name: "1 quart", value: 192 },
+                    { name: "1 gallon", value: 768 }
+                ]
+            },
+            planetsBySize: {
+                title: "Planets by Diameter",
+                description: "Smallest to largest",
+                icon: "🪐",
+                items: [
+                    { name: "Mercury", value: 4879 },
+                    { name: "Mars", value: 6779 },
+                    { name: "Venus", value: 12104 },
+                    { name: "Earth", value: 12756 },
+                    { name: "Neptune", value: 49528 },
+                    { name: "Uranus", value: 51118 },
+                    { name: "Saturn", value: 120536 },
+                    { name: "Jupiter", value: 142984 }
+                ]
+            },
+            elementsDiscoveryYear: {
+                title: "Chemical Elements by Discovery",
+                description: "Oldest to most recent",
+                icon: "⚛️",
+                items: [
+                    { name: "Gold", value: -3000 },
+                    { name: "Silver", value: -3000 },
+                    { name: "Iron", value: -1500 },
+                    { name: "Phosphorus", value: 1669 },
+                    { name: "Oxygen", value: 1774 },
+                    { name: "Uranium", value: 1789 },
+                    { name: "Aluminum", value: 1825 },
+                    { name: "Helium", value: 1868 },
+                    { name: "Radium", value: 1898 },
+                    { name: "Plutonium", value: 1940 },
+                    { name: "Einsteinium", value: 1952 },
+                    { name: "Oganesson", value: 2002 }
+                ]
+            },
+            socialMediaPlatforms: {
+                title: "Social Media by Launch Date",
+                description: "Oldest to newest",
+                icon: "📱",
+                items: [
+                    { name: "Six Degrees", value: 1997 },
+                    { name: "Friendster", value: 2002 },
+                    { name: "MySpace", value: 2003 },
+                    { name: "Facebook", value: 2004 },
+                    { name: "YouTube", value: 2005 },
+                    { name: "Twitter", value: 2006 },
+                    { name: "Instagram", value: 2010 },
+                    { name: "Snapchat", value: 2011 },
+                    { name: "TikTok", value: 2016 },
+                    { name: "Discord", value: 2015 },
+                    { name: "Clubhouse", value: 2020 },
+                    { name: "BeReal", value: 2020 }
                 ]
             },
             iPhoneModels: {
@@ -479,6 +916,178 @@
                     { name: "iPhone 12", value: 2020 },
                     { name: "iPhone 14", value: 2022 },
                     { name: "iPhone 15", value: 2023 }
+                ]
+            },
+            streamingServices: {
+                title: "Streaming Services by Launch",
+                description: "Oldest to newest",
+                icon: "📺",
+                items: [
+                    { name: "Netflix (streaming)", value: 2007 },
+                    { name: "Hulu", value: 2008 },
+                    { name: "Amazon Prime Video", value: 2011 },
+                    { name: "HBO Go", value: 2012 },
+                    { name: "Sling TV", value: 2015 },
+                    { name: "YouTube TV", value: 2017 },
+                    { name: "Disney+", value: 2019 },
+                    { name: "Apple TV+", value: 2019 },
+                    { name: "HBO Max", value: 2020 },
+                    { name: "Peacock", value: 2020 },
+                    { name: "Paramount+", value: 2021 }
+                ]
+            },
+            nationalParksEstablished: {
+                title: "US National Parks by Establishment",
+                description: "Oldest to newest",
+                icon: "🏞️",
+                items: [
+                    { name: "Yellowstone", value: 1872 },
+                    { name: "Sequoia", value: 1890 },
+                    { name: "Yosemite", value: 1890 },
+                    { name: "Mount Rainier", value: 1899 },
+                    { name: "Crater Lake", value: 1902 },
+                    { name: "Grand Canyon", value: 1919 },
+                    { name: "Zion", value: 1919 },
+                    { name: "Bryce Canyon", value: 1928 },
+                    { name: "Great Smoky Mountains", value: 1934 },
+                    { name: "Everglades", value: 1947 },
+                    { name: "Arches", value: 1971 },
+                    { name: "Death Valley", value: 1994 }
+                ]
+            }
+        };
+                    { name: "Jurassic World", value: 1672319444 },
+                    { name: "The Lion King (2019)", value: 1656943394 },
+                    { name: "The Avengers", value: 1518815515 },
+                    { name: "Furious 7", value: 1515341399 },
+                    { name: "Top Gun: Maverick", value: 1488732821 }
+                ]
+            },
+            stocksByMarketCap: {
+                title: "Companies by Market Cap",
+                description: "Most to least valuable",
+                icon: "💼",
+                items: [
+                    { name: "Microsoft", value: 3000000000000 },
+                    { name: "Apple", value: 2900000000000 },
+                    { name: "Nvidia", value: 2200000000000 },
+                    { name: "Alphabet (Google)", value: 2000000000000 },
+                    { name: "Amazon", value: 1500000000000 },
+                    { name: "Meta (Facebook)", value: 1200000000000 },
+                    { name: "Tesla", value: 800000000000 },
+                    { name: "Berkshire Hathaway", value: 780000000000 },
+                    { name: "Taiwan Semiconductor", value: 500000000000 },
+                    { name: "Walmart", value: 480000000000 }
+                ]
+            },
+            elementsById: {
+                title: "Elements by Atomic Number",
+                description: "Lowest to highest number",
+                icon: "⚛️",
+                items: [
+                    { name: "Hydrogen", value: 1 },
+                    { name: "Helium", value: 2 },
+                    { name: "Lithium", value: 3 },
+                    { name: "Beryllium", value: 4 },
+                    { name: "Boron", value: 5 },
+                    { name: "Carbon", value: 6 },
+                    { name: "Nitrogen", value: 7 },
+                    { name: "Oxygen", value: 8 },
+                    { name: "Fluorine", value: 9 },
+                    { name: "Neon", value: 10 },
+                    { name: "Sodium", value: 11 },
+                    { name: "Magnesium", value: 12 }
+                ]
+            },
+            fastFoodChains: {
+                title: "Fast Food by Revenue",
+                description: "Highest to lowest revenue",
+                icon: "🍔",
+                items: [
+                    { name: "Starbucks", value: 32250000000 },
+                    { name: "KFC", value: 27000000000 },
+                    { name: "McDonald's", value: 23223000000 },
+                    { name: "Domino's", value: 17800000000 },
+                    { name: "Subway", value: 16100000000 },
+                    { name: "Pizza Hut", value: 12000000000 },
+                    { name: "Taco Bell", value: 11300000000 },
+                    { name: "Burger King", value: 10200000000 },
+                    { name: "Dunkin'", value: 9200000000 }
+                ]
+            },
+            nbaTeamsByChampionships: {
+                title: "NBA Teams by Championships",
+                description: "Most to least titles",
+                icon: "🏀",
+                items: [
+                    { name: "Boston Celtics", value: 18 },
+                    { name: "Los Angeles Lakers", value: 17 },
+                    { name: "Golden State Warriors", value: 7 },
+                    { name: "Chicago Bulls", value: 6 },
+                    { name: "San Antonio Spurs", value: 5 },
+                    { name: "Philadelphia 76ers", value: 3 },
+                    { name: "Detroit Pistons", value: 3 },
+                    { name: "Miami Heat", value: 3 },
+                    { name: "New York Knicks", value: 2 },
+                    { name: "Houston Rockets", value: 2 },
+                    { name: "Milwaukee Bucks", value: 2 }
+                ]
+            },
+            techByFounded: {
+                title: "Tech Companies by Founding",
+                description: "Oldest to newest",
+                icon: "💻",
+                items: [
+                    { name: "IBM", value: 1911 },
+                    { name: "HP", value: 1939 },
+                    { name: "Intel", value: 1968 },
+                    { name: "Microsoft", value: 1975 },
+                    { name: "Apple", value: 1976 },
+                    { name: "Oracle", value: 1977 },
+                    { name: "Adobe", value: 1982 },
+                    { name: "Dell", value: 1984 },
+                    { name: "Cisco", value: 1984 },
+                    { name: "Netflix", value: 1997 },
+                    { name: "Google", value: 1998 },
+                    { name: "PayPal", value: 1998 },
+                    { name: "Salesforce", value: 1999 },
+                    { name: "Tesla", value: 2003 },
+                    { name: "Facebook", value: 2004 },
+                    { name: "YouTube", value: 2005 },
+                    { name: "Twitter", value: 2006 },
+                    { name: "Uber", value: 2009 },
+                    { name: "Instagram", value: 2010 },
+                    { name: "Snapchat", value: 2011 },
+                    { name: "TikTok", value: 2016 }
+                ]
+            },
+            oceansByDepth: {
+                title: "Ocean Trenches by Depth",
+                description: "Deepest to shallowest",
+                icon: "🌊",
+                items: [
+                    { name: "Mariana Trench", value: 11034 },
+                    { name: "Tonga Trench", value: 10882 },
+                    { name: "Kuril-Kamchatka Trench", value: 10542 },
+                    { name: "Philippines Trench", value: 10540 },
+                    { name: "Kermadec Trench", value: 10047 },
+                    { name: "Izu-Ogasawara Trench", value: 9780 },
+                    { name: "Puerto Rico Trench", value: 8648 }
+                ]
+            },
+            spicesByHeat: {
+                title: "Peppers by Heat Level",
+                description: "Hottest to mildest",
+                icon: "🌶️",
+                items: [
+                    { name: "Carolina Reaper", value: 2200000 },
+                    { name: "Trinidad Moruga Scorpion", value: 2009231 },
+                    { name: "Ghost Pepper", value: 1041427 },
+                    { name: "Habanero", value: 350000 },
+                    { name: "Cayenne", value: 50000 },
+                    { name: "Jalapeño", value: 8000 },
+                    { name: "Poblano", value: 2000 },
+                    { name: "Bell Pepper", value: 0 }
                 ]
             }
         };
@@ -503,20 +1112,34 @@
             const [highScore, setHighScore] = useState(0);
             const [isFinaleRound, setIsFinaleRound] = useState(false);
 
-            // Track high score in memory (localStorage not available in Claude environment)
             useEffect(() => {
-                // Initialize high score
-                const savedHighScore = parseInt(window.sessionStorage?.getItem?.('rankRushHighScore') || '0');
-                setHighScore(savedHighScore);
+                // Load high score from localStorage (with fallback for Claude environment)
+                try {
+                    const savedHighScore = localStorage.getItem('rankRushHighScore');
+                    if (savedHighScore) {
+                        setHighScore(parseInt(savedHighScore));
+                    }
+                } catch (error) {
+                    // localStorage not available in Claude environment
+                    console.log('localStorage not available, using session storage');
+                }
+
+                // Track analytics
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'game_start', {
+                        'custom_parameter': 'rank_rush_8_rounds'
+                    });
+                }
             }, []);
 
             const saveHighScore = (score) => {
                 if (score > highScore) {
                     setHighScore(score);
                     try {
-                        window.sessionStorage?.setItem?.('rankRushHighScore', score.toString());
+                        localStorage.setItem('rankRushHighScore', score.toString());
                     } catch (error) {
-                        console.log('Could not save to sessionStorage');
+                        // localStorage not available, just keep in state
+                        console.log('Could not save to localStorage');
                     }
                 }
             };
@@ -585,7 +1208,6 @@
                 setRoundScore(0);
                 setShowResults(false);
                 setBonuses([]);
-                setRevealedPositions([]);
             };
 
             const moveItem = (fromIndex, toIndex) => {
@@ -846,6 +1468,17 @@
                 }
                 
                 setShowResults(true);
+                
+                // Track analytics
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'round_complete', {
+                        'score': result.score,
+                        'correct_answers': result.correctCount,
+                        'category': currentCategory,
+                        'round': currentRound,
+                        'strikes': strikes + (isStrike ? 1 : 0)
+                    });
+                }
             };
 
             const nextRound = () => {
@@ -886,6 +1519,10 @@
                 setShowResults(false);
                 setRoundScore(0);
                 setBonuses([]);
+                
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'game_reset');
+                }
             };
 
             const getItemResult = (item, index) => {
@@ -903,28 +1540,28 @@
             };
 
             return (
-                <div className="game-container max-w-xs mx-auto bg-white text-gray-900">
+                <div className="max-w-xs mx-auto bg-white text-gray-900 mobile-optimized min-h-screen">
                     {/* Header */}
-                    <div className="bg-gradient-to-r from-blue-900 to-blue-800 text-white p-2">
-                        <div className="flex justify-between items-center mb-1">
-                            <h1 className="text-lg font-bold">Rank Rush</h1>
+                    <div className="bg-gradient-to-r from-blue-900 to-blue-800 text-white p-3">
+                        <div className="flex justify-between items-center mb-2">
+                            <h1 className="text-xl font-bold">Rank Rush</h1>
                             <div className="text-right">
                                 <div className="text-xs text-blue-200">Score</div>
-                                <div className="text-base font-bold text-yellow-400">{currentScore}</div>
+                                <div className="text-lg font-bold text-yellow-400">{currentScore}</div>
                             </div>
                         </div>
                         
-                        <div className="flex justify-between items-center text-xs text-blue-200 mb-1">
+                        <div className="flex justify-between items-center text-xs text-blue-200 mb-2">
                             <span>Round {currentRound}/8</span>
-                            <span>High: {highScore}</span>
+                            <span>High Score: {highScore}</span>
                         </div>
                         
                         {/* Strikes and Power-ups */}
-                        <div className="flex justify-between items-center mb-1">
+                        <div className="flex justify-between items-center mb-2">
                             <div className="flex items-center space-x-1">
                                 <span className="text-xs text-blue-200">Strikes:</span>
                                 {[...Array(3)].map((_, i) => (
-                                    <span key={i} className={`text-xs ${i < strikes ? 'text-red-400' : 'text-gray-500'}`}>
+                                    <span key={i} className={`text-sm ${i < strikes ? 'text-red-400' : 'text-gray-500'}`}>
                                         ❌
                                     </span>
                                 ))}
@@ -935,62 +1572,65 @@
                                     onClick={usePeekPowerUp}
                                     className="bg-yellow-500 hover:bg-yellow-600 text-black px-2 py-1 rounded text-xs font-bold"
                                 >
-                                    🔍 Peek
+                                    🔍 Use Peek
                                 </button>
                             )}
                         </div>
                         
                         {isFinaleRound && (
-                            <div className="bg-yellow-600 text-black text-center py-1 px-2 rounded text-xs font-bold mb-1">
-                                🏆 FINALE - Get all 5 to DOUBLE score! 🏆
+                            <div className="bg-yellow-600 text-black text-center py-1 px-2 rounded text-xs font-bold mb-2">
+                                🏆 FINALE ROUND - Get all 5 correct to DOUBLE your score! 🏆
                             </div>
                         )}
                         
                         <div className="text-xs text-blue-200 text-center">
-                            {gameState === 'ready' ? (currentRound === 1 ? 'Start challenge!' : 'Ready!') : 
+                            {gameState === 'ready' ? (currentRound === 1 ? 'Start your 8-round challenge!' : 'Ready for next round!') : 
                              gameState === 'spinning' ? 'Spinning...' :
-                             gameState === 'playing' ? 'Drag to reorder!' :
-                             gameState === 'finished' ? 'Complete!' :
+                             gameState === 'playing' ? 'Drag to reorder items!' :
+                             gameState === 'finished' ? 'Round complete!' :
                              gameState === 'gameOver' ? 'Game Over!' : ''}
                         </div>
                     </div>
 
                     {/* Game Area */}
-                    <div className="game-content p-2">
+                    <div className="p-3">
                         {/* Spinner Section */}
                         {gameState === 'ready' && (
-                            <div className="text-center mb-3">
-                                <div className="mb-3">
-                                    <h2 className="text-base font-bold text-gray-800 mb-1">Ready to Spin?</h2>
-                                    <p className="text-xs text-gray-600 mb-2">
-                                        Rank 5 items correctly to earn points!
+                            <div className="text-center mb-4">
+                                <div className="mb-4">
+                                    <h2 className="text-lg font-bold text-gray-800 mb-2">Ready to Spin?</h2>
+                                    <p className="text-sm text-gray-600 mb-3">
+                                        {isHailMary ? 
+                                            "This is your last chance! Get all 5 items perfect to earn 30 points and continue." :
+                                            "Each spin costs 10 points. Rank 5 items correctly to earn points back!"
+                                        }
                                     </p>
                                 </div>
                                 
                                 <button 
                                     onClick={spinWheel}
                                     disabled={!canSpin()}
-                                    className={`w-full py-2 px-4 rounded-lg font-bold text-base flex items-center justify-center space-x-2 ${
+                                    className={`w-full py-3 px-6 rounded-lg font-bold text-lg flex items-center justify-center space-x-2 ${
                                         canSpin() 
                                             ? 'bg-yellow-400 hover:bg-yellow-500 text-gray-900' 
                                             : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                     }`}
                                 >
                                     <Zap />
-                                    <span>Spin Wheel</span>
+                                    <span>{isHailMary ? 'Hail Mary Spin (FREE)' : `Spin Wheel (-10 pts)`}</span>
                                 </button>
                             </div>
                         )}
 
                         {/* Slot Machine Spinner Animation */}
                         {gameState === 'spinning' && (
-                            <div className="text-center mb-4">
-                                <div className="mb-3">
-                                    <div className="slot-container bg-white mx-auto w-56">
+                            <div className="text-center mb-6">
+                                <div className="mb-4">
+                                    <div className="slot-container bg-white mx-auto w-64">
                                         <div 
                                             className="slot-reel"
                                             style={{
-                                                transform: `translateY(-${selectedCategoryIndex * 100}px)`
+                                                transform: `translateY(-${selectedCategoryIndex * 120}px)`
                                             }}
                                         >
                                             {/* Create multiple sets of categories for the spinning effect */}
@@ -1002,8 +1642,8 @@
                                                             setIndex === 2 && index === selectedCategoryIndex ? 'selected' : ''
                                                         }`}
                                                     >
-                                                        <div className="text-2xl mb-1">{category.icon}</div>
-                                                        <div className="text-xs font-bold text-blue-900 text-center px-2">
+                                                        <div className="text-3xl mb-2">{category.icon}</div>
+                                                        <div className="text-sm font-bold text-blue-900 text-center px-2">
                                                             {category.title}
                                                         </div>
                                                         <div className="text-xs text-blue-700 text-center px-2">
@@ -1021,30 +1661,30 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div className="text-sm text-blue-900 font-bold">Spinning...</div>
+                                <div className="text-blue-900 font-bold">Spinning the slots...</div>
                             </div>
                         )}
 
                         {/* Selected Category Display */}
                         {currentCategory && gameState === 'playing' && (
-                            <div className="mb-3">
-                                <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-2 text-center">
-                                    <div className="text-xl mb-1">{gameCategories[currentCategory].icon}</div>
-                                    <h3 className="text-sm font-bold text-blue-900">{gameCategories[currentCategory].title}</h3>
-                                    <p className="text-xs text-blue-700">{gameCategories[currentCategory].description}</p>
+                            <div className="mb-4">
+                                <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-3 text-center">
+                                    <div className="text-2xl mb-1">{gameCategories[currentCategory].icon}</div>
+                                    <h3 className="font-bold text-blue-900">{gameCategories[currentCategory].title}</h3>
+                                    <p className="text-sm text-blue-700">{gameCategories[currentCategory].description}</p>
                                 </div>
                             </div>
                         )}
 
                         {/* Instructions */}
                         {gameState === 'playing' && (
-                            <div className="mb-2 text-center">
+                            <div className="mb-3 text-center">
                                 <p className="text-xs text-gray-600">
-                                    Top/Bottom: 10 pts • Middle: 5-8 pts
+                                    Top/Bottom: 10 pts • Middle: 5-8 pts • Perfect: +15 bonus + Peek power-up
                                 </p>
                                 {revealedPositions.length > 0 && (
                                     <p className="text-xs text-green-600 font-bold mt-1">
-                                        🔍 Peek active - 2 positions revealed!
+                                        🔍 Peek active - 2 correct positions revealed!
                                     </p>
                                 )}
                             </div>
@@ -1052,7 +1692,7 @@
 
                         {/* Items List */}
                         {items.length > 0 && (
-                            <div className="space-y-1 mb-3">
+                            <div className="space-y-1 mb-4">
                                 {items.map((item, index) => {
                                     const result = showResults ? getItemResult(item, index) : null;
                                     return (
@@ -1076,154 +1716,7 @@
                                             onTouchEnd={(e) => handleTouchEnd(e, index)}
                                         >
                                             <div className="flex items-center space-x-2 flex-1">
-                                                <div className="text-sm font-bold text-gray-500 w-4">#{index + 1}</div>
-                                                <div className="flex-1">
-                                                    <div className="text-sm font-medium leading-tight">{item.name}</div>
-                                                    {showResults && (
-                                                        <div className="text-xs text-gray-600 leading-none mt-1">
-                                                            Correct: #{item.correctOrder}
-                                                        </div>
-                                                    )}
-                                                    {revealedPositions.includes(index) && !showResults && (
-                                                        <div className="text-xs text-green-600 font-bold leading-none mt-1">
-                                                            ✓ Correct!
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                            
-                                            {gameState === 'playing' && (
-                                                <div className="flex flex-col space-y-0.5 ml-2">
-                                                    <button 
-                                                        onClick={() => moveItemWithArrow(index, 'up')}
-                                                        disabled={index === 0}
-                                                        className="p-1 bg-blue-100 hover:bg-blue-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                                        title="Move up"
-                                                    >
-                                                        <ChevronUp />
-                                                    </button>
-                                                    <button 
-                                                        onClick={() => moveItemWithArrow(index, 'down')}
-                                                        disabled={index === items.length - 1}
-                                                        className="p-1 bg-blue-100 hover:bg-blue-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                                        title="Move down"
-                                                    >
-                                                        <ChevronDown />
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        )}
-
-                        {/* Results Display */}
-                        {gameState === 'finished' && (
-                            <div className="text-center space-y-2 mb-3">
-                                <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-2">
-                                    <div className="text-lg font-bold text-yellow-600 mb-1">+{roundScore} points</div>
-                                    
-                                    {bonuses.map((bonus, idx) => (
-                                        <div key={idx} className="text-xs text-green-600 font-medium">
-                                            🎉 {bonus}
-                                        </div>
-                                    ))}
-                                    
-                                    <div className="text-xs text-gray-600 mt-1">
-                                        {calculateScore().correctCount}/5 correct
-                                        {calculateScore().correctCount <= 1 && (
-                                            <div className="text-red-600 font-bold">⚠️ Strike {strikes + 1}/3</div>
-                                        )}
-                                    </div>
-                                </div>
-                                
-                                <button 
-                                    onClick={nextRound}
-                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg font-semibold"
-                                >
-                                    {currentRound >= 8 ? 'Final Score' : 'Next Round'}
-                                </button>
-                            </div>
-                        )}
-
-                        {/* Action Buttons */}
-                        <div className="space-y-2 mt-auto">
-                            {gameState === 'playing' && (
-                                <button 
-                                    onClick={finishRound}
-                                    className="w-full bg-green-600 hover:bg-green-700 text-white p-2 rounded-lg font-semibold flex items-center justify-center space-x-2"
-                                >
-                                    <CheckCircle />
-                                    <span>Submit Answer</span>
-                                </button>
-                            )}
-                            
-                            {gameState === 'gameOver' && (
-                                <div className="text-center space-y-2">
-                                    <div className="bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-200 rounded-lg p-3">
-                                        <div className="text-lg font-bold text-purple-600 mb-1">
-                                            {currentRound >= 8 ? '🏆 Complete!' : '💥 Game Over!'}
-                                        </div>
-                                        
-                                        <div className="text-base font-bold text-gray-800 mb-1">
-                                            Final Score: {currentScore}
-                                        </div>
-                                        
-                                        {currentScore > highScore ? (
-                                            <div className="text-green-600 font-bold text-sm mb-1">
-                                                🎉 NEW HIGH SCORE! 🎉
-                                            </div>
-                                        ) : highScore > 0 && (
-                                            <div className="text-gray-600 text-sm mb-1">
-                                                High Score: {highScore}
-                                            </div>
-                                        )}
-                                        
-                                        <div className="text-xs text-gray-600">
-                                            {currentRound >= 8 ? 
-                                                `Completed 8 rounds with ${strikes} strikes` :
-                                                `Round ${currentRound} - 3 strikes`
-                                            }
-                                        </div>
-                                    </div>
-                                    
-                                    <button 
-                                        onClick={resetGame}
-                                        className="w-full bg-green-600 hover:bg-green-700 text-white p-2 rounded-lg font-semibold"
-                                    >
-                                        Play Again
-                                    </button>
-                                </div>
-                            )}
-
-                            {gameState !== 'gameOver' && gameState !== 'ready' && (
-                                <button 
-                                    onClick={resetGame}
-                                    className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 p-1 rounded-lg text-sm flex items-center justify-center space-x-2"
-                                >
-                                    <RotateCcw />
-                                    <span>Reset</span>
-                                </button>
-                            )}
-                        </div>
-
-                        {/* Game Rules */}
-                        {gameState === 'ready' && currentRound === 1 && (
-                            <div className="mt-3 bg-gray-50 rounded-lg p-2">
-                                <h4 className="text-sm font-bold text-gray-800 mb-1">How to Play:</h4>
-                                <ul className="text-xs text-gray-600 space-y-0.5">
-                                    <li>• 8 rounds to build score</li>
-                                    <li>• 3 strikes (0-1 correct) = game over</li>
-                                    <li>• Top/Bottom: 10 pts, Middle: 5-8 pts</li>
-                                    <li>• Perfect: +15 bonus + Peek power-up</li>
-                                    <li>• Round 8: Perfect = double score!</li>
-                                </ul>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            );bold text-gray-500 w-5">#{index + 1}</div>
+                                                <div className="text-sm font-bold text-gray-500 w-5">#{index + 1}</div>
                                                 <div className="flex-1">
                                                     <div className="text-sm font-medium leading-tight">{item.name}</div>
                                                     {showResults && (
@@ -1262,35 +1755,6 @@
                                         </div>
                                     );
                                 })}
-                            </div>
-                        )}
-
-                        {/* Results Display */}
-                        {gameState === 'finished' && (
-                            <div className="text-center space-y-3">
-                                <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-3">
-                                    <div className="text-2xl font-bold text-yellow-600 mb-1">+{roundScore} points</div>
-                                    
-                                    {bonuses.map((bonus, idx) => (
-                                        <div key={idx} className="text-sm text-green-600 font-medium">
-                                            🎉 {bonus}
-                                        </div>
-                                    ))}
-                                    
-                                    <div className="text-sm text-gray-600 mt-2">
-                                        {calculateScore().correctCount}/5 correct positions
-                                        {calculateScore().correctCount <= 1 && (
-                                            <div className="text-red-600 font-bold">⚠️ Strike {strikes + 1}/3</div>
-                                        )}
-                                    </div>
-                                </div>
-                                
-                                <button 
-                                    onClick={nextRound}
-                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg font-semibold"
-                                >
-                                    {currentRound >= 8 ? 'View Final Score' : 'Next Round'}
-                                </button>
                             </div>
                         )}
 
@@ -1376,6 +1840,9 @@
         };
 
         ReactDOM.render(<RankRushGame />, document.getElementById('root'));
+    </script>
+</body>
+</html>
     </script>
 </body>
 </html>
