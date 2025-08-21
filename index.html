@@ -1,4 +1,146 @@
-<!DOCTYPE html>
+{gameState === 'finished' && (
+                                <div className="text-center space-y-3">
+                                    <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-3">
+                                        <div className="text-2xl font-bold text-yellow-600 mb-1">+{roundScore} points</div>
+                                        
+                                        {bonuses.map((bonus, idx) => (
+                                            <div key={idx} className="text-sm text-green-600 font-medium">
+                                                🎉 {bonus}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+
+                        {/* Action Buttons */}
+                        <div className="space-y-2">
+                            {gameState === 'playing' && (
+                                <button 
+                                    onClick={finishRound}
+                                    className="w-full bg-green-600 hover:bg-green-700 text-white p-3 rounded-lg font-semibold flex items-center justify-center space-x-2"
+                                >
+                                    <CheckCircle />
+                                    <span>Submit Answer</span>
+                                </button>
+                            )}
+                            
+                            {gameState === 'finished' && (
+                                <div className="text-center space-y-3">
+                                    <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-3">
+                                        <div className="text-2xl font-bold text-yellow-600 mb-1">+{roundScore} points</div>
+                                        
+                                        {bonuses.map((bonus, idx) => (
+                                            <div key={idx} className="text-sm text-green-600 font-medium">
+                                                🎉 {bonus}
+                                            </div>
+                                        ))}
+                                        
+                                        <div className="text-sm text-gray-600 mt-2">
+                                            {calculateScore().correctCount}/5 correct positions
+                                            {calculateScore().correctCount <= 1 && (
+                                                <div className="text-red-600 font-bold">⚠️ Strike {strikes + 1}/3</div>
+                                            )}
+                                        </div>
+                                    </div>
+                                    
+                                    <button 
+                                        onClick={nextRound}
+                                        className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg font-semibold"
+                                    >
+                                        {currentRound >= 8 ? 'View Final Score' : 'Next Round'}
+                                    </button>
+                                </div>
+                            )}
+
+                            {gameState === 'gameOver' && (
+                                <div className="text-center space-y-3">
+                                    <div className="bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-200 rounded-lg p-4">
+                                        <div className="text-2xl font-bold text-purple-600 mb-2">
+                                            {currentRound >= 8 ? '🏆 Challenge Complete!' : '💥 Game Over!'}
+                                        </div>
+                                        
+                                        <div className="text-lg font-bold text-gray-800 mb-2">
+                                            Final Score: {currentScore}
+                                        </div>
+                                        
+                                        {currentScore > highScore ? (
+                                            <div className="text-green-600 font-bold text-sm mb-2">
+                                                🎉 NEW HIGH SCORE! 🎉
+                                            </div>
+                                        ) : highScore > 0 && (
+                                            <div className="text-gray-600 text-sm mb-2">
+                                                High Score: {highScore}
+                                            </div>
+                                        )}
+                                        
+                                        <div className="text-sm text-gray-600">
+                                            {currentRound >= 8 ? 
+                                                `Completed all 8 rounds with ${strikes} strikes` :
+                                                `Ended on round ${currentRound} with 3 strikes`
+                                            }
+                                        </div>
+                                    </div>
+                                    
+                                    <button 
+                                        onClick={resetGame}
+                                        className="w-full bg-green-600 hover:bg-green-700 text-white p-3 rounded-lg font-semibold"
+                                    >
+                                        Play Again
+                                    </button>
+                                </div>
+                            )}
+
+                            {gameState !== 'gameOver' && gameState !== 'ready' && (
+                                <button 
+                                    onClick={resetGame}
+                                    className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 p-2 rounded-lg text-sm flex items-center justify-center space-x-2"
+                                >
+                                    <RotateCcw />
+                                    <span>Reset Game</span>
+                                </button>
+                            )}
+                        </div>
+
+                        {/* Game Rules */}
+                        {gameState === 'ready' && currentRound === 1 && (
+                            <div className="mt-6 bg-gray-50 rounded-lg p-3">
+                                <h4 className="font-bold text-gray-800 mb-2">How to Play:</h4>
+                                <ul className="text-xs text-gray-600 space-y-1">
+                                    <li>• You have 8 rounds to build your score</li>
+                                    <li>• 3 strikes (0-1 correct) = game over</li>
+                                    <li>• Top/Bottom correct: 10 points</li>
+                                    <li>• Middle correct: 5-8 points</li>
+                                    <li>• Perfect round: +15 bonus + Peek power-up</li>
+                                    <li>• Round 8: Get all 5 correct to double your score!</li>
+                                    <li>• Peek power-up reveals 2 correct positions</li>
+                                </ul>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+                                        ))}
+                                        
+                                        <div className="text-sm text-gray-600 mt-2">
+                                            {calculateScore().correctCount}/5 correct positions
+                                            {calculateScore().correctCount <= 1 && (
+                                                <div className="text-red-600 font-bold">⚠️ Strike {strikes + 1}/3</div>
+                                            )}
+                                        </div>
+                                    </div>
+                                    
+                                    <button 
+                                        onClick={nextRound}
+                                        className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg font-semibold"
+                                    >
+                                        {currentRound >= 8 ? 'View Final Score' : 'Next Round'}
+                                    </button>
+                                </div>
+                            )}
+
+                            {gameState === 'gameOver' && (
+                                <div className<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -279,11 +421,13 @@
                     { name: "Star Wars: The Force Awakens", value: 2071310218 },
                     { name: "Avengers: Infinity War", value: 2048359754 },
                     { name: "Spider-Man: No Way Home", value: 1921847111 },
-                    { name: "Jurassic World", value: 1672319444 },
+                    { name: "Jurassic World", value: 1672319444 },,
                     { name: "The Lion King (2019)", value: 1656943394 },
                     { name: "The Avengers", value: 1518815515 },
                     { name: "Furious 7", value: 1515341399 },
-                    { name: "Top Gun: Maverick", value: 1488732821 },
+                    { name: "Top Gun: Maverick", value: 1488732821 }
+                ]
+            },
                     { name: "Jurassic World", value: 1672319444 },
                     { name: "The Lion King (2019)", value: 1656943394 },
                     { name: "The Avengers", value: 1518815515 },
@@ -707,7 +851,10 @@
                     { name: "Great Smoky Mountains", value: 1934 },
                     { name: "Everglades", value: 1947 },
                     { name: "Arches", value: 1971 },
-                    { name: "Death Valley", value: 1994 },
+                    { name: "Death Valley", value: 1994 }
+                ]
+            }
+        };
                     { name: "Jurassic World", value: 1672319444 },
                     { name: "The Lion King (2019)", value: 1656943394 },
                     { name: "The Avengers", value: 1518815515 },
@@ -847,40 +994,70 @@
         const RankRushGame = () => {
             const [currentCategory, setCurrentCategory] = useState(null);
             const [items, setItems] = useState([]);
-            const [gameState, setGameState] = useState('ready'); // ready, spinning, playing, finished, hailMary, gameOver
-            const [points, setPoints] = useState(50);
+            const [gameState, setGameState] = useState('ready'); // ready, spinning, playing, finished, gameOver
+            const [currentScore, setCurrentScore] = useState(0);
+            const [currentRound, setCurrentRound] = useState(1);
+            const [strikes, setStrikes] = useState(0);
+            const [peekPowerUps, setPeekPowerUps] = useState(0);
+            const [revealedPositions, setRevealedPositions] = useState([]);
             const [roundScore, setRoundScore] = useState(0);
             const [showResults, setShowResults] = useState(false);
             const [draggedItem, setDraggedItem] = useState(null);
             const [dragOverIndex, setDragOverIndex] = useState(null);
             const [touchStartY, setTouchStartY] = useState(null);
             const [isDragging, setIsDragging] = useState(false);
-            const [isHailMary, setIsHailMary] = useState(false);
             const [bonuses, setBonuses] = useState([]);
             const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(0);
+            const [highScore, setHighScore] = useState(0);
+            const [isFinaleRound, setIsFinaleRound] = useState(false);
 
             useEffect(() => {
+                // Load high score from localStorage (with fallback for Claude environment)
+                try {
+                    const savedHighScore = localStorage.getItem('rankRushHighScore');
+                    if (savedHighScore) {
+                        setHighScore(parseInt(savedHighScore));
+                    }
+                } catch (error) {
+                    // localStorage not available in Claude environment
+                    console.log('localStorage not available, using session storage');
+                }
+
                 // Track analytics
                 if (typeof gtag !== 'undefined') {
                     gtag('event', 'game_start', {
-                        'custom_parameter': 'rank_rush'
+                        'custom_parameter': 'rank_rush_8_rounds'
                     });
                 }
             }, []);
 
+            const saveHighScore = (score) => {
+                if (score > highScore) {
+                    setHighScore(score);
+                    try {
+                        localStorage.setItem('rankRushHighScore', score.toString());
+                    } catch (error) {
+                        // localStorage not available, just keep in state
+                        console.log('Could not save to localStorage');
+                    }
+                }
+            };
+
+            const startNewGame = () => {
+                setCurrentScore(0);
+                setCurrentRound(1);
+                setStrikes(0);
+                setPeekPowerUps(0);
+                setRevealedPositions([]);
+                setIsFinaleRound(false);
+                setGameState('spinning');
+                startSpinAnimation();
+            };
+
             const spinWheel = () => {
-                if (points < 10 && !isHailMary) {
-                    // Trigger Hail Mary
-                    setIsHailMary(true);
-                    setGameState('spinning');
-                    startSpinAnimation();
-                    return;
+                if (currentRound === 8) {
+                    setIsFinaleRound(true);
                 }
-                
-                if (!isHailMary) {
-                    setPoints(points - 10); // Cost to spin
-                }
-                
                 setGameState('spinning');
                 startSpinAnimation();
             };
@@ -1127,25 +1304,35 @@
                         correctPositions++;
                         
                         // Top and bottom items are worth 10 points
-                        if (correctPos === 1) {
+                        if (correctPos === 1 || correctPos === 5) {
                             score += 10;
-                            earnedBonuses.push('Top Position! +10');
-                        } else if (correctPos === 5) {
-                            score += 10;
-                            earnedBonuses.push('Bottom Position! +10');
+                            earnedBonuses.push(correctPos === 1 ? 'Top Position! +10' : 'Bottom Position! +10');
                         } else {
-                            // Middle items worth 5-15 points (random)
-                            const middlePoints = 5 + Math.floor(Math.random() * 11);
+                            // Middle items worth 5-8 points
+                            const middlePoints = 5 + Math.floor(Math.random() * 4);
                             score += middlePoints;
                             earnedBonuses.push(`Middle Position! +${middlePoints}`);
                         }
                     }
                 });
                 
-                // Perfect round bonus
+                // Perfect round bonus and power-up
                 if (correctPositions === 5) {
-                    score += 25;
-                    earnedBonuses.push('Perfect Round! +25');
+                    score += 15;
+                    earnedBonuses.push('Perfect Round! +15');
+                    
+                    // Award peek power-up (max 1)
+                    if (peekPowerUps === 0) {
+                        setPeekPowerUps(1);
+                        earnedBonuses.push('🔍 Peek Power-Up Earned!');
+                    }
+                }
+                
+                // Finale round bonus - double entire game score
+                if (isFinaleRound && correctPositions === 5) {
+                    const totalGameScore = currentScore + score;
+                    score = totalGameScore; // This effectively doubles the total
+                    earnedBonuses.push('🎉 FINALE BONUS: SCORE DOUBLED!');
                 }
                 
                 return { score, bonuses: earnedBonuses, correctCount: correctPositions };
@@ -1156,23 +1343,29 @@
                 setRoundScore(result.score);
                 setBonuses(result.bonuses);
                 
-                if (isHailMary) {
-                    if (result.correctCount === 5) {
-                        // Hail Mary success
-                        setPoints(30);
-                        setIsHailMary(false);
-                        setBonuses([...result.bonuses, 'Hail Mary Success! +30 points']);
-                    } else {
-                        // Game over
-                        setGameState('gameOver');
-                        setShowResults(true);
-                        return;
-                    }
-                } else {
-                    setPoints(points + result.score);
+                // Check for strike (0-1 correct)
+                const isStrike = result.correctCount <= 1;
+                if (isStrike) {
+                    setStrikes(strikes + 1);
                 }
                 
-                setGameState('finished');
+                // Update total score
+                setCurrentScore(currentScore + result.score);
+                
+                // Check for game over conditions
+                if (strikes + (isStrike ? 1 : 0) >= 3) {
+                    // Game over due to strikes
+                    saveHighScore(currentScore + result.score);
+                    setGameState('gameOver');
+                } else if (currentRound >= 8) {
+                    // Completed all 8 rounds
+                    saveHighScore(currentScore + result.score);
+                    setGameState('gameOver');
+                } else {
+                    // Continue to next round
+                    setGameState('finished');
+                }
+                
                 setShowResults(true);
                 
                 // Track analytics
@@ -1181,21 +1374,44 @@
                         'score': result.score,
                         'correct_answers': result.correctCount,
                         'category': currentCategory,
-                        'is_hail_mary': isHailMary
+                        'round': currentRound,
+                        'strikes': strikes + (isStrike ? 1 : 0)
                     });
                 }
             };
 
             const nextRound = () => {
+                setCurrentRound(currentRound + 1);
+                setRevealedPositions([]);
                 setGameState('ready');
                 setCurrentCategory(null);
                 setItems([]);
                 setShowResults(false);
             };
 
+            const usePeekPowerUp = () => {
+                if (peekPowerUps > 0 && revealedPositions.length === 0) {
+                    // Reveal 2 random correct positions
+                    const correctPositions = items.map((item, index) => ({ 
+                        index, 
+                        correct: index + 1 === item.correctOrder 
+                    })).filter(pos => pos.correct);
+                    
+                    const shuffledCorrect = correctPositions.sort(() => Math.random() - 0.5);
+                    const toReveal = shuffledCorrect.slice(0, 2).map(pos => pos.index);
+                    
+                    setRevealedPositions(toReveal);
+                    setPeekPowerUps(0);
+                }
+            };
+
             const resetGame = () => {
-                setPoints(50);
-                setIsHailMary(false);
+                setCurrentScore(0);
+                setCurrentRound(1);
+                setStrikes(0);
+                setPeekPowerUps(0);
+                setRevealedPositions([]);
+                setIsFinaleRound(false);
                 setGameState('ready');
                 setCurrentCategory(null);
                 setItems([]);
@@ -1219,7 +1435,7 @@
             };
 
             const canSpin = () => {
-                return gameState === 'ready' && (points >= 10 || (points < 10 && !isHailMary));
+                return gameState === 'ready' && currentRound <= 8 && strikes < 3;
             };
 
             return (
@@ -1229,19 +1445,45 @@
                         <div className="flex justify-between items-center mb-2">
                             <h1 className="text-xl font-bold">Rank Rush</h1>
                             <div className="text-right">
-                                <div className="text-xs text-blue-200">Points</div>
-                                <div className="text-lg font-bold text-yellow-400">{points}</div>
+                                <div className="text-xs text-blue-200">Score</div>
+                                <div className="text-lg font-bold text-yellow-400">{currentScore}</div>
                             </div>
                         </div>
                         
-                        {isHailMary && (
-                            <div className="bg-red-600 text-white text-center py-1 px-2 rounded text-xs font-bold mb-2">
-                                ⚡ HAIL MARY ROUND ⚡
+                        <div className="flex justify-between items-center text-xs text-blue-200 mb-2">
+                            <span>Round {currentRound}/8</span>
+                            <span>High Score: {highScore}</span>
+                        </div>
+                        
+                        {/* Strikes and Power-ups */}
+                        <div className="flex justify-between items-center mb-2">
+                            <div className="flex items-center space-x-1">
+                                <span className="text-xs text-blue-200">Strikes:</span>
+                                {[...Array(3)].map((_, i) => (
+                                    <span key={i} className={`text-sm ${i < strikes ? 'text-red-400' : 'text-gray-500'}`}>
+                                        ❌
+                                    </span>
+                                ))}
+                            </div>
+                            
+                            {peekPowerUps > 0 && gameState === 'playing' && (
+                                <button 
+                                    onClick={usePeekPowerUp}
+                                    className="bg-yellow-500 hover:bg-yellow-600 text-black px-2 py-1 rounded text-xs font-bold"
+                                >
+                                    🔍 Use Peek
+                                </button>
+                            )}
+                        </div>
+                        
+                        {isFinaleRound && (
+                            <div className="bg-yellow-600 text-black text-center py-1 px-2 rounded text-xs font-bold mb-2">
+                                🏆 FINALE ROUND - Get all 5 correct to DOUBLE your score! 🏆
                             </div>
                         )}
                         
                         <div className="text-xs text-blue-200 text-center">
-                            {gameState === 'ready' ? 'Spin to start a round!' : 
+                            {gameState === 'ready' ? (currentRound === 1 ? 'Start your 8-round challenge!' : 'Ready for next round!') : 
                              gameState === 'spinning' ? 'Spinning...' :
                              gameState === 'playing' ? 'Drag to reorder items!' :
                              gameState === 'finished' ? 'Round complete!' :
@@ -1337,8 +1579,13 @@
                         {gameState === 'playing' && (
                             <div className="mb-3 text-center">
                                 <p className="text-xs text-gray-600">
-                                    Top/Bottom: 10 pts • Middle: 5-15 pts • Perfect: +25 bonus
+                                    Top/Bottom: 10 pts • Middle: 5-8 pts • Perfect: +15 bonus + Peek power-up
                                 </p>
+                                {revealedPositions.length > 0 && (
+                                    <p className="text-xs text-green-600 font-bold mt-1">
+                                        🔍 Peek active - 2 correct positions revealed!
+                                    </p>
+                                )}
                             </div>
                         )}
 
@@ -1353,6 +1600,7 @@
                                             data-item-index={index}
                                             className={`bg-white border-2 rounded-lg p-2 flex items-center justify-between drag-item item-entrance
                                                 ${result ? result.color : 'border-gray-200 hover:border-blue-300'}
+                                                ${revealedPositions.includes(index) ? 'bg-green-50 border-green-400' : ''}
                                                 ${dragOverIndex === index ? 'drag-over' : ''}`}
                                             style={{ animationDelay: `${index * 0.1}s` }}
                                             draggable={gameState === 'playing'}
@@ -1373,6 +1621,11 @@
                                                     {showResults && (
                                                         <div className="text-xs text-gray-600 leading-none mt-1">
                                                             Correct: #{item.correctOrder}
+                                                        </div>
+                                                    )}
+                                                    {revealedPositions.includes(index) && !showResults && (
+                                                        <div className="text-xs text-green-600 font-bold leading-none mt-1">
+                                                            ✓ Correct position!
                                                         </div>
                                                     )}
                                                 </div>
@@ -1416,51 +1669,45 @@
                                 </button>
                             )}
                             
-                            {gameState === 'finished' && (
-                                <div className="text-center space-y-3">
-                                    <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-3">
-                                        <div className="text-2xl font-bold text-yellow-600 mb-1">+{roundScore} points</div>
-                                        
-                                        {bonuses.map((bonus, idx) => (
-                                            <div key={idx} className="text-sm text-green-600 font-medium">
-                                                🎉 {bonus}
-                                            </div>
-                                        ))}
-                                        
-                                        <div className="text-sm text-gray-600 mt-2">
-                                            {calculateScore().correctCount}/5 correct positions
-                                        </div>
-                                    </div>
-                                    
-                                    <button 
-                                        onClick={nextRound}
-                                        className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg font-semibold"
-                                    >
-                                        Next Round
-                                    </button>
-                                </div>
-                            )}
-
                             {gameState === 'gameOver' && (
                                 <div className="text-center space-y-3">
-                                    <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4">
-                                        <div className="text-2xl font-bold text-red-600 mb-2">Game Over!</div>
-                                        <div className="text-sm text-gray-600 mb-3">
-                                            You couldn't get all 5 items perfect in your Hail Mary round.
+                                    <div className="bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-200 rounded-lg p-4">
+                                        <div className="text-2xl font-bold text-purple-600 mb-2">
+                                            {currentRound >= 8 ? '🏆 Challenge Complete!' : '💥 Game Over!'}
                                         </div>
-                                        <div className="text-lg font-bold text-gray-800">Final Score: {points} points</div>
+                                        
+                                        <div className="text-lg font-bold text-gray-800 mb-2">
+                                            Final Score: {currentScore}
+                                        </div>
+                                        
+                                        {currentScore > highScore ? (
+                                            <div className="text-green-600 font-bold text-sm mb-2">
+                                                🎉 NEW HIGH SCORE! 🎉
+                                            </div>
+                                        ) : highScore > 0 && (
+                                            <div className="text-gray-600 text-sm mb-2">
+                                                High Score: {highScore}
+                                            </div>
+                                        )}
+                                        
+                                        <div className="text-sm text-gray-600">
+                                            {currentRound >= 8 ? 
+                                                `Completed all 8 rounds with ${strikes} strikes` :
+                                                `Ended on round ${currentRound} with 3 strikes`
+                                            }
+                                        </div>
                                     </div>
                                     
                                     <button 
                                         onClick={resetGame}
-                                        className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg font-semibold"
+                                        className="w-full bg-green-600 hover:bg-green-700 text-white p-3 rounded-lg font-semibold"
                                     >
                                         Play Again
                                     </button>
                                 </div>
                             )}
 
-                            {gameState !== 'gameOver' && (
+                            {gameState !== 'gameOver' && gameState !== 'ready' && (
                                 <button 
                                     onClick={resetGame}
                                     className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 p-2 rounded-lg text-sm flex items-center justify-center space-x-2"
@@ -1472,17 +1719,17 @@
                         </div>
 
                         {/* Game Rules */}
-                        {gameState === 'ready' && (
+                        {gameState === 'ready' && currentRound === 1 && (
                             <div className="mt-6 bg-gray-50 rounded-lg p-3">
                                 <h4 className="font-bold text-gray-800 mb-2">How to Play:</h4>
                                 <ul className="text-xs text-gray-600 space-y-1">
-                                    <li>• Start with 50 points</li>
-                                    <li>• Each spin costs 10 points</li>
-                                    <li>• Rank 5 items in correct order</li>
+                                    <li>• You have 8 rounds to build your score</li>
+                                    <li>• 3 strikes (0-1 correct) = game over</li>
                                     <li>• Top/Bottom correct: 10 points</li>
-                                    <li>• Middle correct: 5-15 points</li>
-                                    <li>• All correct: +25 bonus</li>
-                                    <li>• Under 10 points? Hail Mary round!</li>
+                                    <li>• Middle correct: 5-8 points</li>
+                                    <li>• Perfect round: +15 bonus + Peek power-up</li>
+                                    <li>• Round 8: Get all 5 correct to double your score!</li>
+                                    <li>• Peek power-up reveals 2 correct positions</li>
                                 </ul>
                             </div>
                         )}
@@ -1492,6 +1739,9 @@
         };
 
         ReactDOM.render(<RankRushGame />, document.getElementById('root'));
+    </script>
+</body>
+</html>
     </script>
 </body>
 </html>
