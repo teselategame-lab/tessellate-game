@@ -104,14 +104,14 @@
         }
         */
 
-        /* Optimized arrow button styles */
+        /* Optimized arrow button styles - COMPACT */
         .arrow-button {
-            min-width: 44px;
-            min-height: 44px;
+            min-width: 36px;
+            min-height: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 8px;
+            border-radius: 6px;
             transition: all 0.2s ease;
             touch-action: manipulation;
         }
@@ -199,15 +199,15 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
         
-        // Lucide React icons as components - BIGGER for mobile
+        // Lucide React icons as components - SMALLER but still visible
         const ChevronUp = () => (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="18,15 12,9 6,15"></polyline>
             </svg>
         );
         
         const ChevronDown = () => (
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="6,9 12,15 18,9"></polyline>
             </svg>
         );
@@ -1090,7 +1090,7 @@
                                         <div 
                                             key={item.name} 
                                             data-item-index={index}
-                                            className={`game-item bg-white border-2 rounded-lg p-2 flex items-center justify-between item-entrance
+                                            className={`game-item bg-white border-2 rounded-lg p-1.5 flex items-center justify-between item-entrance
                                                 ${result ? result.color : 'border-gray-200'}
                                                 ${revealedPositions.includes(index) ? 'bg-green-50 border-green-400' : ''}`}
                                             style={{ animationDelay: `${index * 0.1}s` }}
@@ -1098,16 +1098,16 @@
                                             onTouchMove={handleItemTouch}
                                         >
                                             <div className="flex items-center space-x-2 flex-1">
-                                                <div className="text-sm font-bold text-gray-500 w-4">#{index + 1}</div>
+                                                <div className="text-xs font-bold text-gray-500 w-3">#{index + 1}</div>
                                                 <div className="flex-1">
                                                     <div className="text-sm font-medium leading-tight">{item.name}</div>
                                                     {showResults && (
-                                                        <div className="text-xs text-gray-600 leading-none mt-1">
+                                                        <div className="text-xs text-gray-600 leading-none mt-0.5">
                                                             Correct: #{item.correctOrder}
                                                         </div>
                                                     )}
                                                     {revealedPositions.includes(index) && !showResults && (
-                                                        <div className="text-xs text-green-600 font-bold leading-none mt-1">
+                                                        <div className="text-xs text-green-600 font-bold leading-none mt-0.5">
                                                             ✓ Correct!
                                                         </div>
                                                     )}
@@ -1115,7 +1115,7 @@
                                             </div>
                                             
                                             {gameState === 'playing' && (
-                                                <div className="flex flex-col space-y-1 ml-2">
+                                                <div className="flex flex-col space-y-0.5 ml-1">
                                                     <button 
                                                         onClick={() => moveItemWithArrow(index, 'up')}
                                                         disabled={index === 0}
