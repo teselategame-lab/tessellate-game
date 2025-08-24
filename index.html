@@ -20,19 +20,26 @@
             user-select: none;
             overflow-x: hidden;
             background: #ffffff;
-            position: fixed;
-            width: 100%;
             height: 100vh;
             height: 100dvh;
         }
         
-        .mobile-optimized {
-            touch-action: manipulation;
-            -webkit-overflow-scrolling: touch;
-            min-height: 80vh;
-            min-height: 80dvh;
+        .game-container {
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            max-height: 100vh;
+            max-height: 100dvh;
+        }
+        
+        .game-content {
+            flex: 1;
             overflow-y: auto;
-            overflow-x: hidden;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 20px;
         }
         
         /* Prevent zoom on double tap */
@@ -108,10 +115,10 @@
         
         .slot-container {
             overflow: hidden;
-            height: 120px;
+            height: 100px;
             position: relative;
-            border-radius: 12px;
-            border: 3px solid #1e40af;
+            border-radius: 8px;
+            border: 2px solid #1e40af;
         }
         
         .slot-reel {
@@ -119,13 +126,13 @@
         }
         
         .category-card {
-            height: 120px;
+            height: 100px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
-            border-bottom: 2px solid #e5e7eb;
+            border-bottom: 1px solid #e5e7eb;
         }
         
         .category-card:last-child {
@@ -156,7 +163,7 @@
         }
     </style>
 </head>
-<body class="mobile-optimized">
+<body>
     <div id="root"></div>
 
     <script type="text/babel">
@@ -887,28 +894,28 @@
             };
 
             return (
-                <div className="max-w-xs mx-auto bg-white text-gray-900 mobile-optimized min-h-screen">
+                <div className="game-container max-w-xs mx-auto bg-white text-gray-900">
                     {/* Header */}
-                    <div className="bg-gradient-to-r from-blue-900 to-blue-800 text-white p-3">
-                        <div className="flex justify-between items-center mb-2">
-                            <h1 className="text-xl font-bold">Rank Rush</h1>
+                    <div className="bg-gradient-to-r from-blue-900 to-blue-800 text-white p-2">
+                        <div className="flex justify-between items-center mb-1">
+                            <h1 className="text-lg font-bold">Rank Rush</h1>
                             <div className="text-right">
                                 <div className="text-xs text-blue-200">Score</div>
-                                <div className="text-lg font-bold text-yellow-400">{currentScore}</div>
+                                <div className="text-base font-bold text-yellow-400">{currentScore}</div>
                             </div>
                         </div>
                         
-                        <div className="flex justify-between items-center text-xs text-blue-200 mb-2">
+                        <div className="flex justify-between items-center text-xs text-blue-200 mb-1">
                             <span>Round {currentRound}/8</span>
-                            <span>High Score: {highScore}</span>
+                            <span>High: {highScore}</span>
                         </div>
                         
                         {/* Strikes and Power-ups */}
-                        <div className="flex justify-between items-center mb-2">
+                        <div className="flex justify-between items-center mb-1">
                             <div className="flex items-center space-x-1">
                                 <span className="text-xs text-blue-200">Strikes:</span>
                                 {[...Array(3)].map((_, i) => (
-                                    <span key={i} className={`text-sm ${i < strikes ? 'text-red-400' : 'text-gray-500'}`}>
+                                    <span key={i} className={`text-xs ${i < strikes ? 'text-red-400' : 'text-gray-500'}`}>
                                         ❌
                                     </span>
                                 ))}
@@ -919,34 +926,34 @@
                                     onClick={usePeekPowerUp}
                                     className="bg-yellow-500 hover:bg-yellow-600 text-black px-2 py-1 rounded text-xs font-bold"
                                 >
-                                    🔍 Use Peek
+                                    🔍 Peek
                                 </button>
                             )}
                         </div>
                         
                         {isFinaleRound && (
-                            <div className="bg-yellow-600 text-black text-center py-1 px-2 rounded text-xs font-bold mb-2">
-                                🏆 FINALE ROUND - Get all 5 correct to DOUBLE your score! 🏆
+                            <div className="bg-yellow-600 text-black text-center py-1 px-2 rounded text-xs font-bold mb-1">
+                                🏆 FINALE - Get all 5 to DOUBLE score! 🏆
                             </div>
                         )}
                         
                         <div className="text-xs text-blue-200 text-center">
-                            {gameState === 'ready' ? (currentRound === 1 ? 'Start your 8-round challenge!' : 'Ready for next round!') : 
+                            {gameState === 'ready' ? (currentRound === 1 ? 'Start challenge!' : 'Ready!') : 
                              gameState === 'spinning' ? 'Spinning...' :
-                             gameState === 'playing' ? 'Drag to reorder items!' :
-                             gameState === 'finished' ? 'Round complete!' :
+                             gameState === 'playing' ? 'Drag to reorder!' :
+                             gameState === 'finished' ? 'Complete!' :
                              gameState === 'gameOver' ? 'Game Over!' : ''}
                         </div>
                     </div>
 
                     {/* Game Area */}
-                    <div className="p-3">
+                    <div className="game-content">
                         {/* Spinner Section */}
                         {gameState === 'ready' && (
-                            <div className="text-center mb-4">
-                                <div className="mb-4">
-                                    <h2 className="text-lg font-bold text-gray-800 mb-2">Ready to Spin?</h2>
-                                    <p className="text-sm text-gray-600 mb-3">
+                            <div className="text-center mb-3">
+                                <div className="mb-3">
+                                    <h2 className="text-base font-bold text-gray-800 mb-1">Ready to Spin?</h2>
+                                    <p className="text-xs text-gray-600 mb-2">
                                         Rank 5 items correctly to earn points!
                                     </p>
                                 </div>
@@ -954,7 +961,7 @@
                                 <button 
                                     onClick={spinWheel}
                                     disabled={!canSpin()}
-                                    className={`w-full py-3 px-6 rounded-lg font-bold text-lg flex items-center justify-center space-x-2 ${
+                                    className={`w-full py-2 px-4 rounded-lg font-bold text-base flex items-center justify-center space-x-2 ${
                                         canSpin() 
                                             ? 'bg-yellow-400 hover:bg-yellow-500 text-gray-900' 
                                             : 'bg-gray-300 text-gray-500 cursor-not-allowed'
@@ -968,13 +975,13 @@
 
                         {/* Slot Machine Spinner Animation */}
                         {gameState === 'spinning' && (
-                            <div className="text-center mb-6">
-                                <div className="mb-4">
-                                    <div className="slot-container bg-white mx-auto w-64">
+                            <div className="text-center mb-4">
+                                <div className="mb-3">
+                                    <div className="slot-container bg-white mx-auto w-56">
                                         <div 
                                             className="slot-reel"
                                             style={{
-                                                transform: `translateY(-${selectedCategoryIndex * 120}px)`
+                                                transform: `translateY(-${selectedCategoryIndex * 100}px)`
                                             }}
                                         >
                                             {/* Create multiple sets of categories for the spinning effect */}
@@ -986,8 +993,8 @@
                                                             setIndex === 2 && index === selectedCategoryIndex ? 'selected' : ''
                                                         }`}
                                                     >
-                                                        <div className="text-3xl mb-2">{category.icon}</div>
-                                                        <div className="text-sm font-bold text-blue-900 text-center px-2">
+                                                        <div className="text-2xl mb-1">{category.icon}</div>
+                                                        <div className="text-xs font-bold text-blue-900 text-center px-2">
                                                             {category.title}
                                                         </div>
                                                         <div className="text-xs text-blue-700 text-center px-2">
@@ -1005,30 +1012,30 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div className="text-blue-900 font-bold">Spinning the slots...</div>
+                                <div className="text-sm text-blue-900 font-bold">Spinning...</div>
                             </div>
                         )}
 
                         {/* Selected Category Display */}
                         {currentCategory && gameState === 'playing' && (
-                            <div className="mb-4">
-                                <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-3 text-center">
-                                    <div className="text-2xl mb-1">{gameCategories[currentCategory].icon}</div>
-                                    <h3 className="font-bold text-blue-900">{gameCategories[currentCategory].title}</h3>
-                                    <p className="text-sm text-blue-700">{gameCategories[currentCategory].description}</p>
+                            <div className="mb-3">
+                                <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-2 text-center">
+                                    <div className="text-xl mb-1">{gameCategories[currentCategory].icon}</div>
+                                    <h3 className="text-sm font-bold text-blue-900">{gameCategories[currentCategory].title}</h3>
+                                    <p className="text-xs text-blue-700">{gameCategories[currentCategory].description}</p>
                                 </div>
                             </div>
                         )}
 
                         {/* Instructions */}
                         {gameState === 'playing' && (
-                            <div className="mb-3 text-center">
+                            <div className="mb-2 text-center">
                                 <p className="text-xs text-gray-600">
-                                    Top/Bottom: 10 pts • Middle: 5-8 pts • Perfect: +15 bonus + Peek power-up
+                                    Top/Bottom: 10 pts • Middle: 5-8 pts
                                 </p>
                                 {revealedPositions.length > 0 && (
                                     <p className="text-xs text-green-600 font-bold mt-1">
-                                        🔍 Peek active - 2 correct positions revealed!
+                                        🔍 Peek active - 2 positions revealed!
                                     </p>
                                 )}
                             </div>
@@ -1036,7 +1043,7 @@
 
                         {/* Items List */}
                         {items.length > 0 && (
-                            <div className="space-y-1 mb-4">
+                            <div className="space-y-1 mb-3">
                                 {items.map((item, index) => {
                                     const result = showResults ? getItemResult(item, index) : null;
                                     return (
@@ -1060,7 +1067,7 @@
                                             onTouchEnd={(e) => handleTouchEnd(e, index)}
                                         >
                                             <div className="flex items-center space-x-2 flex-1">
-                                                <div className="text-sm font-bold text-gray-500 w-5">#{index + 1}</div>
+                                                <div className="text-sm font-bold text-gray-500 w-4">#{index + 1}</div>
                                                 <div className="flex-1">
                                                     <div className="text-sm font-medium leading-tight">{item.name}</div>
                                                     {showResults && (
@@ -1070,7 +1077,7 @@
                                                     )}
                                                     {revealedPositions.includes(index) && !showResults && (
                                                         <div className="text-xs text-green-600 font-bold leading-none mt-1">
-                                                            ✓ Correct position!
+                                                            ✓ Correct!
                                                         </div>
                                                     )}
                                                 </div>
@@ -1081,7 +1088,7 @@
                                                     <button 
                                                         onClick={() => moveItemWithArrow(index, 'up')}
                                                         disabled={index === 0}
-                                                        className="p-1.5 bg-blue-100 hover:bg-blue-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                                        className="p-1 bg-blue-100 hover:bg-blue-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                                         title="Move up"
                                                     >
                                                         <ChevronUp />
@@ -1089,7 +1096,7 @@
                                                     <button 
                                                         onClick={() => moveItemWithArrow(index, 'down')}
                                                         disabled={index === items.length - 1}
-                                                        className="p-1.5 bg-blue-100 hover:bg-blue-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                                        className="p-1 bg-blue-100 hover:bg-blue-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                                         title="Move down"
                                                     >
                                                         <ChevronDown />
@@ -1104,18 +1111,18 @@
 
                         {/* Results Display */}
                         {gameState === 'finished' && (
-                            <div className="text-center space-y-3">
-                                <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-3">
-                                    <div className="text-2xl font-bold text-yellow-600 mb-1">+{roundScore} points</div>
+                            <div className="text-center space-y-2 mb-3">
+                                <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-2">
+                                    <div className="text-lg font-bold text-yellow-600 mb-1">+{roundScore} points</div>
                                     
                                     {bonuses.map((bonus, idx) => (
-                                        <div key={idx} className="text-sm text-green-600 font-medium">
+                                        <div key={idx} className="text-xs text-green-600 font-medium">
                                             🎉 {bonus}
                                         </div>
                                     ))}
                                     
-                                    <div className="text-sm text-gray-600 mt-2">
-                                        {calculateScore().correctCount}/5 correct positions
+                                    <div className="text-xs text-gray-600 mt-1">
+                                        {calculateScore().correctCount}/5 correct
                                         {calculateScore().correctCount <= 1 && (
                                             <div className="text-red-600 font-bold">⚠️ Strike {strikes + 1}/3</div>
                                         )}
@@ -1124,19 +1131,19 @@
                                 
                                 <button 
                                     onClick={nextRound}
-                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg font-semibold"
+                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg font-semibold"
                                 >
-                                    {currentRound >= 8 ? 'View Final Score' : 'Next Round'}
+                                    {currentRound >= 8 ? 'Final Score' : 'Next Round'}
                                 </button>
                             </div>
                         )}
 
-                        {/* Action Buttons */}
-                        <div className="space-y-2">
+                        {/* Action Buttons - This div will be pushed to bottom with mt-auto */}
+                        <div className="space-y-2 mt-auto">
                             {gameState === 'playing' && (
                                 <button 
                                     onClick={finishRound}
-                                    className="w-full bg-green-600 hover:bg-green-700 text-white p-3 rounded-lg font-semibold flex items-center justify-center space-x-2"
+                                    className="w-full bg-green-600 hover:bg-green-700 text-white p-2 rounded-lg font-semibold flex items-center justify-center space-x-2"
                                 >
                                     <CheckCircle />
                                     <span>Submit Answer</span>
@@ -1144,37 +1151,37 @@
                             )}
                             
                             {gameState === 'gameOver' && (
-                                <div className="text-center space-y-3">
-                                    <div className="bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-200 rounded-lg p-4">
-                                        <div className="text-2xl font-bold text-purple-600 mb-2">
-                                            {currentRound >= 8 ? '🏆 Challenge Complete!' : '💥 Game Over!'}
+                                <div className="text-center space-y-2">
+                                    <div className="bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-200 rounded-lg p-3">
+                                        <div className="text-lg font-bold text-purple-600 mb-1">
+                                            {currentRound >= 8 ? '🏆 Complete!' : '💥 Game Over!'}
                                         </div>
                                         
-                                        <div className="text-lg font-bold text-gray-800 mb-2">
+                                        <div className="text-base font-bold text-gray-800 mb-1">
                                             Final Score: {currentScore}
                                         </div>
                                         
                                         {currentScore > highScore ? (
-                                            <div className="text-green-600 font-bold text-sm mb-2">
+                                            <div className="text-green-600 font-bold text-sm mb-1">
                                                 🎉 NEW HIGH SCORE! 🎉
                                             </div>
                                         ) : highScore > 0 && (
-                                            <div className="text-gray-600 text-sm mb-2">
+                                            <div className="text-gray-600 text-sm mb-1">
                                                 High Score: {highScore}
                                             </div>
                                         )}
                                         
-                                        <div className="text-sm text-gray-600">
+                                        <div className="text-xs text-gray-600">
                                             {currentRound >= 8 ? 
-                                                `Completed all 8 rounds with ${strikes} strikes` :
-                                                `Ended on round ${currentRound} with 3 strikes`
+                                                `Completed 8 rounds with ${strikes} strikes` :
+                                                `Round ${currentRound} - 3 strikes`
                                             }
                                         </div>
                                     </div>
                                     
                                     <button 
                                         onClick={resetGame}
-                                        className="w-full bg-green-600 hover:bg-green-700 text-white p-3 rounded-lg font-semibold"
+                                        className="w-full bg-green-600 hover:bg-green-700 text-white p-2 rounded-lg font-semibold"
                                     >
                                         Play Again
                                     </button>
@@ -1184,26 +1191,24 @@
                             {gameState !== 'gameOver' && gameState !== 'ready' && (
                                 <button 
                                     onClick={resetGame}
-                                    className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 p-2 rounded-lg text-sm flex items-center justify-center space-x-2"
+                                    className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 p-1 rounded-lg text-sm flex items-center justify-center space-x-2"
                                 >
                                     <RotateCcw />
-                                    <span>Reset Game</span>
+                                    <span>Reset</span>
                                 </button>
                             )}
                         </div>
 
                         {/* Game Rules */}
                         {gameState === 'ready' && currentRound === 1 && (
-                            <div className="mt-6 bg-gray-50 rounded-lg p-3">
-                                <h4 className="font-bold text-gray-800 mb-2">How to Play:</h4>
-                                <ul className="text-xs text-gray-600 space-y-1">
-                                    <li>• You have 8 rounds to build your score</li>
+                            <div className="mt-3 bg-gray-50 rounded-lg p-2">
+                                <h4 className="text-sm font-bold text-gray-800 mb-1">How to Play:</h4>
+                                <ul className="text-xs text-gray-600 space-y-0.5">
+                                    <li>• 8 rounds to build score</li>
                                     <li>• 3 strikes (0-1 correct) = game over</li>
-                                    <li>• Top/Bottom correct: 10 points</li>
-                                    <li>• Middle correct: 5-8 points</li>
-                                    <li>• Perfect round: +15 bonus + Peek power-up</li>
-                                    <li>• Round 8: Get all 5 correct to double your score!</li>
-                                    <li>• Peek power-up reveals 2 correct positions</li>
+                                    <li>• Top/Bottom: 10 pts, Middle: 5-8 pts</li>
+                                    <li>• Perfect: +15 bonus + Peek power-up</li>
+                                    <li>• Round 8: Perfect = double score!</li>
                                 </ul>
                             </div>
                         )}
