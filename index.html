@@ -3,61 +3,421 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rank Rush - Tile Edition</title>
+    <title>Rank Rush</title>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
     
     <style>
-        body {
+        * {
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-            overflow-x: hidden;
-            background: #ffffff;
-            height: 100vh;
-            height: 100dvh;
-        }
-        
-        .game-container {
-            height: 100vh;
-            height: 100dvh;
-            display: flex;
-            flex-direction: column;
-            max-height: 100vh;
-            max-height: 100dvh;
-        }
-        
-        .game-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            padding-bottom: 20px;
-        }
-        
-        * {
-            touch-action: manipulation;
+            box-sizing: border-box;
         }
 
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #fff;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+            text-align: center;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            border-bottom: 3px solid #1e3a8a;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            text-align: center;
+            color: #1e3a8a;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 24px;
+            font-style: italic;
+        }
+
+        /* Game Info Bar */
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .score {
+            font-weight: 700;
+            color: #d97706;
+        }
+
+        .strikes {
+            font-size: 12px;
+        }
+
+        /* Category Display */
+        .category {
+            text-align: center;
+            padding: 20px;
+            border: 2px solid #1e3a8a;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border-radius: 8px;
+        }
+
+        .category-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .category-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #1e3a8a;
+        }
+
+        .category-description {
+            font-size: 14px;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Tiles */
+        .tiles-container {
+            margin-bottom: 32px;
+        }
+
+        .tiles-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .tile {
+            aspect-ratio: 1;
+            border: 2px solid #ddd;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            padding: 4px;
+            line-height: 1.2;
+            border-radius: 6px;
+        }
+
+        .tile:hover {
+            border-color: #1e3a8a;
+            background: #f8fafc;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .tile.selected {
+            border-color: #d97706;
+            background: #d97706;
+            color: #fff;
+        }
+
+        .tile.revealed {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        .tile-number {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 16px;
+            height: 16px;
+            background: #1e3a8a;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .peek-indicator {
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            font-size: 12px;
+        }
+
+        /* Rankings Display */
+        .rankings {
+            border-top: 2px solid #1e3a8a;
+            padding-top: 24px;
+            margin-bottom: 32px;
+        }
+
+        .rankings h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            text-align: center;
+            color: #1e3a8a;
+        }
+
+        .rankings-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .ranking-slot {
+            aspect-ratio: 1;
+            border: 2px dashed #ccc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            position: relative;
+            padding: 4px;
+            line-height: 1.2;
+            background: #f9f9f9;
+            border-radius: 6px;
+        }
+
+        .ranking-slot.filled {
+            border: 2px solid #d97706;
+            background: linear-gradient(135deg, #fffbeb, #fef3c7);
+            border-style: solid;
+            color: #92400e;
+        }
+
+        .ranking-number {
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            width: 16px;
+            height: 16px;
+            background: #1e3a8a;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 16px 24px;
+            font-size: 16px;
+            font-weight: 700;
+            border: 2px solid #1e3a8a;
+            background: #fff;
+            color: #1e3a8a;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 12px;
+            font-family: inherit;
+            border-radius: 8px;
+        }
+
+        .btn:hover {
+            background: #1e3a8a;
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(30, 58, 138, 0.2);
+        }
+
+        .btn:disabled {
+            border-color: #ccc;
+            color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn:disabled:hover {
+            background: #fff;
+            color: #ccc;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            border: 1px solid #d97706;
+            color: #d97706;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 6px;
+            width: auto;
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            background: #d97706;
+            color: #fff;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Instructions */
+        .instructions {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 24px;
+            font-style: italic;
+        }
+
+        /* Hidden state */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Rules */
+        .rules {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.4;
+            margin-top: 32px;
+            padding-top: 16px;
+            border-top: 1px solid #eee;
+        }
+
+        .rules h4 {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .rules ul {
+            list-style: none;
+        }
+
+        .rules li {
+            margin-bottom: 4px;
+        }
+
+        .rules li::before {
+            content: "• ";
+            color: #999;
+        }
+
+        /* Results */
+        .results {
+            text-align: center;
+            padding: 20px;
+            border: 2px solid #10b981;
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+
+        .results.strike {
+            border-color: #ef4444;
+            background: linear-gradient(135deg, #fef2f2, #fee2e2);
+        }
+
+        .results-score {
+            font-size: 24px;
+            font-weight: 800;
+            color: #10b981;
+            margin-bottom: 8px;
+        }
+
+        .results.strike .results-score {
+            color: #ef4444;
+        }
+
+        .bonus {
+            font-size: 12px;
+            color: #059669;
+            margin-bottom: 4px;
+        }
+
+        .results.strike .bonus {
+            color: #dc2626;
+        }
+
+        /* Game Over */
+        .game-over {
+            text-align: center;
+            padding: 24px;
+            border: 2px solid #8b5cf6;
+            background: linear-gradient(135deg, #faf5ff, #f3e8ff);
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+
+        .final-score {
+            font-size: 28px;
+            font-weight: 800;
+            color: #8b5cf6;
+            margin-bottom: 8px;
+        }
+
+        .high-score {
+            font-size: 14px;
+            color: #10b981;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        /* Slot Machine Animation */
         .slot-container {
             overflow: hidden;
-            height: 100px;
+            height: 120px;
             position: relative;
             border-radius: 8px;
-            border: 2px solid #1e40af;
+            border: 2px solid #1e3a8a;
+            margin-bottom: 24px;
+            background: #fff;
         }
-        
+
         .slot-reel {
             animation: slotSpin 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
         }
-        
+
         .category-card {
-            height: 100px;
+            height: 120px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -65,36 +425,20 @@
             transition: all 0.3s ease;
             border-bottom: 1px solid #e5e7eb;
         }
-        
+
         .category-card:last-child {
             border-bottom: none;
         }
-        
+
         .category-card.selected {
             background: linear-gradient(135deg, #fbbf24, #f59e0b);
             transform: scale(1.02);
             box-shadow: 0 8px 25px rgba(251, 191, 36, 0.3);
-            border-bottom-color: #d97706;
         }
-        
+
         @keyframes slotSpin {
             0% { transform: translateY(0); }
             100% { transform: translateY(-100%); }
-        }
-        
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .item-entrance {
-            animation: slideInUp 0.4s ease forwards;
         }
     </style>
 </head>
@@ -103,27 +447,6 @@
 
     <script type="text/babel">
         const { useState, useEffect } = React;
-        
-        // Icon Components
-        const RotateCcw = () => (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M1 4v6h6"></path>
-                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
-            </svg>
-        );
-        
-        const CheckCircle = () => (
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                <polyline points="22,4 12,14.01 9,11.01"></polyline>
-            </svg>
-        );
-
-        const Zap = () => (
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"></polygon>
-            </svg>
-        );
 
         // ADD YOUR FULL JSON DATA HERE - Replace this with your complete categories
         const gameCategories = {
@@ -161,14 +484,6 @@
             const [highScore, setHighScore] = useState(0);
             const [isFinaleRound, setIsFinaleRound] = useState(false);
             const [userSelections, setUserSelections] = useState([]);
-
-            const tileColors = [
-                'bg-purple-200 border-purple-400 text-purple-800',
-                'bg-blue-200 border-blue-400 text-blue-800', 
-                'bg-green-200 border-green-400 text-green-800',
-                'bg-yellow-200 border-yellow-400 text-yellow-800',
-                'bg-pink-200 border-pink-400 text-pink-800'
-            ];
 
             useEffect(() => {
                 const savedHighScore = parseInt(window.sessionStorage?.getItem?.('rankRushHighScore') || '0');
@@ -257,33 +572,10 @@
                 };
                 
                 setUserSelections([...userSelections, newSelection]);
-                
-                if (navigator.vibrate) {
-                    navigator.vibrate(50);
-                }
             };
 
             const resetSelections = () => {
                 setUserSelections([]);
-                if (navigator.vibrate) {
-                    navigator.vibrate(100);
-                }
-            };
-
-            const getTileAppearance = (itemIndex) => {
-                const selection = userSelections.find(sel => sel.itemIndex === itemIndex);
-                if (selection) {
-                    return {
-                        selected: true,
-                        position: selection.position,
-                        colorClass: tileColors[selection.position - 1]
-                    };
-                }
-                return {
-                    selected: false,
-                    position: null,
-                    colorClass: 'bg-gray-100 border-gray-300 text-gray-800 hover:bg-gray-200'
-                };
             };
 
             const calculateScore = () => {
@@ -323,14 +615,14 @@
                     
                     if (peekPowerUps === 0) {
                         setPeekPowerUps(1);
-                        earnedBonuses.push('🔍 Peek Power-Up Earned!');
+                        earnedBonuses.push('Peek Power-Up Earned!');
                     }
                 }
                 
                 if (isFinaleRound && correctPositions === 5) {
                     const totalGameScore = currentScore + score;
                     score = totalGameScore;
-                    earnedBonuses.push('🎉 FINALE BONUS: SCORE DOUBLED!');
+                    earnedBonuses.push('FINALE BONUS: SCORE DOUBLED!');
                 }
                 
                 return { score, bonuses: earnedBonuses, correctCount: correctPositions };
@@ -402,373 +694,278 @@
                 setUserSelections([]);
             };
 
-            const canSpin = () => {
-                return gameState === 'ready' && currentRound <= 8 && strikes < 3;
-            };
-
             const canSubmit = () => {
                 return gameState === 'playing' && userSelections.length === 5;
             };
 
+            const getInstructionText = () => {
+                const count = userSelections.length;
+                if (gameState !== 'playing') return '';
+                
+                if (count === 0) {
+                    return 'Click items in your preferred ranking order';
+                } else if (count < 5) {
+                    return `Selected ${count} of 5 items`;
+                } else {
+                    return 'All items selected — ready to submit';
+                }
+            };
+
             return (
-                <div className="game-container max-w-xs mx-auto bg-white text-gray-900">
-                    {/* Game Header */}
-                    <div className="bg-gradient-to-r from-blue-900 to-blue-800 text-white p-1.5">
-                        <div className="flex justify-between items-center mb-1">
-                            <h1 className="text-base font-bold">Rank Rush</h1>
-                            <div className="text-right">
-                                <div className="text-xs text-blue-200">Score</div>
-                                <div className="text-sm font-bold text-yellow-400">{currentScore}</div>
-                            </div>
+                <div>
+                    <h1>Rank Rush</h1>
+                    <div className="subtitle">A ranking game</div>
+                    
+                    <div className="game-info">
+                        <div>
+                            <span className="score">Score: {currentScore}</span>
                         </div>
-                        
-                        <div className="flex justify-between items-center text-xs text-blue-200 mb-1">
-                            <span>Round {currentRound}/8</span>
-                            <span>High: {highScore}</span>
+                        <div>
+                            Round {currentRound} of 8
                         </div>
-                        
-                        <div className="flex justify-between items-center mb-1">
-                            <div className="flex items-center space-x-1">
-                                <span className="text-xs text-blue-200">Strikes:</span>
-                                {[...Array(3)].map((_, i) => (
-                                    <span key={i} className={`text-xs ${i < strikes ? 'text-red-400' : 'text-gray-500'}`}>
-                                        ❌
-                                    </span>
-                                ))}
-                            </div>
-                            
+                        <div className="strikes">
+                            Strikes: {strikes}/3
                             {peekPowerUps > 0 && gameState === 'playing' && (
                                 <button 
                                     onClick={usePeekPowerUp}
-                                    className="bg-yellow-500 hover:bg-yellow-600 text-black px-1.5 py-0.5 rounded text-xs font-bold"
+                                    className="btn-secondary btn-small"
+                                    style={{ marginLeft: '8px' }}
                                 >
-                                    🔍 Peek
+                                    Peek
                                 </button>
                             )}
                         </div>
-                        
-                        {isFinaleRound && (
-                            <div className="bg-yellow-600 text-black text-center py-0.5 px-2 rounded text-xs font-bold mb-1">
-                                🏆 FINALE - Get all 5 to DOUBLE score! 🏆
-                            </div>
-                        )}
-                        
-                        <div className="text-xs text-blue-200 text-center">
-                            {gameState === 'ready' ? (currentRound === 1 ? 'Start challenge!' : 'Ready!') : 
-                             gameState === 'spinning' ? 'Spinning...' :
-                             gameState === 'playing' ? 'Click tiles in order!' :
-                             gameState === 'finished' ? 'Complete!' :
-                             gameState === 'gameOver' ? 'Game Over!' : ''}
-                        </div>
                     </div>
 
-                    <div className="game-content">
-                        {/* Ready State */}
-                        {gameState === 'ready' && (
-                            <div className="text-center mb-3">
-                                <div className="mb-3">
-                                    <h2 className="text-base font-bold text-gray-800 mb-1">Ready to Spin?</h2>
-                                    <p className="text-xs text-gray-600 mb-2">
-                                        Rank 5 items correctly to earn points!
-                                    </p>
+                    {/* Ready State */}
+                    {gameState === 'ready' && (
+                        <div>
+                            <h2>Ready to begin?</h2>
+                            <p className="instructions">We'll show you 5 items to rank in order.</p>
+                            {isFinaleRound && (
+                                <div style={{ 
+                                    textAlign: 'center', 
+                                    padding: '12px', 
+                                    background: '#fbbf24', 
+                                    borderRadius: '8px', 
+                                    marginBottom: '16px',
+                                    fontWeight: '700',
+                                    color: '#92400e'
+                                }}>
+                                    FINALE ROUND - Get all 5 correct to DOUBLE your score!
                                 </div>
-                                
-                                <button 
-                                    onClick={spinWheel}
-                                    disabled={!canSpin()}
-                                    className={`w-full py-2 px-4 rounded-lg font-bold text-base flex items-center justify-center space-x-2 ${
-                                        canSpin() 
-                                            ? 'bg-yellow-400 hover:bg-yellow-500 text-gray-900' 
-                                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                    }`}
+                            )}
+                            <button className="btn" onClick={spinWheel}>
+                                Start Round
+                            </button>
+                        </div>
+                    )}
+
+                    {/* Spinning */}
+                    {gameState === 'spinning' && (
+                        <div style={{ textAlign: 'center' }}>
+                            <div className="slot-container">
+                                <div 
+                                    className="slot-reel"
+                                    style={{
+                                        transform: `translateY(-${selectedCategoryIndex * 120}px)`
+                                    }}
                                 >
-                                    <Zap />
-                                    <span>Spin Wheel</span>
-                                </button>
-                            </div>
-                        )}
-
-                        {/* Category Wheel */}
-                        {gameState === 'spinning' && (
-                            <div className="text-center mb-4">
-                                <div className="mb-3">
-                                    <div className="slot-container bg-white mx-auto w-56">
-                                        <div 
-                                            className="slot-reel"
-                                            style={{
-                                                transform: `translateY(-${selectedCategoryIndex * 100}px)`
-                                            }}
-                                        >
-                                            {[...Array(3)].map((_, setIndex) => 
-                                                Object.entries(gameCategories).map(([key, category], index) => (
-                                                    <div 
-                                                        key={`${setIndex}-${key}`}
-                                                        className={`category-card bg-gradient-to-br from-blue-50 to-blue-100 ${
-                                                            setIndex === 2 && index === selectedCategoryIndex ? 'selected' : ''
-                                                        }`}
-                                                    >
-                                                        <div className="text-2xl mb-1">{category.icon}</div>
-                                                        <div className="text-xs font-bold text-blue-900 text-center px-2">
-                                                            {category.title}
-                                                        </div>
-                                                        <div className="text-xs text-blue-700 text-center px-2">
-                                                            {category.description}
-                                                        </div>
-                                                    </div>
-                                                ))
-                                            )}
-                                        </div>
-                                        
-                                        <div className="absolute inset-0 pointer-events-none">
-                                            <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-yellow-400 transform -translate-y-1/2"></div>
-                                            <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-yellow-400 transform translate-y-1/2"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="text-sm text-blue-900 font-bold">Spinning...</div>
-                            </div>
-                        )}
-
-                        {/* Current Category Display */}
-                        {currentCategory && gameState === 'playing' && (
-                            <div className="mb-3">
-                                <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-2 text-center">
-                                    <div className="text-xl mb-1">{gameCategories[currentCategory].icon}</div>
-                                    <h3 className="text-sm font-bold text-blue-900">{gameCategories[currentCategory].title}</h3>
-                                    <p className="text-xs text-blue-700">{gameCategories[currentCategory].description}</p>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Playing State Instructions */}
-                        {gameState === 'playing' && (
-                            <div className="mb-2 text-center">
-                                <p className="text-xs text-gray-600">
-                                    {userSelections.length === 0 ? 'Tap tiles in order: 1st, 2nd, 3rd...' : 
-                                     userSelections.length < 5 ? `Selected ${userSelections.length}/5 - keep going!` :
-                                     'All selected! Ready to submit.'}
-                                </p>
-                                {revealedPositions.length > 0 && (
-                                    <p className="text-xs text-green-600 font-bold mt-1">
-                                        🔍 Peek active - 2 items revealed!
-                                    </p>
-                                )}
-                            </div>
-                        )}
-
-                        {/* Game Board */}
-                        {items.length > 0 && (
-                            <div className="mb-4">
-                                {/* Main Selection Grid */}
-                                <div className="grid grid-cols-5 gap-2 mb-4">
-                                    {items.map((item, index) => {
-                                        const tileAppearance = getTileAppearance(index);
-                                        const isRevealed = revealedPositions.includes(index);
-                                        
-                                        return (
-                                            <button
-                                                key={item.name}
-                                                onClick={() => handleTileClick(index)}
-                                                disabled={gameState !== 'playing'}
-                                                className={`
-                                                    relative p-3 rounded-lg border-2 text-xs font-medium leading-tight transition-all duration-200
-                                                    ${tileAppearance.selected 
-                                                        ? 'bg-gray-200 border-gray-400 text-gray-600 opacity-60' 
-                                                        : 'bg-gray-100 border-gray-300 text-gray-800 hover:bg-gray-200'}
-                                                    ${gameState === 'playing' ? 'cursor-pointer active:scale-95' : 'cursor-default'}
-                                                    ${isRevealed ? 'ring-2 ring-green-400 ring-opacity-50' : ''}
-                                                    min-h-[80px] flex flex-col items-center justify-center
-                                                `}
-                                                style={{ 
-                                                    animationDelay: `${index * 0.1}s`,
-                                                    touchAction: 'manipulation'
-                                                }}
+                                    {[...Array(3)].map((_, setIndex) => 
+                                        Object.entries(gameCategories).map(([key, category], index) => (
+                                            <div 
+                                                key={`${setIndex}-${key}`}
+                                                className={`category-card ${
+                                                    setIndex === 2 && index === selectedCategoryIndex ? 'selected' : ''
+                                                }`}
                                             >
-                                                {/* Selection Number Badge */}
-                                                {tileAppearance.selected && (
-                                                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
-                                                        {tileAppearance.position}
-                                                    </div>
-                                                )}
-                                                
-                                                {/* Peek Indicator */}
-                                                {isRevealed && !showResults && (
-                                                    <div className="absolute -top-1 -left-1 text-green-600 text-base">
-                                                        🔍
-                                                    </div>
-                                                )}
-                                                
-                                                <div className="text-center px-1">
-                                                    {item.name}
-                                                </div>
-                                                
-                                                {/* Show correct order in results */}
-                                                {showResults && (
-                                                    <div className="text-xs opacity-75 mt-1">
-                                                        Should be #{item.correctOrder}
-                                                    </div>
-                                                )}
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-
-                                {/* Your Rankings Display */}
-                                <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-3">
-                                    <h4 className="text-sm font-bold text-blue-900 mb-2 text-center">Your Rankings</h4>
-                                    <div className="grid grid-cols-5 gap-2">
-                                        {[1, 2, 3, 4, 5].map((position) => {
-                                            const selection = userSelections.find(sel => sel.position === position);
-                                            const item = selection ? items[selection.itemIndex] : null;
-                                            
-                                            return (
-                                                <div
-                                                    key={position}
-                                                    className={`
-                                                        relative p-2 rounded-lg border-2 text-xs font-medium leading-tight min-h-[60px] 
-                                                        flex flex-col items-center justify-center transition-all duration-200
-                                                        ${item 
-                                                            ? `${tileColors[position - 1]} shadow-md` 
-                                                            : 'bg-white border-dashed border-gray-300 text-gray-400'}
-                                                    `}
-                                                >
-                                                    {/* Position Number */}
-                                                    <div className="absolute -top-1 -left-1 w-5 h-5 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
-                                                        {position}
-                                                    </div>
-                                                    
-                                                    <div className="text-center px-1 mt-1">
-                                                        {item ? item.name : '?'}
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                    
-                                    {/* Reset Button */}
-                                    {gameState === 'playing' && userSelections.length > 0 && (
-                                        <div className="text-center mt-3">
-                                            <button
-                                                onClick={resetSelections}
-                                                className="bg-white hover:bg-gray-50 text-blue-700 border border-blue-300 px-3 py-1 rounded text-xs font-medium"
-                                            >
-                                                Reset Selections
-                                            </button>
-                                        </div>
+                                                <div className="category-icon">{category.icon}</div>
+                                                <div className="category-title">{category.title}</div>
+                                                <div className="category-description">{category.description}</div>
+                                            </div>
+                                        ))
                                     )}
                                 </div>
                             </div>
-                        )}
+                            <h2>Spinning...</h2>
+                        </div>
+                    )}
 
-                        {/* Round Finished */}
-                        {gameState === 'finished' && (
-                            <div className="text-center space-y-2 mb-3">
-                                <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-2">
-                                    <div className="text-lg font-bold text-yellow-600 mb-1">+{roundScore} points</div>
-                                    
-                                    {bonuses.map((bonus, idx) => (
-                                        <div key={idx} className="text-xs text-green-600 font-medium">
-                                            🎉 {bonus}
-                                        </div>
-                                    ))}
-                                    
-                                    <div className="text-xs text-gray-600 mt-1">
-                                        {calculateScore().correctCount}/5 correct
-                                        {calculateScore().correctCount <= 1 && (
-                                            <div className="text-red-600 font-bold">⚠️ Strike {strikes + 1}/3</div>
-                                        )}
-                                    </div>
+                    {/* Category Display */}
+                    {currentCategory && gameState === 'playing' && (
+                        <div className="category">
+                            <div className="category-icon">{gameCategories[currentCategory].icon}</div>
+                            <div className="category-title">{gameCategories[currentCategory].title}</div>
+                            <div className="category-description">{gameCategories[currentCategory].description}</div>
+                        </div>
+                    )}
+
+                    {/* Instructions */}
+                    {gameState === 'playing' && (
+                        <div className="instructions">
+                            {getInstructionText()}
+                            {revealedPositions.length > 0 && (
+                                <div style={{ color: '#10b981', fontWeight: '600' }}>
+                                    Peek active - 2 items revealed!
                                 </div>
-                                
-                                <button 
-                                    onClick={nextRound}
-                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg font-semibold"
-                                >
-                                    {currentRound >= 8 ? 'Final Score' : 'Next Round'}
-                                </button>
-                            </div>
-                        )}
-
-                        {/* Action Buttons */}
-                        <div className="space-y-3 mt-auto">
-                            {gameState === 'playing' && (
-                                <button 
-                                    onClick={finishRound}
-                                    disabled={!canSubmit()}
-                                    className={`w-full p-4 rounded-lg font-bold text-lg flex items-center justify-center space-x-2 transition-all
-                                        ${canSubmit() 
-                                            ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg' 
-                                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                        }`}
-                                >
-                                    <CheckCircle />
-                                    <span>{canSubmit() ? 'Submit Answer' : `Select ${5 - userSelections.length} more`}</span>
-                                </button>
-                            )}
-                            
-                            {gameState === 'gameOver' && (
-                                <div className="text-center space-y-2">
-                                    <div className="bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-200 rounded-lg p-3">
-                                        <div className="text-lg font-bold text-purple-600 mb-1">
-                                            {currentRound >= 8 ? '🏆 Complete!' : '💥 Game Over!'}
-                                        </div>
-                                        
-                                        <div className="text-base font-bold text-gray-800 mb-1">
-                                            Final Score: {currentScore}
-                                        </div>
-                                        
-                                        {currentScore > highScore ? (
-                                            <div className="text-green-600 font-bold text-sm mb-1">
-                                                🎉 NEW HIGH SCORE! 🎉
-                                            </div>
-                                        ) : highScore > 0 && (
-                                            <div className="text-gray-600 text-sm mb-1">
-                                                High Score: {highScore}
-                                            </div>
-                                        )}
-                                        
-                                        <div className="text-xs text-gray-600">
-                                            {currentRound >= 8 ? 
-                                                `Completed 8 rounds with ${strikes} strikes` :
-                                                `Round ${currentRound} - 3 strikes`
-                                            }
-                                        </div>
-                                    </div>
-                                    
-                                    <button 
-                                        onClick={resetGame}
-                                        className="w-full bg-green-600 hover:bg-green-700 text-white p-3 rounded-lg font-semibold"
-                                    >
-                                        Play Again
-                                    </button>
-                                </div>
-                            )}
-
-                            {gameState !== 'gameOver' && gameState !== 'ready' && gameState !== 'playing' && (
-                                <button 
-                                    onClick={resetGame}
-                                    className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 p-2 rounded-lg text-sm flex items-center justify-center space-x-2"
-                                >
-                                    <RotateCcw />
-                                    <span>Reset</span>
-                                </button>
                             )}
                         </div>
+                    )}
 
-                        {/* How to Play */}
-                        {gameState === 'ready' && currentRound === 1 && (
-                            <div className="mt-3 bg-gray-50 rounded-lg p-2">
-                                <h4 className="text-sm font-bold text-gray-800 mb-1">How to Play:</h4>
-                                <ul className="text-xs text-gray-600 space-y-0.5">
-                                    <li>• Tap tiles in ranking order (1st, 2nd, 3rd...)</li>
-                                    <li>• 8 rounds to build score</li>
-                                    <li>• 3 strikes (0-1 correct) = game over</li>
-                                    <li>• Perfect: +15 bonus + Peek power-up</li>
-                                    <li>• Round 8: Perfect = double score!</li>
-                                </ul>
+                    {/* Game Area */}
+                    {items.length > 0 && (
+                        <div className="tiles-container">
+                            <div className="tiles-grid">
+                                {items.map((item, index) => {
+                                    const selection = userSelections.find(sel => sel.itemIndex === index);
+                                    const isSelected = !!selection;
+                                    const isRevealed = revealedPositions.includes(index);
+                                    
+                                    return (
+                                        <div
+                                            key={item.name}
+                                            onClick={() => handleTileClick(index)}
+                                            className={`tile ${isSelected ? 'selected' : ''} ${isRevealed ? 'revealed' : ''}`}
+                                        >
+                                            {isSelected && (
+                                                <div className="tile-number">
+                                                    {selection.position}
+                                                </div>
+                                            )}
+                                            
+                                            {isRevealed && !showResults && (
+                                                <div className="peek-indicator">🔍</div>
+                                            )}
+                                            
+                                            <div>{item.name}</div>
+                                            
+                                            {showResults && (
+                                                <div style={{ fontSize: '9px', opacity: 0.7, marginTop: '2px' }}>
+                                                    #{item.correctOrder}
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
                             </div>
-                        )}
-                    </div>
+
+                            <div className="rankings">
+                                <h3>Your Rankings</h3>
+                                <div className="rankings-grid">
+                                    {[1, 2, 3, 4, 5].map((position) => {
+                                        const selection = userSelections.find(sel => sel.position === position);
+                                        const item = selection ? items[selection.itemIndex] : null;
+                                        
+                                        return (
+                                            <div
+                                                key={position}
+                                                className={`ranking-slot ${item ? 'filled' : ''}`}
+                                            >
+                                                <div className="ranking-number">{position}</div>
+                                                <div>{item ? item.name : '—'}</div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                                
+                                {gameState === 'playing' && userSelections.length > 0 && (
+                                    <div style={{ textAlign: 'center', marginTop: '16px' }}>
+                                        <button
+                                            onClick={resetSelections}
+                                            className="btn-secondary"
+                                        >
+                                            Reset
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Results */}
+                    {gameState === 'finished' && (
+                        <div className={`results ${calculateScore().correctCount <= 1 ? 'strike' : ''}`}>
+                            <div className="results-score">+{roundScore} points</div>
+                            
+                            {bonuses.map((bonus, idx) => (
+                                <div key={idx} className="bonus">
+                                    {bonus}
+                                </div>
+                            ))}
+                            
+                            <div style={{ fontSize: '14px', marginTop: '8px' }}>
+                                {calculateScore().correctCount}/5 correct
+                                {calculateScore().correctCount <= 1 && (
+                                    <div style={{ fontWeight: '700', color: '#ef4444' }}>
+                                        Strike {strikes + 1}/3
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Game Over */}
+                    {gameState === 'gameOver' && (
+                        <div className="game-over">
+                            <div style={{ fontSize: '20px', fontWeight: '700', color: '#8b5cf6', marginBottom: '8px' }}>
+                                {currentRound >= 8 ? 'Game Complete!' : 'Game Over!'}
+                            </div>
+                            
+                            <div className="final-score">Final Score: {currentScore}</div>
+                            
+                            {currentScore > highScore ? (
+                                <div className="high-score">NEW HIGH SCORE!</div>
+                            ) : highScore > 0 && (
+                                <div style={{ fontSize: '12px', color: '#666' }}>
+                                    High Score: {highScore}
+                                </div>
+                            )}
+                            
+                            <div style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
+                                {currentRound >= 8 ? 
+                                    `Completed 8 rounds with ${strikes} strikes` :
+                                    `Round ${currentRound} - 3 strikes`
+                                }
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Action Buttons */}
+                    {gameState === 'playing' && (
+                        <button 
+                            onClick={finishRound}
+                            disabled={!canSubmit()}
+                            className="btn"
+                        >
+                            {canSubmit() ? 'Submit Rankings' : `Select ${5 - userSelections.length} more`}
+                        </button>
+                    )}
+
+                    {gameState === 'finished' && (
+                        <button onClick={nextRound} className="btn">
+                            {currentRound >= 8 ? 'Final Score' : 'Next Round'}
+                        </button>
+                    )}
+
+                    {gameState === 'gameOver' && (
+                        <button onClick={resetGame} className="btn">
+                            Play Again
+                        </button>
+                    )}
+
+                    {/* Rules */}
+                    {gameState === 'ready' && currentRound === 1 && (
+                        <div className="rules">
+                            <h4>How to Play</h4>
+                            <ul>
+                                <li>Click tiles in your preferred ranking order</li>
+                                <li>Complete 8 rounds to finish the game</li>
+                                <li>Get 3 strikes (≤1 correct) and it's game over</li>
+                                <li>Perfect rounds earn bonus points and power-ups</li>
+                                <li>Round 8: Perfect = double score!</li>
+                            </ul>
+                        </div>
+                    )}
                 </div>
             );
         };
