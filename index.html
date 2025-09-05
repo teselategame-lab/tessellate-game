@@ -101,8 +101,6 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
-            max-height: 400px;
-            overflow-y: auto;
             margin-bottom: 15px;
         }
 
@@ -183,7 +181,7 @@
 
         .rankings-compact {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             margin: 15px 0;
             font-size: 10px;
         }
@@ -287,11 +285,6 @@
             color: #666;
             margin-bottom: 20px;
             font-style: italic;
-        }
-
-        /* Hidden state */
-        .hidden {
-            display: none !important;
         }
 
         /* Rules */
@@ -508,7 +501,7 @@
                 const category = gameCategories[categoryKey];
                 
                 const shuffledItems = [...category.items].sort(() => Math.random() - 0.5);
-                const selectedItems = shuffledItems.slice(0, 5);
+                const selectedItems = shuffledItems.slice(0, 3); // 3 items only
                 
                 const isDescending = [
                     'countriesByPopulation', 'moviesByBoxOffice', 'stocksByMarketCap',
@@ -544,7 +537,7 @@
                     return;
                 }
                 
-                if (userSelections.length >= 5) {
+                if (userSelections.length >= 3) { // 3 items max
                     return;
                 }
                 
@@ -566,7 +559,7 @@
                 let correctPositions = 0;
                 
                 const orderedItems = [];
-                for (let pos = 1; pos <= 5; pos++) {
+                for (let pos = 1; pos <= 3; pos++) { // 3 positions only
                     const selection = userSelections.find(sel => sel.position === pos);
                     if (selection) {
                         orderedItems.push(items[selection.itemIndex]);
@@ -580,18 +573,17 @@
                     if (currentPos === correctPos) {
                         correctPositions++;
                         
-                        if (correctPos === 1 || correctPos === 5) {
+                        if (correctPos === 1 || correctPos === 3) {
                             score += 10;
                             earnedBonuses.push(correctPos === 1 ? 'Top Position! +10' : 'Bottom Position! +10');
                         } else {
-                            const middlePoints = 5 + Math.floor(Math.random() * 4);
-                            score += middlePoints;
-                            earnedBonuses.push(`Middle Position! +${middlePoints}`);
+                            score += 8;
+                            earnedBonuses.push('Middle Position! +8');
                         }
                     }
                 });
                 
-                if (correctPositions === 5) {
+                if (correctPositions === 3) { // Perfect = all 3 correct
                     score += 15;
                     earnedBonuses.push('Perfect Round! +15');
                     
@@ -601,7 +593,7 @@
                     }
                 }
                 
-                if (isFinaleRound && correctPositions === 5) {
+                if (isFinaleRound && correctPositions === 3) { // 3 correct for finale
                     const totalGameScore = currentScore + score;
                     score = totalGameScore;
                     earnedBonuses.push('FINALE BONUS: SCORE DOUBLED!');
@@ -653,7 +645,7 @@
                     });
                     
                     const shuffled = correctItems.sort(() => Math.random() - 0.5);
-                    const toReveal = shuffled.slice(0, 2).map(item => item.itemIndex);
+                    const toReveal = shuffled.slice(0, 1).map(item => item.itemIndex); // Reveal 1 item
                     
                     setRevealedPositions(toReveal);
                     setPeekPowerUps(0);
@@ -677,7 +669,7 @@
             };
 
             const canSubmit = () => {
-                return gameState === 'playing' && userSelections.length === 5;
+                return gameState === 'playing' && userSelections.length === 3; // 3 items required
             };
 
             return (
@@ -709,7 +701,7 @@
                     {gameState === 'ready' && (
                         <div>
                             <h2 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '16px', textAlign: 'center', color: '#1e3a8a' }}>Ready to begin?</h2>
-                            <p className="instructions">We'll show you 5 items to rank in order.</p>
+                            <p className="instructions">We'll show you 3 items to rank in order.</p>
                             {isFinaleRound && (
                                 <div style={{ 
                                     textAlign: 'center', 
@@ -720,7 +712,7 @@
                                     fontWeight: '700',
                                     color: '#92400e'
                                 }}>
-                                    FINALE ROUND - Get all 5 correct to DOUBLE your score!
+                                    FINALE ROUND - Get all 3 correct to DOUBLE your score!
                                 </div>
                             )}
                             <button className="btn" onClick={spinWheel}>
@@ -772,11 +764,11 @@
                     {gameState === 'playing' && (
                         <div className="instructions">
                             {userSelections.length === 0 ? 'Tap items in order from first to last' : 
-                             userSelections.length < 5 ? `Selected ${userSelections.length}/5 items` :
+                             userSelections.length < 3 ? `Selected ${userSelections.length}/3 items` :
                              'All items selected! Ready to submit'}
                             {revealedPositions.length > 0 && (
                                 <div style={{ color: '#10b981', fontWeight: '600' }}>
-                                    Peek active - 2 items revealed!
+                                    Peek active - 1 item revealed!
                                 </div>
                             )}
                         </div>
@@ -822,7 +814,7 @@
                             <div className="rankings">
                                 <h3>Your Rankings</h3>
                                 <div className="rankings-compact">
-                                    {[1, 2, 3, 4, 5].map((position) => {
+                                    {[1, 2, 3].map((position) => {
                                         const selection = userSelections.find(sel => sel.position === position);
                                         const item = selection ? items[selection.itemIndex] : null;
                                         
@@ -866,7 +858,7 @@
                             ))}
                             
                             <div style={{ fontSize: '14px', marginTop: '8px' }}>
-                                {calculateScore().correctCount}/5 correct
+                                {calculateScore().correctCount}/3 correct
                                 {calculateScore().correctCount <= 1 && (
                                     <div style={{ fontWeight: '700', color: '#ef4444' }}>
                                         Strike {strikes + 1}/3
@@ -909,7 +901,7 @@
                             disabled={!canSubmit()}
                             className="btn"
                         >
-                            {canSubmit() ? 'Submit Rankings' : `Select ${5 - userSelections.length} more`}
+                            {canSubmit() ? 'Submit Rankings' : `Select ${3 - userSelections.length} more`}
                         </button>
                     )}
 
@@ -930,7 +922,7 @@
                         <div className="rules">
                             <h4>How to Play</h4>
                             <ul>
-                                <li>Tap items in your preferred ranking order (1st, 2nd, 3rd)</li>
+                                <li>Tap 3 items in your preferred ranking order</li>
                                 <li>Complete 8 rounds to finish the game</li>
                                 <li>Get 3 strikes (≤1 correct) and it's game over</li>
                                 <li>Perfect rounds earn bonus points and power-ups</li>
