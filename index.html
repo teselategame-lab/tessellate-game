@@ -424,24 +424,711 @@
         const { useState, useEffect } = React;
 
         // ADD YOUR FULL JSON DATA HERE - Replace this with your complete categories
-        const gameCategories = {
-            planetsByDistance: {
-                title: "Planets by Distance from Sun",
-                description: "Closest to farthest",
-                icon: "🪐",
-                items: [
-                    { name: "Mercury", value: 1 },
-                    { name: "Venus", value: 2 },
-                    { name: "Earth", value: 3 },
-                    { name: "Mars", value: 4 },
-                    { name: "Jupiter", value: 5 },
-                    { name: "Saturn", value: 6 },
-                    { name: "Uranus", value: 7 },
-                    { name: "Neptune", value: 8 }
-                ]
-            },
-            // ADD MORE CATEGORIES HERE...
-        };
+const gameCategories = {
+    // COUNTRIES & TERRITORIES
+    countriesByArea: {
+        title: "Countries by Area",
+        description: "Largest to smallest (sq km)",
+        icon: "🗺️",
+        items: [
+            { name: "Russia", value: 17098242 },
+            { name: "Canada", value: 9984670 },
+            { name: "United States", value: 9833517 },
+            { name: "China", value: 9596960 },
+            { name: "Brazil", value: 8514877 },
+            { name: "Australia", value: 7692024 },
+            { name: "India", value: 3287263 },
+            { name: "Argentina", value: 2780400 },
+            { name: "Kazakhstan", value: 2724900 },
+            { name: "Algeria", value: 2381741 },
+            { name: "Democratic Republic Congo", value: 2344858 },
+            { name: "Saudi Arabia", value: 2149690 },
+            { name: "Mexico", value: 1964375 },
+            { name: "Indonesia", value: 1904569 },
+            { name: "Sudan", value: 1861484 }
+        ]
+    },
+
+    countriesByPopulation: {
+        title: "Countries by Population",
+        description: "Most to least populated",
+        icon: "🌍",
+        items: [
+            { name: "China", value: 1412000000 },
+            { name: "India", value: 1408000000 },
+            { name: "United States", value: 333000000 },
+            { name: "Indonesia", value: 275000000 },
+            { name: "Pakistan", value: 231000000 },
+            { name: "Nigeria", value: 218000000 },
+            { name: "Brazil", value: 215000000 },
+            { name: "Bangladesh", value: 169000000 },
+            { name: "Russia", value: 146000000 },
+            { name: "Mexico", value: 128000000 },
+            { name: "Ethiopia", value: 120000000 },
+            { name: "Japan", value: 125000000 },
+            { name: "Philippines", value: 110000000 },
+            { name: "Egypt", value: 104000000 },
+            { name: "Vietnam", value: 97000000 }
+        ]
+    },
+
+    countriesByGDP: {
+        title: "Countries by GDP",
+        description: "Highest to lowest (trillions USD)",
+        icon: "💰",
+        items: [
+            { name: "United States", value: 26.9 },
+            { name: "China", value: 17.7 },
+            { name: "Japan", value: 4.2 },
+            { name: "Germany", value: 4.1 },
+            { name: "India", value: 3.7 },
+            { name: "United Kingdom", value: 3.1 },
+            { name: "France", value: 2.9 },
+            { name: "Italy", value: 2.1 },
+            { name: "Brazil", value: 2.1 },
+            { name: "Canada", value: 2.0 },
+            { name: "South Korea", value: 1.8 },
+            { name: "Spain", value: 1.4 },
+            { name: "Australia", value: 1.4 },
+            { name: "Mexico", value: 1.3 },
+            { name: "Indonesia", value: 1.3 }
+        ]
+    },
+
+    countriesByCoastline: {
+        title: "Countries by Coastline Length",
+        description: "Longest to shortest (km)",
+        icon: "🏖️",
+        items: [
+            { name: "Norway", value: 83281 },
+            { name: "Canada", value: 36563 },
+            { name: "Greenland", value: 44087 },
+            { name: "Indonesia", value: 54716 },
+            { name: "Russia", value: 37653 },
+            { name: "Philippines", value: 36289 },
+            { name: "Japan", value: 29751 },
+            { name: "Australia", value: 25760 },
+            { name: "United States", value: 19924 },
+            { name: "Antarctica", value: 17968 },
+            { name: "New Zealand", value: 15134 },
+            { name: "Greece", value: 13676 },
+            { name: "United Kingdom", value: 12429 },
+            { name: "Turkey", value: 7200 },
+            { name: "Italy", value: 7600 }
+        ]
+    },
+
+    landlocked Countries: {
+        title: "Landlocked Countries by Area",
+        description: "Largest to smallest (sq km)",
+        icon: "🏔️",
+        items: [
+            { name: "Kazakhstan", value: 2724900 },
+            { name: "Mongolia", value: 1564110 },
+            { name: "Chad", value: 1284000 },
+            { name: "Niger", value: 1267000 },
+            { name: "Mali", value: 1240192 },
+            { name: "Ethiopia", value: 1104300 },
+            { name: "Bolivia", value: 1098581 },
+            { name: "Zambia", value: 752618 },
+            { name: "Afghanistan", value: 652864 },
+            { name: "Central African Republic", value: 622984 },
+            { name: "South Sudan", value: 619745 },
+            { name: "Paraguay", value: 406752 },
+            { name: "Uzbekistan", value: 447400 },
+            { name: "Turkmenistan", value: 488100 },
+            { name: "Belarus", value: 207600 }
+        ]
+    },
+
+    // CITIES
+    citiesByPopulation: {
+        title: "Cities by Population",
+        description: "Most to least populated (millions)",
+        icon: "🏙️",
+        items: [
+            { name: "Tokyo", value: 37.4 },
+            { name: "Delhi", value: 32.9 },
+            { name: "Shanghai", value: 28.5 },
+            { name: "Dhaka", value: 22.5 },
+            { name: "São Paulo", value: 22.4 },
+            { name: "Cairo", value: 21.8 },
+            { name: "Mexico City", value: 21.8 },
+            { name: "Beijing", value: 21.3 },
+            { name: "Mumbai", value: 20.4 },
+            { name: "Osaka", value: 18.9 },
+            { name: "Karachi", value: 16.8 },
+            { name: "Chongqing", value: 16.4 },
+            { name: "Istanbul", value: 15.8 },
+            { name: "Buenos Aires", value: 15.4 },
+            { name: "Kolkata", value: 15.1 }
+        ]
+    },
+
+    citiesByElevation: {
+        title: "Cities by Elevation",
+        description: "Highest to lowest (meters)",
+        icon: "⛰️",
+        items: [
+            { name: "La Paz, Bolivia", value: 3640 },
+            { name: "Cusco, Peru", value: 3399 },
+            { name: "Quito, Ecuador", value: 2850 },
+            { name: "Bogotá, Colombia", value: 2640 },
+            { name: "Addis Ababa, Ethiopia", value: 2355 },
+            { name: "Asmara, Eritrea", value: 2325 },
+            { name: "Sana'a, Yemen", value: 2250 },
+            { name: "Mexico City, Mexico", value: 2240 },
+            { name: "Nairobi, Kenya", value: 1795 },
+            { name: "Tehran, Iran", value: 1220 },
+            { name: "Denver, USA", value: 1609 },
+            { name: "Kabul, Afghanistan", value: 1790 },
+            { name: "Madrid, Spain", value: 667 },
+            { name: "Johannesburg, South Africa", value: 1753 },
+            { name: "Calgary, Canada", value: 1048 }
+        ]
+    },
+
+    capitalsByLatitude: {
+        title: "Capital Cities by Latitude",
+        description: "Northernmost to southernmost",
+        icon: "🧭",
+        items: [
+            { name: "Reykjavik, Iceland", value: 64.1 },
+            { name: "Helsinki, Finland", value: 60.2 },
+            { name: "Oslo, Norway", value: 59.9 },
+            { name: "Stockholm, Sweden", value: 59.3 },
+            { name: "Tallinn, Estonia", value: 59.4 },
+            { name: "Riga, Latvia", value: 56.9 },
+            { name: "Moscow, Russia", value: 55.8 },
+            { name: "Copenhagen, Denmark", value: 55.7 },
+            { name: "Vilnius, Lithuania", value: 54.7 },
+            { name: "Warsaw, Poland", value: 52.2 },
+            { name: "Berlin, Germany", value: 52.5 },
+            { name: "London, UK", value: 51.5 },
+            { name: "Brussels, Belgium", value: 50.8 },
+            { name: "Prague, Czech Republic", value: 50.1 },
+            { name: "Paris, France", value: 48.9 }
+        ]
+    },
+
+    // WATER BODIES
+    lakesByArea: {
+        title: "Lakes by Surface Area",
+        description: "Largest to smallest (sq km)",
+        icon: "🏞️",
+        items: [
+            { name: "Caspian Sea", value: 371000 },
+            { name: "Lake Superior", value: 82100 },
+            { name: "Lake Victoria", value: 68870 },
+            { name: "Lake Huron", value: 59600 },
+            { name: "Lake Michigan", value: 58016 },
+            { name: "Lake Tanganyika", value: 32900 },
+            { name: "Lake Baikal", value: 31722 },
+            { name: "Great Bear Lake", value: 31328 },
+            { name: "Lake Malawi", value: 29600 },
+            { name: "Great Slave Lake", value: 28568 },
+            { name: "Lake Erie", value: 25744 },
+            { name: "Lake Winnipeg", value: 24514 },
+            { name: "Lake Ontario", value: 18960 },
+            { name: "Lake Ladoga", value: 17700 },
+            { name: "Lake Balkhash", value: 16400 }
+        ]
+    },
+
+    lakesByDepth: {
+        title: "Lakes by Maximum Depth",
+        description: "Deepest to shallowest (meters)",
+        icon: "🏊‍♂️",
+        items: [
+            { name: "Lake Baikal", value: 1642 },
+            { name: "Lake Tanganyika", value: 1470 },
+            { name: "Caspian Sea", value: 1025 },
+            { name: "Lake Vostok", value: 800 },
+            { name: "O'Higgins/San Martín Lake", value: 836 },
+            { name: "Lake Malawi", value: 706 },
+            { name: "Issyk Kul", value: 668 },
+            { name: "Great Slave Lake", value: 614 },
+            { name: "Crater Lake", value: 594 },
+            { name: "Lake Matano", value: 590 },
+            { name: "General Carrera Lake", value: 586 },
+            { name: "Lake Chelan", value: 453 },
+            { name: "Lake Superior", value: 406 },
+            { name: "Lake Toba", value: 505 },
+            { name: "Lake Tahoe", value: 501 }
+        ]
+    },
+
+    riversByLength: {
+        title: "Rivers by Length",
+        description: "Longest to shortest (km)",
+        icon: "🏞️",
+        items: [
+            { name: "Nile", value: 6650 },
+            { name: "Amazon", value: 6400 },
+            { name: "Yangtze", value: 6300 },
+            { name: "Mississippi-Missouri", value: 6275 },
+            { name: "Yenisei", value: 5539 },
+            { name: "Yellow River", value: 5464 },
+            { name: "Ob", value: 5410 },
+            { name: "Paraná", value: 4880 },
+            { name: "Congo", value: 4700 },
+            { name: "Amur", value: 4444 },
+            { name: "Lena", value: 4400 },
+            { name: "Mekong", value: 4350 },
+            { name: "Mackenzie", value: 4241 }
+        ]
+    },
+
+    oceansByDepth: {
+        title: "Oceans by Maximum Depth",
+        description: "Deepest to shallowest (meters)",
+        icon: "🌊",
+        items: [
+            { name: "Pacific Ocean", value: 11034 },
+            { name: "Atlantic Ocean", value: 8486 },
+            { name: "Indian Ocean", value: 7906 },
+            { name: "Southern Ocean", value: 7236 },
+            { name: "Arctic Ocean", value: 5449 }
+        ]
+    },
+
+    oceansByArea: {
+        title: "Oceans by Surface Area",
+        description: "Largest to smallest (million sq km)",
+        icon: "🌊",
+        items: [
+            { name: "Pacific Ocean", value: 165.2 },
+            { name: "Atlantic Ocean", value: 106.4 },
+            { name: "Indian Ocean", value: 70.6 },
+            { name: "Southern Ocean", value: 20.3 },
+            { name: "Arctic Ocean", value: 14.1 }
+        ]
+    },
+
+    waterfallsByHeight: {
+        title: "Waterfalls by Height",
+        description: "Tallest to shortest (meters)",
+        icon: "💧",
+        items: [
+            { name: "Angel Falls, Venezuela", value: 979 },
+            { name: "Tugela Falls, South Africa", value: 948 },
+            { name: "Tres Hermanas Falls, Peru", value: 914 },
+            { name: "Olo'upena Falls, Hawaii", value: 900 },
+            { name: "Yumbilla Falls, Peru", value: 896 },
+            { name: "Vinnufossen, Norway", value: 860 },
+            { name: "Skorga, Norway", value: 864 },
+            { name: "Pu'uka'oku Falls, Hawaii", value: 840 },
+            { name: "James Bruce Falls, Canada", value: 840 },
+            { name: "Browne Falls, New Zealand", value: 836 },
+            { name: "Strupenfossen, Norway", value: 820 },
+            { name: "Ramnefjellsfossen, Norway", value: 818 },
+            { name: "Utigård, Norway", value: 800 }
+        ]
+    },
+
+    // ISLANDS & PENINSULAS
+    islandsByArea: {
+        title: "Islands by Area",
+        description: "Largest to smallest (sq km)",
+        icon: "🏝️",
+        items: [
+            { name: "Greenland", value: 2166086 },
+            { name: "New Guinea", value: 785753 },
+            { name: "Borneo", value: 748168 },
+            { name: "Madagascar", value: 587041 },
+            { name: "Baffin Island", value: 507451 },
+            { name: "Sumatra", value: 473481 },
+            { name: "Honshu", value: 225800 },
+            { name: "Victoria Island", value: 217291 },
+            { name: "Great Britain", value: 209331 },
+            { name: "Ellesmere Island", value: 196236 },
+            { name: "Sulawesi", value: 180681 },
+            { name: "South Island", value: 145836 },
+            { name: "Java", value: 138794 },
+            { name: "North Island", value: 111583 },
+            { name: "Cuba", value: 109884 }
+        ]
+    },
+
+    peninsulasByArea: {
+        title: "Peninsulas by Area",
+        description: "Largest to smallest (sq km)",
+        icon: "🗻",
+        items: [
+            { name: "Arabian Peninsula", value: 3237500 },
+            { name: "Deccan Peninsula", value: 2000000 },
+            { name: "Indochina Peninsula", value: 1900000 },
+            { name: "Horn of Africa", value: 1882857 },
+            { name: "Alaska Peninsula", value: 1500000 },
+            { name: "Labrador Peninsula", value: 1400000 },
+            { name: "Scandinavian Peninsula", value: 750000 },
+            { name: "Iberian Peninsula", value: 582860 },
+            { name: "Korean Peninsula", value: 220847 },
+            { name: "Florida Peninsula", value: 170312 },
+            { name: "Italian Peninsula", value: 131337 },
+            { name: "Kamchatka Peninsula", value: 104000 },
+            { name: "Baja California", value: 143390 },
+            { name: "Yucatan Peninsula", value: 181000 },
+            { name: "Crimean Peninsula", value: 26844 }
+        ]
+    },
+
+    // MOUNTAINS & LAND FEATURES
+    mountainsByHeight: {
+        title: "Mountains by Height",
+        description: "Tallest to shortest (meters)",
+        icon: "🏔️",
+        items: [
+            { name: "Mount Everest", value: 8849 },
+            { name: "K2", value: 8611 },
+            { name: "Kangchenjunga", value: 8586 },
+            { name: "Lhotse", value: 8516 },
+            { name: "Makalu", value: 8485 },
+            { name: "Cho Oyu", value: 8188 },
+            { name: "Dhaulagiri", value: 8167 },
+            { name: "Manaslu", value: 8163 },
+            { name: "Nanga Parbat", value: 8126 },
+            { name: "Annapurna", value: 8091 },
+            { name: "Gasherbrum I", value: 8080 },
+            { name: "Broad Peak", value: 8051 }
+        ]
+    },
+
+    mountainRangesByLength: {
+        title: "Mountain Ranges by Length",
+        description: "Longest to shortest (km)",
+        icon: "⛰️",
+        items: [
+            { name: "Andes", value: 8900 },
+            { name: "Rocky Mountains", value: 4800 },
+            { name: "Himalayas", value: 3800 },
+            { name: "Great Dividing Range", value: 3500 },
+            { name: "Transantarctic Mountains", value: 3500 },
+            { name: "Brazilian Highlands", value: 3000 },
+            { name: "Kunlun Mountains", value: 3000 },
+            { name: "Alaska Range", value: 1000 },
+            { name: "Appalachian Mountains", value: 3200 },
+            { name: "Ural Mountains", value: 2500 },
+            { name: "Atlas Mountains", value: 2500 },
+            { name: "Carpathian Mountains", value: 1500 },
+            { name: "Scandinavian Mountains", value: 1700 },
+            { name: "Alps", value: 1200 },
+            { name: "Pyrenees", value: 491 }
+        ]
+    },
+
+    volcanosByHeight: {
+        title: "Volcanoes by Height",
+        description: "Tallest to shortest (meters)",
+        icon: "🌋",
+        items: [
+            { name: "Ojos del Salado, Chile", value: 6893 },
+            { name: "Llullaillaco, Chile/Argentina", value: 6739 },
+            { name: "Chimborazo, Ecuador", value: 6267 },
+            { name: "Pico de Orizaba, Mexico", value: 5636 },
+            { name: "Mount Elbrus, Russia", value: 5642 },
+            { name: "Mount Damavand, Iran", value: 5609 },
+            { name: "Mount Ararat, Turkey", value: 5137 },
+            { name: "Mount Kilimanjaro, Tanzania", value: 5895 },
+            { name: "Cotopaxi, Ecuador", value: 5897 },
+            { name: "Mount Rainier, USA", value: 4392 },
+            { name: "Mount Fuji, Japan", value: 3776 },
+            { name: "Mount Vesuvius, Italy", value: 1281 },
+            { name: "Mount Etna, Italy", value: 3357 },
+            { name: "Krakatoa, Indonesia", value: 813 },
+            { name: "Mauna Loa, Hawaii", value: 4169 }
+        ]
+    },
+
+    desertsByArea: {
+        title: "Deserts by Area",
+        description: "Largest to smallest (sq km)",
+        icon: "🏜️",
+        items: [
+            { name: "Antarctica", value: 14000000 },
+            { name: "Sahara", value: 9000000 },
+            { name: "Arabian Desert", value: 2330000 },
+            { name: "Gobi Desert", value: 1300000 },
+            { name: "Kalahari Desert", value: 900000 },
+            { name: "Great Victoria Desert", value: 647000 },
+            { name: "Thar Desert", value: 200000 },
+            { name: "Sonoran Desert", value: 310000 },
+            { name: "Chihuahuan Desert", value: 450000 },
+            { name: "Great Basin Desert", value: 492000 },
+            { name: "Mojave Desert", value: 124000 }
+        ]
+    },
+
+    canyonsByDepth: {
+        title: "Canyons by Depth",
+        description: "Deepest to shallowest (meters)",
+        icon: "🏔️",
+        items: [
+            { name: "Yarlung Tsangpo, China", value: 6009 },
+            { name: "Colca Canyon, Peru", value: 4160 },
+            { name: "Cotahuasi Canyon, Peru", value: 3535 },
+            { name: "Kali Gandaki Gorge, Nepal", value: 4375 },
+            { name: "Tiger Leaping Gorge, China", value: 3790 },
+            { name: "Antelope Canyon, USA", value: 3200 },
+            { name: "Grand Canyon, USA", value: 1857 },
+            { name: "Copper Canyon, Mexico", value: 1879 },
+            { name: "Fish River Canyon, Namibia", value: 550 },
+            { name: "Black Canyon, USA", value: 823 },
+            { name: "Glen Canyon, USA", value: 370 },
+            { name: "Palo Duro Canyon, USA", value: 244 },
+            { name: "Canyon de Chelly, USA", value: 300 }
+        ]
+    },
+
+    // CONTINENTS & REGIONS
+    continentsByArea: {
+        title: "Continents by Area",
+        description: "Largest to smallest (sq km)",
+        icon: "🌏",
+        items: [
+            { name: "Asia", value: 44579000 },
+            { name: "Africa", value: 30370000 },
+            { name: "North America", value: 24709000 },
+            { name: "South America", value: 17840000 },
+            { name: "Antarctica", value: 14000000 },
+            { name: "Europe", value: 10180000 },
+            { name: "Australia/Oceania", value: 8600000 }
+        ]
+    },
+
+    continentsByPopulation: {
+        title: "Continents by Population",
+        description: "Most to least populated (billions)",
+        icon: "👥",
+        items: [
+            { name: "Asia", value: 4.6 },
+            { name: "Africa", value: 1.4 },
+            { name: "Europe", value: 0.75 },
+            { name: "North America", value: 0.58 },
+            { name: "South America", value: 0.43 },
+            { name: "Oceania", value: 0.046 },
+            { name: "Antarctica", value: 0.0015 }
+        ]
+    },
+
+    // US GEOGRAPHY
+    usStatesByArea: {
+        title: "US States by Area",
+        description: "Largest to smallest (sq mi)",
+        icon: "🗺️",
+        items: [
+            { name: "Alaska", value: 665384 },
+            { name: "Texas", value: 268596 },
+            { name: "California", value: 163696 },
+            { name: "Montana", value: 147040 },
+            { name: "New Mexico", value: 121590 },
+            { name: "Arizona", value: 113990 },
+            { name: "Nevada", value: 110572 },
+            { name: "Colorado", value: 104094 },
+            { name: "Oregon", value: 98379 },
+            { name: "Wyoming", value: 97813 },
+            { name: "Michigan", value: 96714 },
+            { name: "Minnesota", value: 86936 },
+            { name: "Utah", value: 84897 },
+            { name: "Idaho", value: 83569 }
+        ]
+    },
+
+    usStatesByPopulation: {
+        title: "US States by Population",
+        description: "Most to least populated (millions)",
+        icon: "👥",
+        items: [
+            { name: "California", value: 39.5 },
+            { name: "Texas", value: 30.0 },
+            { name: "Florida", value: 22.6 },
+            { name: "New York", value: 19.3 },
+            { name: "Pennsylvania", value: 13.0 },
+            { name: "Illinois", value: 12.6 },
+            { name: "Ohio", value: 11.8 },
+            { name: "Georgia", value: 10.9 },
+            { name: "North Carolina", value: 10.7 },
+            { name: "Michigan", value: 10.0 },
+            { name: "New Jersey", value: 9.3 },
+            { name: "Virginia", value: 8.6 },
+            { name: "Washington", value: 7.7 },
+            { name: "Arizona", value: 7.4 },
+            { name: "Massachusetts", value: 7.0 }
+        ]
+    },
+
+    usStatesByElevation: {
+        title: "US States by Highest Point",
+        description: "Highest to lowest elevation (feet)",
+        icon: "🏔️",
+        items: [
+            { name: "Alaska (Denali)", value: 20310 },
+            { name: "California (Mt. Whitney)", value: 14505 },
+            { name: "Colorado (Mt. Elbert)", value: 14440 },
+            { name: "Washington (Mt. Rainier)", value: 14411 },
+            { name: "Wyoming (Gannett Peak)", value: 13804 },
+            { name: "Hawaii (Mauna Kea)", value: 13796 },
+            { name: "Utah (Kings Peak)", value: 13528 },
+            { name: "New Mexico (Wheeler Peak)", value: 13159 },
+            { name: "Nevada (Boundary Peak)", value: 13140 },
+            { name: "Montana (Granite Peak)", value: 12799 },
+            { name: "Idaho (Borah Peak)", value: 12662 },
+            { name: "Arizona (Humphreys Peak)", value: 12633 },
+            { name: "Oregon (Mt. Hood)", value: 11249 },
+            { name: "Texas (Guadalupe Peak)", value: 8751 },
+            { name: "South Dakota (Harney Peak)", value: 7244 }
+        ]
+    },
+
+    // WORLD HERITAGE & FAMOUS SITES
+    unescoBySites: {
+        title: "Countries by UNESCO Sites",
+        description: "Most to least heritage sites",
+        icon: "🏛️",
+        items: [
+            { name: "Italy", value: 58 },
+            { name: "China", value: 56 },
+            { name: "Germany", value: 51 },
+            { name: "France", value: 49 },
+            { name: "Spain", value: 49 },
+            { name: "India", value: 40 },
+            { name: "Mexico", value: 35 },
+            { name: "United Kingdom", value: 33 },
+            { name: "Russia", value: 30 },
+            { name: "Iran", value: 26 },
+            { name: "Japan", value: 25 },
+            { name: "Brazil", value: 23 },
+            { name: "Turkey", value: 19 },
+            { name: "Greece", value: 18 },
+            { name: "Poland", value: 17 }
+        ]
+    },
+
+    nationalParksByArea: {
+        title: "National Parks by Area",
+        description: "Largest to smallest (sq km)",
+        icon: "🌲",
+        items: [
+            { name: "Northeast Greenland", value: 972000 },
+            { name: "Quttinirpaaq (Canada)", value: 37775 },
+            { name: "Great Bear Lake (Canada)", value: 23500 },
+            { name: "Namib-Naukluft (Namibia)", value: 49768 },
+            { name: "Kruger (South Africa)", value: 19485 },
+            { name: "Serengeti (Tanzania)", value: 14750 },
+            { name: "Everglades (USA)", value: 6104 },
+            { name: "Yellowstone (USA)", value: 8991 },
+            { name: "Grand Canyon (USA)", value: 4926 },
+            { name: "Banff (Canada)", value: 6641 },
+            { name: "Fiordland (New Zealand)", value: 12607 },
+            { name: "Torres del Paine (Chile)", value: 2420 },
+            { name: "Yosemite (USA)", value: 3027 }
+        ]
+    },
+
+    // NATURAL RESOURCES & CLIMATE
+    countriesByOilReserves: {
+        title: "Countries by Oil Reserves",
+        description: "Most to least (billion barrels)",
+        icon: "⛽",
+        items: [
+            { name: "Venezuela", value: 304 },
+            { name: "Saudi Arabia", value: 298 },
+            { name: "Iran", value: 208 },
+            { name: "Iraq", value: 145 },
+            { name: "Kuwait", value: 104 },
+            { name: "UAE", value: 98 },
+            { name: "Russia", value: 80 },
+            { name: "Libya", value: 48 },
+            { name: "Nigeria", value: 37 },
+            { name: "Kazakhstan", value: 30 },
+            { name: "United States", value: 69 },
+            { name: "China", value: 26 },
+            { name: "Qatar", value: 25 },
+            { name: "Brazil", value: 13 },
+            { name: "Algeria", value: 12 }
+        ]
+    },
+
+    countriesByForestCover: {
+        title: "Countries by Forest Coverage",
+        description: "Highest to lowest percentage",
+        icon: "🌳",
+        items: [
+            { name: "Suriname", value: 98.3 },
+            { name: "Micronesia", value: 91.9 },
+            { name: "Gabon", value: 90.0 },
+            { name: "Seychelles", value: 88.4 },
+            { name: "Palau", value: 87.6 },
+            { name: "Guyana", value: 87.0 },
+            { name: "Laos", value: 82.1 },
+            { name: "Solomon Islands", value: 79.9 },
+            { name: "Papua New Guinea", value: 74.1 },
+            { name: "Finland", value: 73.1 },
+            { name: "Bhutan", value: 71.0 },
+            { name: "Slovenia", value: 69.1 },
+            { name: "Zambia", value: 66.3 },
+            { name: "Sweden", value: 66.9 },
+            { name: "Japan", value: 68.5 }
+        ]
+    },
+
+    // SOME NON-GEOGRAPHY FOR VARIETY
+    tallestBuildings: {
+        title: "Tallest Buildings",
+        description: "Highest to lowest (meters)",
+        icon: "🏗️",
+        items: [
+            { name: "Burj Khalifa", value: 828 },
+            { name: "Merdeka 118", value: 679 },
+            { name: "Shanghai Tower", value: 632 },
+            { name: "Abraj Al-Bait", value: 601 },
+            { name: "Ping An Finance Centre", value: 599 },
+            { name: "Lotte World Tower", value: 555 },
+            { name: "One World Trade Center", value: 541 },
+            { name: "Guangzhou CTF Finance", value: 530 },
+            { name: "Tianjin CTF Finance", value: 530 },
+            { name: "China Zun", value: 528 },
+            { name: "Taipei 101", value: 508 },
+            { name: "Shanghai World Financial", value: 492 }
+        ]
+    },
+
+    planetsByDistance: {
+        title: "Planets by Distance from Sun",
+        description: "Closest to farthest (AU)",
+        icon: "🪐",
+        items: [
+            { name: "Mercury", value: 0.39 },
+            { name: "Venus", value: 0.72 },
+            { name: "Earth", value: 1.0 },
+            { name: "Mars", value: 1.52 },
+            { name: "Jupiter", value: 5.20 },
+            { name: "Saturn", value: 9.58 },
+            { name: "Uranus", value: 19.20 },
+            { name: "Neptune", value: 30.05 }
+        ]
+    },
+
+    languagesBySpeakers: {
+        title: "Languages by Native Speakers",
+        description: "Most to least speakers (millions)",
+        icon: "🗣️",
+        items: [
+            { name: "Mandarin Chinese", value: 918 },
+            { name: "Spanish", value: 460 },
+            { name: "English", value: 379 },
+            { name: "Hindi", value: 341 },
+            { name: "Arabic", value: 315 },
+            { name: "Bengali", value: 228 },
+            { name: "Portuguese", value: 220 },
+            { name: "Russian", value: 154 },
+            { name: "Japanese", value: 128 },
+            { name: "Punjabi", value: 92 },
+            { name: "German", value: 76 },
+            { name: "French", value: 76 }
+        ]
+    }
+};
 
         const RankRushGame = () => {
             const [currentCategory, setCurrentCategory] = useState(null);
