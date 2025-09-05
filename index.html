@@ -44,22 +44,6 @@
             margin-bottom: 24px;
         }
 
-        h2 {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            text-align: center;
-            color: #1e3a8a;
-        }
-
-        .subtitle {
-            font-size: 14px;
-            color: #666;
-            text-align: center;
-            margin-bottom: 24px;
-            font-style: italic;
-        }
-
         /* Game Info Bar */
         .game-info {
             display: flex;
@@ -91,52 +75,49 @@
         }
 
         .category-icon {
-            font-size: 24px;
-            margin-bottom: 8px;
+            font-size: 20px;
+            margin-bottom: 4px;
         }
 
         .category-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             color: #1e3a8a;
         }
 
         .category-description {
-            font-size: 14px;
+            font-size: 12px;
             color: #666;
             font-style: italic;
         }
 
-        /* Tiles */
+        /* Tiles - Single Column Design */
         .tiles-container {
-            margin-bottom: 32px;
+            margin-bottom: 20px;
         }
 
         .tiles-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 15px;
         }
 
         .tile {
-            min-height: 70px;
-            border: 2px solid #1e3a8a;
             background: #1e3a8a;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            color: white;
+            padding: 16px;
+            border-radius: 8px;
             text-align: center;
-            font-size: 13px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
             position: relative;
-            padding: 12px 8px;
-            line-height: 1.2;
-            border-radius: 8px;
+            transition: all 0.2s ease;
+            border: 2px solid #1e3a8a;
         }
 
         .tile:hover {
@@ -147,100 +128,93 @@
         }
 
         .tile.selected {
-            border-color: #d97706;
             background: #d97706;
-            color: #fff;
+            border-color: #d97706;
             box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
         }
 
         .tile.revealed {
-            border-color: #10b981;
             background: #10b981;
-            color: #fff;
+            border-color: #10b981;
         }
 
-        .tile-number {
+        .selection-badge {
             position: absolute;
-            top: -6px;
-            right: -6px;
-            width: 16px;
-            height: 16px;
-            background: #1e3a8a;
-            color: #fff;
+            top: -8px;
+            right: -8px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            color: #333;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
-            font-weight: 800;
+            font-size: 12px;
+            font-weight: bold;
         }
 
         .peek-indicator {
             position: absolute;
-            top: -6px;
-            left: -6px;
+            top: -8px;
+            left: -8px;
             font-size: 12px;
         }
 
-        /* Rankings Display */
+        /* Compact Rankings Display */
         .rankings {
             border-top: 2px solid #1e3a8a;
-            padding-top: 24px;
-            margin-bottom: 32px;
+            padding-top: 15px;
+            margin-bottom: 20px;
         }
 
         .rankings h3 {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 700;
-            margin-bottom: 16px;
+            margin-bottom: 10px;
             text-align: center;
             color: #1e3a8a;
         }
 
-        .rankings-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
+        .rankings-compact {
+            display: flex;
+            gap: 6px;
+            margin: 15px 0;
+            font-size: 10px;
         }
 
-        .ranking-slot {
-            aspect-ratio: 1;
-            border: 2px dashed #ccc;
+        .ranking-mini {
+            flex: 1;
+            height: 30px;
+            background: #f8f9fa;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            text-align: center;
-            font-size: 11px;
-            font-weight: 600;
             position: relative;
-            padding: 4px;
-            line-height: 1.2;
-            background: #f9f9f9;
-            border-radius: 6px;
         }
 
-        .ranking-slot.filled {
-            border: 2px solid #d97706;
-            background: linear-gradient(135deg, #fffbeb, #fef3c7);
-            border-style: solid;
+        .ranking-mini.filled {
+            background: #fef3c7;
+            border-color: #d97706;
             color: #92400e;
         }
 
         .ranking-number {
             position: absolute;
             top: -6px;
-            left: -6px;
-            width: 16px;
-            height: 16px;
+            left: 2px;
+            width: 14px;
+            height: 14px;
             background: #1e3a8a;
-            color: #fff;
+            color: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
-            font-weight: 800;
+            font-size: 8px;
+            font-weight: bold;
         }
 
         /* Buttons */
@@ -306,7 +280,7 @@
             text-align: center;
             font-size: 14px;
             color: #666;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             font-style: italic;
         }
 
@@ -1195,23 +1169,10 @@
                 return gameState === 'playing' && userSelections.length === 5;
             };
 
-            const getInstructionText = () => {
-                const count = userSelections.length;
-                if (gameState !== 'playing') return '';
-                
-                if (count === 0) {
-                    return 'Click items in your preferred ranking order';
-                } else if (count < 5) {
-                    return `Selected ${count} of 5 items`;
-                } else {
-                    return 'All items selected — ready to submit';
-                }
-            };
-
             return (
                 <div>
                     <h1>Rank Rush</h1>
-                    {/* <div className="subtitle">A ranking game</div> */}                    
+                    
                     <div className="game-info">
                         <div>
                             <span className="score">Score: {currentScore}</span>
@@ -1236,7 +1197,7 @@
                     {/* Ready State */}
                     {gameState === 'ready' && (
                         <div>
-                            <h2>Ready to begin?</h2>
+                            <h2 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '16px', textAlign: 'center', color: '#1e3a8a' }}>Ready to begin?</h2>
                             <p className="instructions">We'll show you 5 items to rank in order.</p>
                             {isFinaleRound && (
                                 <div style={{ 
@@ -1264,7 +1225,7 @@
                                 <div 
                                     className="slot-reel"
                                     style={{
-                                        transform: `translateY(-${selectedCategoryIndex * 120}px)`
+                                        transform: `translateY(-${selectedCategoryIndex * 80}px)`
                                     }}
                                 >
                                     {[...Array(3)].map((_, setIndex) => 
@@ -1276,14 +1237,14 @@
                                                 }`}
                                             >
                                                 <div className="category-icon">{category.icon}</div>
-                                                <div className="category-title">{category.title}</div>
-                                                <div className="category-description">{category.description}</div>
+                                                <div className="category-title" style={{ fontSize: '12px' }}>{category.title}</div>
+                                                <div className="category-description" style={{ fontSize: '10px' }}>{category.description}</div>
                                             </div>
                                         ))
                                     )}
                                 </div>
                             </div>
-                            <h2>Spinning...</h2>
+                            <h2 style={{ fontSize: '20px', fontWeight: '700', color: '#1e3a8a' }}>Spinning...</h2>
                         </div>
                     )}
 
@@ -1299,7 +1260,9 @@
                     {/* Instructions */}
                     {gameState === 'playing' && (
                         <div className="instructions">
-                            {getInstructionText()}
+                            {userSelections.length === 0 ? 'Tap items in order from first to last' : 
+                             userSelections.length < 5 ? `Selected ${userSelections.length}/5 items` :
+                             'All items selected! Ready to submit'}
                             {revealedPositions.length > 0 && (
                                 <div style={{ color: '#10b981', fontWeight: '600' }}>
                                     Peek active - 2 items revealed!
@@ -1324,7 +1287,7 @@
                                             className={`tile ${isSelected ? 'selected' : ''} ${isRevealed ? 'revealed' : ''}`}
                                         >
                                             {isSelected && (
-                                                <div className="tile-number">
+                                                <div className="selection-badge">
                                                     {selection.position}
                                                 </div>
                                             )}
@@ -1336,8 +1299,8 @@
                                             <div>{item.name}</div>
                                             
                                             {showResults && (
-                                                <div style={{ fontSize: '9px', opacity: 0.7, marginTop: '2px' }}>
-                                                    #{item.correctOrder}
+                                                <div style={{ fontSize: '11px', opacity: 0.7, marginTop: '4px' }}>
+                                                    Should be #{item.correctOrder}
                                                 </div>
                                             )}
                                         </div>
@@ -1347,7 +1310,7 @@
 
                             <div className="rankings">
                                 <h3>Your Rankings</h3>
-                                <div className="rankings-grid">
+                                <div className="rankings-compact">
                                     {[1, 2, 3, 4, 5].map((position) => {
                                         const selection = userSelections.find(sel => sel.position === position);
                                         const item = selection ? items[selection.itemIndex] : null;
@@ -1355,22 +1318,24 @@
                                         return (
                                             <div
                                                 key={position}
-                                                className={`ranking-slot ${item ? 'filled' : ''}`}
+                                                className={`ranking-mini ${item ? 'filled' : ''}`}
                                             >
                                                 <div className="ranking-number">{position}</div>
-                                                <div>{item ? item.name : '—'}</div>
+                                                <div style={{ fontSize: '9px', textAlign: 'center' }}>
+                                                    {item ? item.name.slice(0, 8) + (item.name.length > 8 ? '...' : '') : '—'}
+                                                </div>
                                             </div>
                                         );
                                     })}
                                 </div>
                                 
                                 {gameState === 'playing' && userSelections.length > 0 && (
-                                    <div style={{ textAlign: 'center', marginTop: '16px' }}>
+                                    <div style={{ textAlign: 'center', marginTop: '12px' }}>
                                         <button
                                             onClick={resetSelections}
                                             className="btn-secondary"
                                         >
-                                            Reset
+                                            Reset Selections
                                         </button>
                                     </div>
                                 )}
@@ -1454,7 +1419,7 @@
                         <div className="rules">
                             <h4>How to Play</h4>
                             <ul>
-                                <li>Click tiles in your preferred ranking order</li>
+                                <li>Tap items in your preferred ranking order</li>
                                 <li>Complete 8 rounds to finish the game</li>
                                 <li>Get 3 strikes (≤1 correct) and it's game over</li>
                                 <li>Perfect rounds earn bonus points and power-ups</li>
