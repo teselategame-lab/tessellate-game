@@ -3,417 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rank Rush</title>
+    <title>Country Knowledge Challenge</title>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: #fff;
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 20px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Typography */
-        h1 {
-            font-size: 32px;
-            font-weight: 800;
-            letter-spacing: -1px;
-            margin-bottom: 8px;
-            text-align: center;
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            border-bottom: 3px solid #1e3a8a;
-            padding-bottom: 16px;
-            margin-bottom: 24px;
-        }
-
-        /* Game Info Bar */
-        .game-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #ddd;
-            margin-bottom: 24px;
-            font-size: 14px;
-        }
-
-        .score {
-            font-weight: 700;
-            color: #d97706;
-        }
-
-        .strikes {
-            font-size: 12px;
-        }
-
-        /* Category Display */
-        .category {
-            text-align: center;
-            padding: 12px;
-            border: 2px solid #1e3a8a;
-            margin-bottom: 16px;
-            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
-            border-radius: 8px;
-        }
-
-        .category-icon {
-            font-size: 20px;
-            margin-bottom: 4px;
-        }
-
-        .category-title {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 2px;
-            color: #1e3a8a;
-        }
-
-        .category-description {
-            font-size: 12px;
-            color: #666;
-            font-style: italic;
-        }
-
-        /* Tiles - Single Column Design */
-        .tiles-container {
-            margin-bottom: 20px;
-        }
-
-        .tiles-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-
-        .tile {
-            background: #1e3a8a;
-            color: white;
-            padding: 12px 16px;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            position: relative;
-            transition: all 0.2s ease;
-            border: 2px solid #1e3a8a;
-            max-height: 50px;
-            min-height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .tile:hover {
-            background: #1e40af;
-            border-color: #1e40af;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(30, 58, 138, 0.2);
-        }
-
-        .tile.selected {
-            background: #d97706;
-            border-color: #d97706;
-            box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
-        }
-
-        .tile.revealed {
-            background: #10b981;
-            border-color: #10b981;
-        }
-
-        .selection-badge {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            width: 24px;
-            height: 24px;
-            background: white;
-            color: #333;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .peek-indicator {
-            position: absolute;
-            top: -8px;
-            left: -8px;
-            font-size: 12px;
-        }
-
-        /* Compact Rankings Display */
-        .rankings {
-            border-top: 2px solid #1e3a8a;
-            padding-top: 15px;
-            margin-bottom: 20px;
-        }
-
-        .rankings h3 {
-            font-size: 14px;
-            font-weight: 700;
-            margin-bottom: 10px;
-            text-align: center;
-            color: #1e3a8a;
-        }
-
-        .rankings-compact {
-            display: flex;
-            gap: 8px;
-            margin: 15px 0;
-            font-size: 10px;
-        }
-
-        .ranking-mini {
-            flex: 1;
-            height: 30px;
-            background: #f8f9fa;
-            border: 1px solid #e5e7eb;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .ranking-mini.filled {
-            background: #fef3c7;
-            border-color: #d97706;
-            color: #92400e;
-        }
-
-        .ranking-number {
-            position: absolute;
-            top: -6px;
-            left: 2px;
-            width: 14px;
-            height: 14px;
-            background: #1e3a8a;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 8px;
-            font-weight: bold;
-        }
-
-        /* Buttons */
-        .btn {
-            width: 100%;
-            padding: 16px 24px;
-            font-size: 16px;
-            font-weight: 700;
-            border: 2px solid #1e3a8a;
-            background: #fff;
-            color: #1e3a8a;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            margin-bottom: 12px;
-            font-family: inherit;
-            border-radius: 8px;
-        }
-
-        .btn:hover {
-            background: #1e3a8a;
-            color: #fff;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(30, 58, 138, 0.2);
-        }
-
-        .btn:disabled {
-            border-color: #ccc;
-            color: #ccc;
-            cursor: not-allowed;
-        }
-
-        .btn:disabled:hover {
-            background: #fff;
-            color: #ccc;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .btn-secondary {
-            border: 1px solid #d97706;
-            color: #d97706;
-            font-size: 14px;
-            font-weight: 600;
-            padding: 8px 16px;
-            border-radius: 6px;
-            width: auto;
-            display: inline-block;
-        }
-
-        .btn-secondary:hover {
-            background: #d97706;
-            color: #fff;
-        }
-
-        .btn-small {
-            padding: 6px 12px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        /* Instructions */
-        .instructions {
-            text-align: center;
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 20px;
-            font-style: italic;
-        }
-
-        /* Rules */
-        .rules {
-            font-size: 12px;
-            color: #666;
-            line-height: 1.4;
-            margin-top: 32px;
-            padding-top: 16px;
-            border-top: 1px solid #eee;
-        }
-
-        .rules h4 {
-            font-size: 14px;
-            color: #333;
-            margin-bottom: 8px;
-        }
-
-        .rules ul {
-            list-style: none;
-        }
-
-        .rules li {
-            margin-bottom: 4px;
-        }
-
-        .rules li::before {
-            content: "• ";
-            color: #999;
-        }
-
-        /* Results */
-        .results {
-            text-align: center;
-            padding: 20px;
-            border: 2px solid #10b981;
-            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
-            border-radius: 8px;
-            margin-bottom: 24px;
-        }
-
-        .results.strike {
-            border-color: #ef4444;
-            background: linear-gradient(135deg, #fef2f2, #fee2e2);
-        }
-
-        .results-score {
-            font-size: 24px;
-            font-weight: 800;
-            color: #10b981;
-            margin-bottom: 8px;
-        }
-
-        .results.strike .results-score {
-            color: #ef4444;
-        }
-
-        .bonus {
-            font-size: 12px;
-            color: #059669;
-            margin-bottom: 4px;
-        }
-
-        .results.strike .bonus {
-            color: #dc2626;
-        }
-
-        /* Game Over */
-        .game-over {
-            text-align: center;
-            padding: 24px;
-            border: 2px solid #8b5cf6;
-            background: linear-gradient(135deg, #faf5ff, #f3e8ff);
-            border-radius: 8px;
-            margin-bottom: 24px;
-        }
-
-        .final-score {
-            font-size: 28px;
-            font-weight: 800;
-            color: #8b5cf6;
-            margin-bottom: 8px;
-        }
-
-        .high-score {
-            font-size: 14px;
-            color: #10b981;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        /* Slot Machine Animation */
-        .slot-container {
-            overflow: hidden;
-            height: 80px;
-            position: relative;
-            border-radius: 8px;
-            border: 2px solid #1e3a8a;
-            margin-bottom: 24px;
-            background: #fff;
-        }
-
-        .slot-reel {
-            animation: slotSpin 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-        }
-
-        .category-card {
-            height: 80px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .category-card:last-child {
-            border-bottom: none;
-        }
-
-        .category-card.selected {
-            background: linear-gradient(135deg, #fbbf24, #f59e0b);
-            transform: scale(1.02);
-            box-shadow: 0 8px 25px rgba(251, 191, 36, 0.3);
-        }
-
-        @keyframes slotSpin {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-100%); }
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
         }
     </style>
 </head>
@@ -423,1205 +21,455 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // ADD YOUR FULL JSON DATA HERE - Replace this with your complete categories
-const gameCategories = {
-    // COUNTRIES & TERRITORIES
-    countriesByArea: {
-        title: "Countries by Area",
-        description: "Largest to smallest (sq km)",
-        icon: "🗺️",
-        items: [
-            { name: "Russia", value: 17098242 },
-            { name: "Canada", value: 9984670 },
-            { name: "United States", value: 9833517 },
-            { name: "China", value: 9596960 },
-            { name: "Brazil", value: 8514877 },
-            { name: "Australia", value: 7692024 },
-            { name: "India", value: 3287263 },
-            { name: "Argentina", value: 2780400 },
-            { name: "Kazakhstan", value: 2724900 },
-            { name: "Algeria", value: 2381741 },
-            { name: "Democratic Republic Congo", value: 2344858 },
-            { name: "Saudi Arabia", value: 2149690 },
-            { name: "Mexico", value: 1964375 },
-            { name: "Indonesia", value: 1904569 },
-            { name: "Sudan", value: 1861484 }
-        ]
-    },
+        const countries = [
+          { 
+            name: 'Russia', 
+            area: 17098242, 
+            population: 144104080, 
+            gdp: 2240000000000,
+            shape: 'M20,40 Q30,20 60,25 Q80,30 90,45 Q85,55 70,60 Q40,65 20,50 Z' 
+          },
+          { 
+            name: 'Canada', 
+            area: 9984670, 
+            population: 38246108, 
+            gdp: 2140000000000,
+            shape: 'M10,35 Q20,20 40,25 Q60,20 80,30 Q85,45 75,55 Q50,60 25,55 Q15,45 10,35 Z' 
+          },
+          { 
+            name: 'United States', 
+            area: 9833517, 
+            population: 331900000, 
+            gdp: 25460000000000,
+            shape: 'M15,45 Q25,35 45,40 Q65,35 80,45 Q85,55 70,60 Q45,65 25,60 Q10,55 15,45 Z' 
+          },
+          { 
+            name: 'China', 
+            area: 9596960, 
+            population: 1412000000, 
+            gdp: 17730000000000,
+            shape: 'M25,35 Q35,25 55,30 Q75,35 85,50 Q80,60 60,65 Q40,60 25,50 Q20,40 25,35 Z' 
+          },
+          { 
+            name: 'Brazil', 
+            area: 8514877, 
+            population: 215300000, 
+            gdp: 2610000000000,
+            shape: 'M30,45 Q40,35 60,40 Q75,45 80,60 Q70,75 50,80 Q35,75 25,65 Q25,55 30,45 Z' 
+          },
+          { 
+            name: 'Australia', 
+            area: 7692024, 
+            population: 25690000, 
+            gdp: 1550000000000,
+            shape: 'M20,50 Q35,45 55,50 Q75,55 85,65 Q80,75 60,75 Q40,70 25,65 Q15,60 20,50 Z' 
+          },
+          { 
+            name: 'India', 
+            area: 3287263, 
+            population: 1380000000, 
+            gdp: 3740000000000,
+            shape: 'M35,40 Q45,30 60,35 Q70,45 65,60 Q55,70 45,65 Q35,60 30,50 Q30,45 35,40 Z' 
+          },
+          { 
+            name: 'Argentina', 
+            area: 2780400, 
+            population: 45380000, 
+            gdp: 630000000000,
+            shape: 'M40,50 Q45,40 55,45 Q60,50 58,70 Q55,85 50,80 Q45,75 42,65 Q40,55 40,50 Z' 
+          },
+          { 
+            name: 'Kazakhstan', 
+            area: 2724900, 
+            population: 19400000, 
+            gdp: 220000000000,
+            shape: 'M25,35 Q40,30 65,35 Q80,40 85,50 Q75,55 55,55 Q35,50 25,40 Q20,35 25,35 Z' 
+          },
+          { 
+            name: 'Algeria', 
+            area: 2381741, 
+            population: 44700000, 
+            gdp: 190000000000,
+            shape: 'M30,40 Q45,35 65,40 Q75,50 70,60 Q60,65 45,60 Q35,55 25,50 Q25,45 30,40 Z' 
+          },
+          { 
+            name: 'Saudi Arabia', 
+            area: 2149690, 
+            population: 35000000, 
+            gdp: 830000000000,
+            shape: 'M35,45 Q50,40 70,45 Q75,55 65,65 Q50,60 40,55 Q30,50 35,45 Z' 
+          },
+          { 
+            name: 'Mexico', 
+            area: 1964375, 
+            population: 128900000, 
+            gdp: 1640000000000,
+            shape: 'M20,50 Q30,45 50,48 Q70,50 75,60 Q65,65 45,62 Q25,60 20,55 Q15,52 20,50 Z' 
+          },
+          { 
+            name: 'Indonesia', 
+            area: 1904569, 
+            population: 273500000, 
+            gdp: 1320000000000,
+            shape: 'M25,55 Q35,50 55,52 Q75,55 85,60 Q80,70 60,68 Q40,65 25,62 Q20,58 25,55 Z' 
+          },
+          { 
+            name: 'Turkey', 
+            area: 783562, 
+            population: 84340000, 
+            gdp: 820000000000,
+            shape: 'M30,45 Q45,42 65,45 Q75,50 70,55 Q55,58 40,55 Q25,52 30,45 Z' 
+          },
+          { 
+            name: 'Iran', 
+            area: 1648195, 
+            population: 85000000, 
+            gdp: 360000000000,
+            shape: 'M35,42 Q50,38 68,42 Q75,48 68,55 Q50,58 35,55 Q28,48 35,42 Z' 
+          }
+        ];
 
-    countriesByPopulation: {
-        title: "Countries by Population",
-        description: "Most to least populated",
-        icon: "🌍",
-        items: [
-            { name: "China", value: 1412000000 },
-            { name: "India", value: 1408000000 },
-            { name: "United States", value: 333000000 },
-            { name: "Indonesia", value: 275000000 },
-            { name: "Pakistan", value: 231000000 },
-            { name: "Nigeria", value: 218000000 },
-            { name: "Brazil", value: 215000000 },
-            { name: "Bangladesh", value: 169000000 },
-            { name: "Russia", value: 146000000 },
-            { name: "Mexico", value: 128000000 },
-            { name: "Ethiopia", value: 120000000 },
-            { name: "Japan", value: 125000000 },
-            { name: "Philippines", value: 110000000 },
-            { name: "Egypt", value: 104000000 },
-            { name: "Vietnam", value: 97000000 }
-        ]
-    },
+        const rounds = [
+          { 
+            id: 1, 
+            title: 'Land Area', 
+            instruction: 'Rank by largest to smallest land area',
+            metric: 'area',
+            icon: '🗺️',
+            points: 1
+          },
+          { 
+            id: 2, 
+            title: 'Population', 
+            instruction: 'Rank by largest to smallest population',
+            metric: 'population',
+            icon: '👥',
+            points: 2
+          },
+          { 
+            id: 3, 
+            title: 'GDP', 
+            instruction: 'Rank by highest to lowest GDP',
+            metric: 'gdp',
+            icon: '💰',
+            points: 3
+          }
+        ];
 
-    countriesByGDP: {
-        title: "Countries by GDP",
-        description: "Highest to lowest (trillions USD)",
-        icon: "💰",
-        items: [
-            { name: "United States", value: 26.9 },
-            { name: "China", value: 17.7 },
-            { name: "Japan", value: 4.2 },
-            { name: "Germany", value: 4.1 },
-            { name: "India", value: 3.7 },
-            { name: "United Kingdom", value: 3.1 },
-            { name: "France", value: 2.9 },
-            { name: "Italy", value: 2.1 },
-            { name: "Brazil", value: 2.1 },
-            { name: "Canada", value: 2.0 },
-            { name: "South Korea", value: 1.8 },
-            { name: "Spain", value: 1.4 },
-            { name: "Australia", value: 1.4 },
-            { name: "Mexico", value: 1.3 },
-            { name: "Indonesia", value: 1.3 }
-        ]
-    },
+        function CountrySizeGame() {
+          const [currentCountries, setCurrentCountries] = useState([]);
+          const [userRanking, setUserRanking] = useState([]);
+          const [gameState, setGameState] = useState('playing'); // 'playing', 'roundFinished', 'gameFinished'
+          const [currentRound, setCurrentRound] = useState(1);
+          const [roundScores, setRoundScores] = useState([]);
+          const [totalGamesPlayed, setTotalGamesPlayed] = useState(0);
+          const [totalScore, setTotalScore] = useState(0);
 
-    countriesByCoastline: {
-        title: "Countries by Coastline Length",
-        description: "Longest to shortest (km)",
-        icon: "🏖️",
-        items: [
-            { name: "Norway", value: 83281 },
-            { name: "Canada", value: 36563 },
-            { name: "Greenland", value: 44087 },
-            { name: "Indonesia", value: 54716 },
-            { name: "Russia", value: 37653 },
-            { name: "Philippines", value: 36289 },
-            { name: "Japan", value: 29751 },
-            { name: "Australia", value: 25760 },
-            { name: "United States", value: 19924 },
-            { name: "Antarctica", value: 17968 },
-            { name: "New Zealand", value: 15134 },
-            { name: "Greece", value: 13676 },
-            { name: "United Kingdom", value: 12429 },
-            { name: "Turkey", value: 7200 },
-            { name: "Italy", value: 7600 }
-        ]
-    },
+          const getRandomCountries = () => {
+            const shuffled = [...countries].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, 3);
+          };
 
-    landlockedCountries: {
-        title: "Landlocked Countries by Area",
-        description: "Largest to smallest (sq km)",
-        icon: "🏔️",
-        items: [
-            { name: "Kazakhstan", value: 2724900 },
-            { name: "Mongolia", value: 1564110 },
-            { name: "Chad", value: 1284000 },
-            { name: "Niger", value: 1267000 },
-            { name: "Mali", value: 1240192 },
-            { name: "Ethiopia", value: 1104300 },
-            { name: "Bolivia", value: 1098581 },
-            { name: "Zambia", value: 752618 },
-            { name: "Afghanistan", value: 652864 },
-            { name: "Central African Republic", value: 622984 },
-            { name: "South Sudan", value: 619745 },
-            { name: "Paraguay", value: 406752 },
-            { name: "Uzbekistan", value: 447400 },
-            { name: "Turkmenistan", value: 488100 },
-            { name: "Belarus", value: 207600 }
-        ]
-    },
+          const startNewGame = () => {
+            const newCountries = getRandomCountries();
+            setCurrentCountries(newCountries);
+            setUserRanking([]);
+            setGameState('playing');
+            setCurrentRound(1);
+            setRoundScores([]);
+          };
 
-    // CITIES
-    citiesByPopulation: {
-        title: "Cities by Population",
-        description: "Most to least populated (millions)",
-        icon: "🏙️",
-        items: [
-            { name: "Tokyo", value: 37.4 },
-            { name: "Delhi", value: 32.9 },
-            { name: "Shanghai", value: 28.5 },
-            { name: "Dhaka", value: 22.5 },
-            { name: "São Paulo", value: 22.4 },
-            { name: "Cairo", value: 21.8 },
-            { name: "Mexico City", value: 21.8 },
-            { name: "Beijing", value: 21.3 },
-            { name: "Mumbai", value: 20.4 },
-            { name: "Osaka", value: 18.9 },
-            { name: "Karachi", value: 16.8 },
-            { name: "Chongqing", value: 16.4 },
-            { name: "Istanbul", value: 15.8 },
-            { name: "Buenos Aires", value: 15.4 },
-            { name: "Kolkata", value: 15.1 }
-        ]
-    },
+          const startNextRound = () => {
+            setUserRanking([]);
+            setGameState('playing');
+            setCurrentRound(prev => prev + 1);
+          };
 
-    citiesByElevation: {
-        title: "Cities by Elevation",
-        description: "Highest to lowest (meters)",
-        icon: "⛰️",
-        items: [
-            { name: "La Paz, Bolivia", value: 3640 },
-            { name: "Cusco, Peru", value: 3399 },
-            { name: "Quito, Ecuador", value: 2850 },
-            { name: "Bogotá, Colombia", value: 2640 },
-            { name: "Addis Ababa, Ethiopia", value: 2355 },
-            { name: "Asmara, Eritrea", value: 2325 },
-            { name: "Sana'a, Yemen", value: 2250 },
-            { name: "Mexico City, Mexico", value: 2240 },
-            { name: "Nairobi, Kenya", value: 1795 },
-            { name: "Tehran, Iran", value: 1220 },
-            { name: "Denver, USA", value: 1609 },
-            { name: "Kabul, Afghanistan", value: 1790 },
-            { name: "Madrid, Spain", value: 667 },
-            { name: "Johannesburg, South Africa", value: 1753 },
-            { name: "Calgary, Canada", value: 1048 }
-        ]
-    },
+          useEffect(() => {
+            startNewGame();
+          }, []);
 
-    capitalsByLatitude: {
-        title: "Capital Cities by Latitude",
-        description: "Northernmost to southernmost",
-        icon: "🧭",
-        items: [
-            { name: "Reykjavik, Iceland", value: 64.1 },
-            { name: "Helsinki, Finland", value: 60.2 },
-            { name: "Oslo, Norway", value: 59.9 },
-            { name: "Stockholm, Sweden", value: 59.3 },
-            { name: "Tallinn, Estonia", value: 59.4 },
-            { name: "Riga, Latvia", value: 56.9 },
-            { name: "Moscow, Russia", value: 55.8 },
-            { name: "Copenhagen, Denmark", value: 55.7 },
-            { name: "Vilnius, Lithuania", value: 54.7 },
-            { name: "Warsaw, Poland", value: 52.2 },
-            { name: "Berlin, Germany", value: 52.5 },
-            { name: "London, UK", value: 51.5 },
-            { name: "Brussels, Belgium", value: 50.8 },
-            { name: "Prague, Czech Republic", value: 50.1 },
-            { name: "Paris, France", value: 48.9 }
-        ]
-    },
+          const handleCountryClick = (country) => {
+            if (gameState !== 'playing') return;
+            
+            if (userRanking.find(item => item.country.name === country.name)) {
+              // Remove from ranking if already selected
+              setUserRanking(prev => prev.filter(item => item.country.name !== country.name));
+            } else if (userRanking.length < 3) {
+              // Add to ranking
+              const position = userRanking.length + 1;
+              setUserRanking(prev => [...prev, { country, position }]);
+            }
+          };
 
-    // WATER BODIES
-    lakesByArea: {
-        title: "Lakes by Surface Area",
-        description: "Largest to smallest (sq km)",
-        icon: "🏞️",
-        items: [
-            { name: "Caspian Sea", value: 371000 },
-            { name: "Lake Superior", value: 82100 },
-            { name: "Lake Victoria", value: 68870 },
-            { name: "Lake Huron", value: 59600 },
-            { name: "Lake Michigan", value: 58016 },
-            { name: "Lake Tanganyika", value: 32900 },
-            { name: "Lake Baikal", value: 31722 },
-            { name: "Great Bear Lake", value: 31328 },
-            { name: "Lake Malawi", value: 29600 },
-            { name: "Great Slave Lake", value: 28568 },
-            { name: "Lake Erie", value: 25744 },
-            { name: "Lake Winnipeg", value: 24514 },
-            { name: "Lake Ontario", value: 18960 },
-            { name: "Lake Ladoga", value: 17700 },
-            { name: "Lake Balkhash", value: 16400 }
-        ]
-    },
+          const submitRanking = () => {
+            if (userRanking.length !== 3) return;
+            
+            const currentRoundData = rounds[currentRound - 1];
+            const metric = currentRoundData.metric;
+            
+            // Sort countries by current metric (highest to lowest)
+            const correctOrder = [...currentCountries].sort((a, b) => b[metric] - a[metric]);
+            
+            // Check if user ranking matches correct order
+            const userOrder = userRanking
+              .sort((a, b) => a.position - b.position)
+              .map(item => item.country.name);
+            
+            const correctOrderNames = correctOrder.map(country => country.name);
+            const isCorrect = JSON.stringify(userOrder) === JSON.stringify(correctOrderNames);
+            
+            // Get points for this round (1, 2, or 3)
+            const roundPoints = [1, 2, 3][currentRound - 1];
+            const pointsEarned = isCorrect ? roundPoints : 0;
+            
+            const newRoundScore = { round: currentRound, correct: isCorrect, points: pointsEarned };
+            const updatedRoundScores = [...roundScores, newRoundScore];
+            setRoundScores(updatedRoundScores);
+            
+            if (currentRound === 3) {
+              // Game finished - calculate total points for this game
+              const gameScore = updatedRoundScores.reduce((sum, score) => sum + score.points, 0);
+              setTotalScore(prev => prev + gameScore);
+              setTotalGamesPlayed(prev => prev + 1);
+              setGameState('gameFinished');
+            } else {
+              // Round finished
+              setGameState('roundFinished');
+            }
+          };
 
-    lakesByDepth: {
-        title: "Lakes by Maximum Depth",
-        description: "Deepest to shallowest (meters)",
-        icon: "🏊‍♂️",
-        items: [
-            { name: "Lake Baikal", value: 1642 },
-            { name: "Lake Tanganyika", value: 1470 },
-            { name: "Caspian Sea", value: 1025 },
-            { name: "Lake Vostok", value: 800 },
-            { name: "O'Higgins/San Martín Lake", value: 836 },
-            { name: "Lake Malawi", value: 706 },
-            { name: "Issyk Kul", value: 668 },
-            { name: "Great Slave Lake", value: 614 },
-            { name: "Crater Lake", value: 594 },
-            { name: "Lake Matano", value: 590 },
-            { name: "General Carrera Lake", value: 586 },
-            { name: "Lake Chelan", value: 453 },
-            { name: "Lake Superior", value: 406 },
-            { name: "Lake Toba", value: 505 },
-            { name: "Lake Tahoe", value: 501 }
-        ]
-    },
+          const getRankForCountry = (country) => {
+            const ranking = userRanking.find(item => item.country.name === country.name);
+            return ranking ? ranking.position : null;
+          };
 
-    riversByLength: {
-        title: "Rivers by Length",
-        description: "Longest to shortest (km)",
-        icon: "🏞️",
-        items: [
-            { name: "Nile", value: 6650 },
-            { name: "Amazon", value: 6400 },
-            { name: "Yangtze", value: 6300 },
-            { name: "Mississippi-Missouri", value: 6275 },
-            { name: "Yenisei", value: 5539 },
-            { name: "Yellow River", value: 5464 },
-            { name: "Ob", value: 5410 },
-            { name: "Paraná", value: 4880 },
-            { name: "Congo", value: 4700 },
-            { name: "Amur", value: 4444 },
-            { name: "Lena", value: 4400 },
-            { name: "Mekong", value: 4350 },
-            { name: "Mackenzie", value: 4241 }
-        ]
-    },
+          const getCorrectOrder = () => {
+            const currentRoundData = rounds[currentRound - 1];
+            const metric = currentRoundData.metric;
+            return [...currentCountries].sort((a, b) => b[metric] - a[metric]);
+          };
 
-    oceansByDepth: {
-        title: "Oceans by Maximum Depth",
-        description: "Deepest to shallowest (meters)",
-        icon: "🌊",
-        items: [
-            { name: "Pacific Ocean", value: 11034 },
-            { name: "Atlantic Ocean", value: 8486 },
-            { name: "Indian Ocean", value: 7906 },
-            { name: "Southern Ocean", value: 7236 },
-            { name: "Arctic Ocean", value: 5449 }
-        ]
-    },
+          const formatValue = (value, metric) => {
+            switch (metric) {
+              case 'area':
+                return (value / 1000000).toFixed(1) + 'M km²';
+              case 'population':
+                return (value / 1000000).toFixed(1) + 'M people';
+              case 'gdp':
+                return '$' + (value / 1000000000000).toFixed(1) + 'T';
+              default:
+                return value;
+            }
+          };
 
-    oceansByArea: {
-        title: "Oceans by Surface Area",
-        description: "Largest to smallest (million sq km)",
-        icon: "🌊",
-        items: [
-            { name: "Pacific Ocean", value: 165.2 },
-            { name: "Atlantic Ocean", value: 106.4 },
-            { name: "Indian Ocean", value: 70.6 },
-            { name: "Southern Ocean", value: 20.3 },
-            { name: "Arctic Ocean", value: 14.1 }
-        ]
-    },
+          const getCurrentRoundData = () => rounds[currentRound - 1];
 
-    waterfallsByHeight: {
-        title: "Waterfalls by Height",
-        description: "Tallest to shortest (meters)",
-        icon: "💧",
-        items: [
-            { name: "Angel Falls, Venezuela", value: 979 },
-            { name: "Tugela Falls, South Africa", value: 948 },
-            { name: "Tres Hermanas Falls, Peru", value: 914 },
-            { name: "Olo'upena Falls, Hawaii", value: 900 },
-            { name: "Yumbilla Falls, Peru", value: 896 },
-            { name: "Vinnufossen, Norway", value: 860 },
-            { name: "Skorga, Norway", value: 864 },
-            { name: "Pu'uka'oku Falls, Hawaii", value: 840 },
-            { name: "James Bruce Falls, Canada", value: 840 },
-            { name: "Browne Falls, New Zealand", value: 836 },
-            { name: "Strupenfossen, Norway", value: 820 },
-            { name: "Ramnefjellsfossen, Norway", value: 818 },
-            { name: "Utigård, Norway", value: 800 }
-        ]
-    },
+          const getTotalGamePoints = () => {
+            return roundScores.reduce((sum, score) => sum + score.points, 0);
+          };
 
-    // ISLANDS & PENINSULAS
-    islandsByArea: {
-        title: "Islands by Area",
-        description: "Largest to smallest (sq km)",
-        icon: "🏝️",
-        items: [
-            { name: "Greenland", value: 2166086 },
-            { name: "New Guinea", value: 785753 },
-            { name: "Borneo", value: 748168 },
-            { name: "Madagascar", value: 587041 },
-            { name: "Baffin Island", value: 507451 },
-            { name: "Sumatra", value: 473481 },
-            { name: "Honshu", value: 225800 },
-            { name: "Victoria Island", value: 217291 },
-            { name: "Great Britain", value: 209331 },
-            { name: "Ellesmere Island", value: 196236 },
-            { name: "Sulawesi", value: 180681 },
-            { name: "South Island", value: 145836 },
-            { name: "Java", value: 138794 },
-            { name: "North Island", value: 111583 },
-            { name: "Cuba", value: 109884 }
-        ]
-    },
-
-    peninsulasByArea: {
-        title: "Peninsulas by Area",
-        description: "Largest to smallest (sq km)",
-        icon: "🗻",
-        items: [
-            { name: "Arabian Peninsula", value: 3237500 },
-            { name: "Deccan Peninsula", value: 2000000 },
-            { name: "Indochina Peninsula", value: 1900000 },
-            { name: "Horn of Africa", value: 1882857 },
-            { name: "Alaska Peninsula", value: 1500000 },
-            { name: "Labrador Peninsula", value: 1400000 },
-            { name: "Scandinavian Peninsula", value: 750000 },
-            { name: "Iberian Peninsula", value: 582860 },
-            { name: "Korean Peninsula", value: 220847 },
-            { name: "Florida Peninsula", value: 170312 },
-            { name: "Italian Peninsula", value: 131337 },
-            { name: "Kamchatka Peninsula", value: 104000 },
-            { name: "Baja California", value: 143390 },
-            { name: "Yucatan Peninsula", value: 181000 },
-            { name: "Crimean Peninsula", value: 26844 }
-        ]
-    },
-
-    // MOUNTAINS & LAND FEATURES
-    mountainsByHeight: {
-        title: "Mountains by Height",
-        description: "Tallest to shortest (meters)",
-        icon: "🏔️",
-        items: [
-            { name: "Mount Everest", value: 8849 },
-            { name: "K2", value: 8611 },
-            { name: "Kangchenjunga", value: 8586 },
-            { name: "Lhotse", value: 8516 },
-            { name: "Makalu", value: 8485 },
-            { name: "Cho Oyu", value: 8188 },
-            { name: "Dhaulagiri", value: 8167 },
-            { name: "Manaslu", value: 8163 },
-            { name: "Nanga Parbat", value: 8126 },
-            { name: "Annapurna", value: 8091 },
-            { name: "Gasherbrum I", value: 8080 },
-            { name: "Broad Peak", value: 8051 }
-        ]
-    },
-
-    mountainRangesByLength: {
-        title: "Mountain Ranges by Length",
-        description: "Longest to shortest (km)",
-        icon: "⛰️",
-        items: [
-            { name: "Andes", value: 8900 },
-            { name: "Rocky Mountains", value: 4800 },
-            { name: "Himalayas", value: 3800 },
-            { name: "Great Dividing Range", value: 3500 },
-            { name: "Transantarctic Mountains", value: 3500 },
-            { name: "Brazilian Highlands", value: 3000 },
-            { name: "Kunlun Mountains", value: 3000 },
-            { name: "Alaska Range", value: 1000 },
-            { name: "Appalachian Mountains", value: 3200 },
-            { name: "Ural Mountains", value: 2500 },
-            { name: "Atlas Mountains", value: 2500 },
-            { name: "Carpathian Mountains", value: 1500 },
-            { name: "Scandinavian Mountains", value: 1700 },
-            { name: "Alps", value: 1200 },
-            { name: "Pyrenees", value: 491 }
-        ]
-    },
-
-    volcanosByHeight: {
-        title: "Volcanoes by Height",
-        description: "Tallest to shortest (meters)",
-        icon: "🌋",
-        items: [
-            { name: "Ojos del Salado, Chile", value: 6893 },
-            { name: "Llullaillaco, Chile/Argentina", value: 6739 },
-            { name: "Chimborazo, Ecuador", value: 6267 },
-            { name: "Pico de Orizaba, Mexico", value: 5636 },
-            { name: "Mount Elbrus, Russia", value: 5642 },
-            { name: "Mount Damavand, Iran", value: 5609 },
-            { name: "Mount Ararat, Turkey", value: 5137 },
-            { name: "Mount Kilimanjaro, Tanzania", value: 5895 },
-            { name: "Cotopaxi, Ecuador", value: 5897 },
-            { name: "Mount Rainier, USA", value: 4392 },
-            { name: "Mount Fuji, Japan", value: 3776 },
-            { name: "Mount Vesuvius, Italy", value: 1281 },
-            { name: "Mount Etna, Italy", value: 3357 },
-            { name: "Krakatoa, Indonesia", value: 813 },
-            { name: "Mauna Loa, Hawaii", value: 4169 }
-        ]
-    },
-
-    desertsByArea: {
-        title: "Deserts by Area",
-        description: "Largest to smallest (sq km)",
-        icon: "🏜️",
-        items: [
-            { name: "Antarctica", value: 14000000 },
-            { name: "Sahara", value: 9000000 },
-            { name: "Arabian Desert", value: 2330000 },
-            { name: "Gobi Desert", value: 1300000 },
-            { name: "Kalahari Desert", value: 900000 },
-            { name: "Great Victoria Desert", value: 647000 },
-            { name: "Thar Desert", value: 200000 },
-            { name: "Sonoran Desert", value: 310000 },
-            { name: "Chihuahuan Desert", value: 450000 },
-            { name: "Great Basin Desert", value: 492000 },
-            { name: "Mojave Desert", value: 124000 }
-        ]
-    },
-
-    canyonsByDepth: {
-        title: "Canyons by Depth",
-        description: "Deepest to shallowest (meters)",
-        icon: "🏔️",
-        items: [
-            { name: "Yarlung Tsangpo, China", value: 6009 },
-            { name: "Colca Canyon, Peru", value: 4160 },
-            { name: "Cotahuasi Canyon, Peru", value: 3535 },
-            { name: "Kali Gandaki Gorge, Nepal", value: 4375 },
-            { name: "Tiger Leaping Gorge, China", value: 3790 },
-            { name: "Antelope Canyon, USA", value: 3200 },
-            { name: "Grand Canyon, USA", value: 1857 },
-            { name: "Copper Canyon, Mexico", value: 1879 },
-            { name: "Fish River Canyon, Namibia", value: 550 },
-            { name: "Black Canyon, USA", value: 823 },
-            { name: "Glen Canyon, USA", value: 370 },
-            { name: "Palo Duro Canyon, USA", value: 244 },
-            { name: "Canyon de Chelly, USA", value: 300 }
-        ]
-    },
-
-    // CONTINENTS & REGIONS
-    continentsByArea: {
-        title: "Continents by Area",
-        description: "Largest to smallest (sq km)",
-        icon: "🌏",
-        items: [
-            { name: "Asia", value: 44579000 },
-            { name: "Africa", value: 30370000 },
-            { name: "North America", value: 24709000 },
-            { name: "South America", value: 17840000 },
-            { name: "Antarctica", value: 14000000 },
-            { name: "Europe", value: 10180000 },
-            { name: "Australia/Oceania", value: 8600000 }
-        ]
-    },
-
-    continentsByPopulation: {
-        title: "Continents by Population",
-        description: "Most to least populated (billions)",
-        icon: "👥",
-        items: [
-            { name: "Asia", value: 4.6 },
-            { name: "Africa", value: 1.4 },
-            { name: "Europe", value: 0.75 },
-            { name: "North America", value: 0.58 },
-            { name: "South America", value: 0.43 },
-            { name: "Oceania", value: 0.046 },
-            { name: "Antarctica", value: 0.0015 }
-        ]
-    },
-
-    // US GEOGRAPHY
-    usStatesByArea: {
-        title: "US States by Area",
-        description: "Largest to smallest (sq mi)",
-        icon: "🗺️",
-        items: [
-            { name: "Alaska", value: 665384 },
-            { name: "Texas", value: 268596 },
-            { name: "California", value: 163696 },
-            { name: "Montana", value: 147040 },
-            { name: "New Mexico", value: 121590 },
-            { name: "Arizona", value: 113990 },
-            { name: "Nevada", value: 110572 },
-            { name: "Colorado", value: 104094 },
-            { name: "Oregon", value: 98379 },
-            { name: "Wyoming", value: 97813 },
-            { name: "Michigan", value: 96714 },
-            { name: "Minnesota", value: 86936 },
-            { name: "Utah", value: 84897 },
-            { name: "Idaho", value: 83569 }
-        ]
-    },
-
-    usStatesByPopulation: {
-        title: "US States by Population",
-        description: "Most to least populated (millions)",
-        icon: "👥",
-        items: [
-            { name: "California", value: 39.5 },
-            { name: "Texas", value: 30.0 },
-            { name: "Florida", value: 22.6 },
-            { name: "New York", value: 19.3 },
-            { name: "Pennsylvania", value: 13.0 },
-            { name: "Illinois", value: 12.6 },
-            { name: "Ohio", value: 11.8 },
-            { name: "Georgia", value: 10.9 },
-            { name: "North Carolina", value: 10.7 },
-            { name: "Michigan", value: 10.0 },
-            { name: "New Jersey", value: 9.3 },
-            { name: "Virginia", value: 8.6 },
-            { name: "Washington", value: 7.7 },
-            { name: "Arizona", value: 7.4 },
-            { name: "Massachusetts", value: 7.0 }
-        ]
-    },
-
-    usStatesByElevation: {
-        title: "US States by Highest Point",
-        description: "Highest to lowest elevation (feet)",
-        icon: "🏔️",
-        items: [
-            { name: "Alaska (Denali)", value: 20310 },
-            { name: "California (Mt. Whitney)", value: 14505 },
-            { name: "Colorado (Mt. Elbert)", value: 14440 },
-            { name: "Washington (Mt. Rainier)", value: 14411 },
-            { name: "Wyoming (Gannett Peak)", value: 13804 },
-            { name: "Hawaii (Mauna Kea)", value: 13796 },
-            { name: "Utah (Kings Peak)", value: 13528 },
-            { name: "New Mexico (Wheeler Peak)", value: 13159 },
-            { name: "Nevada (Boundary Peak)", value: 13140 },
-            { name: "Montana (Granite Peak)", value: 12799 },
-            { name: "Idaho (Borah Peak)", value: 12662 },
-            { name: "Arizona (Humphreys Peak)", value: 12633 },
-            { name: "Oregon (Mt. Hood)", value: 11249 },
-            { name: "Texas (Guadalupe Peak)", value: 8751 },
-            { name: "South Dakota (Harney Peak)", value: 7244 }
-        ]
-    },
-
-    // WORLD HERITAGE & FAMOUS SITES
-    unescoBySites: {
-        title: "Countries by UNESCO Sites",
-        description: "Most to least heritage sites",
-        icon: "🏛️",
-        items: [
-            { name: "Italy", value: 58 },
-            { name: "China", value: 56 },
-            { name: "Germany", value: 51 },
-            { name: "France", value: 49 },
-            { name: "Spain", value: 49 },
-            { name: "India", value: 40 },
-            { name: "Mexico", value: 35 },
-            { name: "United Kingdom", value: 33 },
-            { name: "Russia", value: 30 },
-            { name: "Iran", value: 26 },
-            { name: "Japan", value: 25 },
-            { name: "Brazil", value: 23 },
-            { name: "Turkey", value: 19 },
-            { name: "Greece", value: 18 },
-            { name: "Poland", value: 17 }
-        ]
-    },
-
-    nationalParksByArea: {
-        title: "National Parks by Area",
-        description: "Largest to smallest (sq km)",
-        icon: "🌲",
-        items: [
-            { name: "Northeast Greenland", value: 972000 },
-            { name: "Quttinirpaaq (Canada)", value: 37775 },
-            { name: "Great Bear Lake (Canada)", value: 23500 },
-            { name: "Namib-Naukluft (Namibia)", value: 49768 },
-            { name: "Kruger (South Africa)", value: 19485 },
-            { name: "Serengeti (Tanzania)", value: 14750 },
-            { name: "Everglades (USA)", value: 6104 },
-            { name: "Yellowstone (USA)", value: 8991 },
-            { name: "Grand Canyon (USA)", value: 4926 },
-            { name: "Banff (Canada)", value: 6641 },
-            { name: "Fiordland (New Zealand)", value: 12607 },
-            { name: "Torres del Paine (Chile)", value: 2420 },
-            { name: "Yosemite (USA)", value: 3027 }
-        ]
-    },
-
-    // NATURAL RESOURCES & CLIMATE
-    countriesByOilReserves: {
-        title: "Countries by Oil Reserves",
-        description: "Most to least (billion barrels)",
-        icon: "⛽",
-        items: [
-            { name: "Venezuela", value: 304 },
-            { name: "Saudi Arabia", value: 298 },
-            { name: "Iran", value: 208 },
-            { name: "Iraq", value: 145 },
-            { name: "Kuwait", value: 104 },
-            { name: "UAE", value: 98 },
-            { name: "Russia", value: 80 },
-            { name: "Libya", value: 48 },
-            { name: "Nigeria", value: 37 },
-            { name: "Kazakhstan", value: 30 },
-            { name: "United States", value: 69 },
-            { name: "China", value: 26 },
-            { name: "Qatar", value: 25 },
-            { name: "Brazil", value: 13 },
-            { name: "Algeria", value: 12 }
-        ]
-    },
-
-    countriesByForestCover: {
-        title: "Countries by Forest Coverage",
-        description: "Highest to lowest percentage",
-        icon: "🌳",
-        items: [
-            { name: "Suriname", value: 98.3 },
-            { name: "Micronesia", value: 91.9 },
-            { name: "Gabon", value: 90.0 },
-            { name: "Seychelles", value: 88.4 },
-            { name: "Palau", value: 87.6 },
-            { name: "Guyana", value: 87.0 },
-            { name: "Laos", value: 82.1 },
-            { name: "Solomon Islands", value: 79.9 },
-            { name: "Papua New Guinea", value: 74.1 },
-            { name: "Finland", value: 73.1 },
-            { name: "Bhutan", value: 71.0 },
-            { name: "Slovenia", value: 69.1 },
-            { name: "Zambia", value: 66.3 },
-            { name: "Sweden", value: 66.9 },
-            { name: "Japan", value: 68.5 }
-        ]
-    },
-
-    // SOME NON-GEOGRAPHY FOR VARIETY
-    tallestBuildings: {
-        title: "Tallest Buildings",
-        description: "Highest to lowest (meters)",
-        icon: "🏗️",
-        items: [
-            { name: "Burj Khalifa", value: 828 },
-            { name: "Merdeka 118", value: 679 },
-            { name: "Shanghai Tower", value: 632 },
-            { name: "Abraj Al-Bait", value: 601 },
-            { name: "Ping An Finance Centre", value: 599 },
-            { name: "Lotte World Tower", value: 555 },
-            { name: "One World Trade Center", value: 541 },
-            { name: "Guangzhou CTF Finance", value: 530 },
-            { name: "Tianjin CTF Finance", value: 530 },
-            { name: "China Zun", value: 528 },
-            { name: "Taipei 101", value: 508 },
-            { name: "Shanghai World Financial", value: 492 }
-        ]
-    },
-
-    planetsByDistance: {
-        title: "Planets by Distance from Sun",
-        description: "Closest to farthest (AU)",
-        icon: "🪐",
-        items: [
-            { name: "Mercury", value: 0.39 },
-            { name: "Venus", value: 0.72 },
-            { name: "Earth", value: 1.0 },
-            { name: "Mars", value: 1.52 },
-            { name: "Jupiter", value: 5.20 },
-            { name: "Saturn", value: 9.58 },
-            { name: "Uranus", value: 19.20 },
-            { name: "Neptune", value: 30.05 }
-        ]
-    },
-
-    languagesBySpeakers: {
-        title: "Languages by Native Speakers",
-        description: "Most to least speakers (millions)",
-        icon: "🗣️",
-        items: [
-            { name: "Mandarin Chinese", value: 918 },
-            { name: "Spanish", value: 460 },
-            { name: "English", value: 379 },
-            { name: "Hindi", value: 341 },
-            { name: "Arabic", value: 315 },
-            { name: "Bengali", value: 228 },
-            { name: "Portuguese", value: 220 },
-            { name: "Russian", value: 154 },
-            { name: "Japanese", value: 128 },
-            { name: "Punjabi", value: 92 },
-            { name: "German", value: 76 },
-            { name: "French", value: 76 }
-        ]
-    }
-};
-
-        const RankRushGame = () => {
-            const [currentCategory, setCurrentCategory] = useState(null);
-            const [items, setItems] = useState([]);
-            const [gameState, setGameState] = useState('ready');
-            const [currentScore, setCurrentScore] = useState(0);
-            const [currentRound, setCurrentRound] = useState(1);
-            const [strikes, setStrikes] = useState(0);
-            const [peekPowerUps, setPeekPowerUps] = useState(0);
-            const [revealedPositions, setRevealedPositions] = useState([]);
-            const [roundScore, setRoundScore] = useState(0);
-            const [showResults, setShowResults] = useState(false);
-            const [bonuses, setBonuses] = useState([]);
-            const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(0);
-            const [highScore, setHighScore] = useState(0);
-            const [isFinaleRound, setIsFinaleRound] = useState(false);
-            const [userSelections, setUserSelections] = useState([]);
-
-            useEffect(() => {
-                const savedHighScore = parseInt(window.sessionStorage?.getItem?.('rankRushHighScore') || '0');
-                setHighScore(savedHighScore);
-            }, []);
-
-            const saveHighScore = (score) => {
-                if (score > highScore) {
-                    setHighScore(score);
-                    try {
-                        window.sessionStorage?.setItem?.('rankRushHighScore', score.toString());
-                    } catch (error) {
-                        console.log('Could not save to sessionStorage');
-                    }
-                }
-            };
-
-            const spinWheel = () => {
-                if (currentRound === 8) {
-                    setIsFinaleRound(true);
-                }
-                setGameState('spinning');
-                startSpinAnimation();
-            };
-
-            const startSpinAnimation = () => {
-                const categoryKeys = Object.keys(gameCategories);
-                const finalCategoryIndex = Math.floor(Math.random() * categoryKeys.length);
-                const finalCategory = categoryKeys[finalCategoryIndex];
-                
-                setSelectedCategoryIndex(finalCategoryIndex);
-                
-                setTimeout(() => {
-                    setCurrentCategory(finalCategory);
-                    initializeRound(finalCategory);
-                }, 3000);
-            };
-
-            const initializeRound = (categoryKey) => {
-                const category = gameCategories[categoryKey];
-                
-                const shuffledItems = [...category.items].sort(() => Math.random() - 0.5);
-                const selectedItems = shuffledItems.slice(0, 3); // 3 items only
-                
-                const isDescending = [
-                    'countriesByPopulation', 'moviesByBoxOffice', 'stocksByMarketCap',
-                    'fastFoodChains', 'oceansByDepth', 'spicesByHeat', 'usStatesByArea'
-                ].includes(categoryKey);
-                
-                const sortedItems = [...selectedItems].sort((a, b) => {
-                    return isDescending ? b.value - a.value : a.value - b.value;
-                });
-                
-                const itemsWithOrder = sortedItems.map((item, index) => ({
-                    ...item,
-                    correctOrder: index + 1
-                }));
-                
-                const shuffledForDisplay = [...itemsWithOrder].sort(() => Math.random() - 0.5);
-                
-                setItems(shuffledForDisplay);
-                setGameState('playing');
-                setRoundScore(0);
-                setShowResults(false);
-                setBonuses([]);
-                setRevealedPositions([]);
-                setUserSelections([]);
-            };
-
-            const handleTileClick = (itemIndex) => {
-                if (gameState !== 'playing') return;
-                
-                const existingSelectionIndex = userSelections.findIndex(sel => sel.itemIndex === itemIndex);
-                
-                if (existingSelectionIndex !== -1) {
-                    return;
-                }
-                
-                if (userSelections.length >= 3) { // 3 items max
-                    return;
-                }
-                
-                const newSelection = {
-                    itemIndex,
-                    position: userSelections.length + 1
-                };
-                
-                setUserSelections([...userSelections, newSelection]);
-            };
-
-            const resetSelections = () => {
-                setUserSelections([]);
-            };
-
-            const calculateScore = () => {
-                let score = 0;
-                let earnedBonuses = [];
-                let correctPositions = 0;
-                
-                const orderedItems = [];
-                for (let pos = 1; pos <= 3; pos++) { // 3 positions only
-                    const selection = userSelections.find(sel => sel.position === pos);
-                    if (selection) {
-                        orderedItems.push(items[selection.itemIndex]);
-                    }
-                }
-                
-                orderedItems.forEach((item, index) => {
-                    const currentPos = index + 1;
-                    const correctPos = item.correctOrder;
-                    
-                    if (currentPos === correctPos) {
-                        correctPositions++;
-                        
-                        if (correctPos === 1 || correctPos === 3) {
-                            score += 10;
-                            earnedBonuses.push(correctPos === 1 ? 'Top Position! +10' : 'Bottom Position! +10');
-                        } else {
-                            score += 8;
-                            earnedBonuses.push('Middle Position! +8');
-                        }
-                    }
-                });
-                
-                if (correctPositions === 3) { // Perfect = all 3 correct
-                    score += 15;
-                    earnedBonuses.push('Perfect Round! +15');
-                    
-                    if (peekPowerUps === 0) {
-                        setPeekPowerUps(1);
-                        earnedBonuses.push('Peek Power-Up Earned!');
-                    }
-                }
-                
-                if (isFinaleRound && correctPositions === 3) { // 3 correct for finale
-                    const totalGameScore = currentScore + score;
-                    score = totalGameScore;
-                    earnedBonuses.push('FINALE BONUS: SCORE DOUBLED!');
-                }
-                
-                return { score, bonuses: earnedBonuses, correctCount: correctPositions };
-            };
-
-            const finishRound = () => {
-                const result = calculateScore();
-                setRoundScore(result.score);
-                setBonuses(result.bonuses);
-                
-                const isStrike = result.correctCount <= 1;
-                if (isStrike) {
-                    setStrikes(strikes + 1);
-                }
-                
-                setCurrentScore(currentScore + result.score);
-                
-                if (strikes + (isStrike ? 1 : 0) >= 3) {
-                    saveHighScore(currentScore + result.score);
-                    setGameState('gameOver');
-                } else if (currentRound >= 8) {
-                    saveHighScore(currentScore + result.score);
-                    setGameState('gameOver');
-                } else {
-                    setGameState('finished');
-                }
-                
-                setShowResults(true);
-            };
-
-            const nextRound = () => {
-                setCurrentRound(currentRound + 1);
-                setRevealedPositions([]);
-                setGameState('ready');
-                setCurrentCategory(null);
-                setItems([]);
-                setShowResults(false);
-                setUserSelections([]);
-            };
-
-            const usePeekPowerUp = () => {
-                if (peekPowerUps > 0 && revealedPositions.length === 0) {
-                    const correctItems = [];
-                    items.forEach((item, itemIndex) => {
-                        correctItems.push({ itemIndex, correctOrder: item.correctOrder });
-                    });
-                    
-                    const shuffled = correctItems.sort(() => Math.random() - 0.5);
-                    const toReveal = shuffled.slice(0, 1).map(item => item.itemIndex); // Reveal 1 item
-                    
-                    setRevealedPositions(toReveal);
-                    setPeekPowerUps(0);
-                }
-            };
-
-            const resetGame = () => {
-                setCurrentScore(0);
-                setCurrentRound(1);
-                setStrikes(0);
-                setPeekPowerUps(0);
-                setRevealedPositions([]);
-                setIsFinaleRound(false);
-                setGameState('ready');
-                setCurrentCategory(null);
-                setItems([]);
-                setShowResults(false);
-                setRoundScore(0);
-                setBonuses([]);
-                setUserSelections([]);
-            };
-
-            const canSubmit = () => {
-                return gameState === 'playing' && userSelections.length === 3; // 3 items required
-            };
-
-            return (
-                <div>
-                    <h1>Rank Rush</h1>
-                    
-                    <div className="game-info">
-                        <div>
-                            <span className="score">Score: {currentScore}</span>
-                        </div>
-                        <div>
-                            Round {currentRound} of 8
-                        </div>
-                        <div className="strikes">
-                            Strikes: {strikes}/3
-                            {peekPowerUps > 0 && gameState === 'playing' && (
-                                <button 
-                                    onClick={usePeekPowerUp}
-                                    className="btn-secondary btn-small"
-                                    style={{ marginLeft: '8px' }}
-                                >
-                                    Peek
-                                </button>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Ready State */}
-                    {gameState === 'ready' && (
-                        <div>
-                            <h2 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '16px', textAlign: 'center', color: '#1e3a8a' }}>Ready to begin?</h2>
-                            <p className="instructions">We'll show you 3 items to rank in order.</p>
-                            {isFinaleRound && (
-                                <div style={{ 
-                                    textAlign: 'center', 
-                                    padding: '12px', 
-                                    background: '#fbbf24', 
-                                    borderRadius: '8px', 
-                                    marginBottom: '16px',
-                                    fontWeight: '700',
-                                    color: '#92400e'
-                                }}>
-                                    FINALE ROUND - Get all 3 correct to DOUBLE your score!
-                                </div>
-                            )}
-                            <button className="btn" onClick={spinWheel}>
-                                Start Round
-                            </button>
-                        </div>
-                    )}
-
-                    {/* Spinning */}
-                    {gameState === 'spinning' && (
-                        <div style={{ textAlign: 'center' }}>
-                            <div className="slot-container">
-                                <div 
-                                    className="slot-reel"
-                                    style={{
-                                        transform: `translateY(-${selectedCategoryIndex * 80}px)`
-                                    }}
-                                >
-                                    {[...Array(3)].map((_, setIndex) => 
-                                        Object.entries(gameCategories).map(([key, category], index) => (
-                                            <div 
-                                                key={`${setIndex}-${key}`}
-                                                className={`category-card ${
-                                                    setIndex === 2 && index === selectedCategoryIndex ? 'selected' : ''
-                                                }`}
-                                            >
-                                                <div className="category-icon">{category.icon}</div>
-                                                <div className="category-title" style={{ fontSize: '12px' }}>{category.title}</div>
-                                                <div className="category-description" style={{ fontSize: '10px' }}>{category.description}</div>
-                                            </div>
-                                        ))
-                                    )}
-                                </div>
-                            </div>
-                            <h2 style={{ fontSize: '20px', fontWeight: '700', color: '#1e3a8a' }}>Spinning...</h2>
-                        </div>
-                    )}
-
-                    {/* Category Display */}
-                    {currentCategory && gameState === 'playing' && (
-                        <div className="category">
-                            <div className="category-icon">{gameCategories[currentCategory].icon}</div>
-                            <div className="category-title">{gameCategories[currentCategory].title}</div>
-                            <div className="category-description">{gameCategories[currentCategory].description}</div>
-                        </div>
-                    )}
-
-                    {/* Instructions */}
-                    {gameState === 'playing' && (
-                        <div className="instructions">
-                            {userSelections.length === 0 ? 'Tap items in order from first to last' : 
-                             userSelections.length < 3 ? `Selected ${userSelections.length}/3 items` :
-                             'All items selected! Ready to submit'}
-                            {revealedPositions.length > 0 && (
-                                <div style={{ color: '#10b981', fontWeight: '600' }}>
-                                    Peek active - 1 item revealed!
-                                </div>
-                            )}
-                        </div>
-                    )}
-
-                    {/* Game Area */}
-                    {items.length > 0 && (
-                        <div className="tiles-container">
-                            <div className="tiles-grid">
-                                {items.map((item, index) => {
-                                    const selection = userSelections.find(sel => sel.itemIndex === index);
-                                    const isSelected = !!selection;
-                                    const isRevealed = revealedPositions.includes(index);
-                                    
-                                    return (
-                                        <div
-                                            key={item.name}
-                                            onClick={() => handleTileClick(index)}
-                                            className={`tile ${isSelected ? 'selected' : ''} ${isRevealed ? 'revealed' : ''}`}
-                                        >
-                                            {isSelected && (
-                                                <div className="selection-badge">
-                                                    {selection.position}
-                                                </div>
-                                            )}
-                                            
-                                            {isRevealed && !showResults && (
-                                                <div className="peek-indicator">🔍</div>
-                                            )}
-                                            
-                                            <div>{item.name}</div>
-                                            
-                                            {showResults && (
-                                                <div style={{ fontSize: '11px', opacity: 0.7, marginTop: '4px' }}>
-                                                    Should be #{item.correctOrder}
-                                                </div>
-                                            )}
-                                        </div>
-                                    );
-                                })}
-                            </div>
-
-                            <div className="rankings">
-                                <h3>Your Rankings</h3>
-                                <div className="rankings-compact">
-                                    {[1, 2, 3].map((position) => {
-                                        const selection = userSelections.find(sel => sel.position === position);
-                                        const item = selection ? items[selection.itemIndex] : null;
-                                        
-                                        return (
-                                            <div
-                                                key={position}
-                                                className={`ranking-mini ${item ? 'filled' : ''}`}
-                                            >
-                                                <div className="ranking-number">{position}</div>
-                                                <div style={{ fontSize: '9px', textAlign: 'center' }}>
-                                                    {item ? item.name.slice(0, 8) + (item.name.length > 8 ? '...' : '') : '—'}
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                                
-                                {gameState === 'playing' && userSelections.length > 0 && (
-                                    <div style={{ textAlign: 'center', marginTop: '12px' }}>
-                                        <button
-                                            onClick={resetSelections}
-                                            className="btn-secondary"
-                                        >
-                                            Reset Selections
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Results */}
-                    {gameState === 'finished' && (
-                        <div className={`results ${calculateScore().correctCount <= 1 ? 'strike' : ''}`}>
-                            <div className="results-score">+{roundScore} points</div>
-                            
-                            {bonuses.map((bonus, idx) => (
-                                <div key={idx} className="bonus">
-                                    {bonus}
-                                </div>
-                            ))}
-                            
-                            <div style={{ fontSize: '14px', marginTop: '8px' }}>
-                                {calculateScore().correctCount}/3 correct
-                                {calculateScore().correctCount <= 1 && (
-                                    <div style={{ fontWeight: '700', color: '#ef4444' }}>
-                                        Strike {strikes + 1}/3
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Game Over */}
-                    {gameState === 'gameOver' && (
-                        <div className="game-over">
-                            <div style={{ fontSize: '20px', fontWeight: '700', color: '#8b5cf6', marginBottom: '8px' }}>
-                                {currentRound >= 8 ? 'Game Complete!' : 'Game Over!'}
-                            </div>
-                            
-                            <div className="final-score">Final Score: {currentScore}</div>
-                            
-                            {currentScore > highScore ? (
-                                <div className="high-score">NEW HIGH SCORE!</div>
-                            ) : highScore > 0 && (
-                                <div style={{ fontSize: '12px', color: '#666' }}>
-                                    High Score: {highScore}
-                                </div>
-                            )}
-                            
-                            <div style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
-                                {currentRound >= 8 ? 
-                                    `Completed 8 rounds with ${strikes} strikes` :
-                                    `Round ${currentRound} - 3 strikes`
-                                }
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Action Buttons */}
-                    {gameState === 'playing' && (
-                        <button 
-                            onClick={finishRound}
-                            disabled={!canSubmit()}
-                            className="btn"
-                        >
-                            {canSubmit() ? 'Submit Rankings' : `Select ${3 - userSelections.length} more`}
-                        </button>
-                    )}
-
-                    {gameState === 'finished' && (
-                        <button onClick={nextRound} className="btn">
-                            {currentRound >= 8 ? 'Final Score' : 'Next Round'}
-                        </button>
-                    )}
-
-                    {gameState === 'gameOver' && (
-                        <button onClick={resetGame} className="btn">
-                            Play Again
-                        </button>
-                    )}
-
-                    {/* Rules */}
-                    {gameState === 'ready' && currentRound === 1 && (
-                        <div className="rules">
-                            <h4>How to Play</h4>
-                            <ul>
-                                <li>Tap 3 items in your preferred ranking order</li>
-                                <li>Complete 8 rounds to finish the game</li>
-                                <li>Get 3 strikes (≤1 correct) and it's game over</li>
-                                <li>Perfect rounds earn bonus points and power-ups</li>
-                                <li>Round 8: Perfect = double score!</li>
-                            </ul>
-                        </div>
-                    )}
+          return (
+            <div className="min-h-screen bg-gray-900 text-white p-8">
+              <div className="max-w-4xl mx-auto">
+                <div className="text-center mb-8">
+                  <h1 className="text-4xl font-bold mb-4">Country Knowledge Challenge</h1>
+                  <div className="flex justify-center items-center gap-6 mb-4">
+                    {rounds.map((round, index) => (
+                      <div 
+                        key={round.id}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 ${
+                          currentRound === round.id 
+                            ? 'border-blue-500 bg-blue-900/20' 
+                            : currentRound > round.id 
+                              ? (roundScores[index]?.correct ? 'border-green-500 bg-green-900/20' : 'border-red-500 bg-red-900/20')
+                              : 'border-gray-600 bg-gray-800'
+                        }`}
+                      >
+                        <span className="text-xl">{round.icon}</span>
+                        <span className="font-semibold">Round {round.id}: {round.title}</span>
+                        <span className="text-sm text-gray-400">({round.points}pt)</span>
+                        {currentRound > round.id && (
+                          <span className={`ml-2 ${roundScores[index]?.correct ? 'text-green-400' : 'text-red-400'}`}>
+                            {roundScores[index]?.correct ? '✓' : '✗'}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {gameState !== 'gameFinished' && (
+                    <p className="text-lg text-gray-300 mb-4">
+                      {getCurrentRoundData().instruction}
+                    </p>
+                  )}
+                  
+                  <div className="text-sm text-gray-400">
+                    Total Score: {totalScore}/{totalGamesPlayed * 6} points
+                    {totalGamesPlayed > 0 && ` (${Math.round((totalScore/(totalGamesPlayed * 6)) * 100)}%)`}
+                  </div>
                 </div>
-            );
-        };
 
-        ReactDOM.render(<RankRushGame />, document.getElementById('root'));
+                {/* Country Cards */}
+                <div className="grid grid-cols-3 gap-6 mb-8">
+                  {currentCountries.map((country, index) => {
+                    const rank = getRankForCountry(country);
+                    return (
+                      <div
+                        key={country.name}
+                        onClick={() => handleCountryClick(country)}
+                        className={`
+                          relative bg-gray-800 rounded-lg p-6 cursor-pointer transition-all duration-200 border-2
+                          ${rank ? 'border-blue-500 bg-blue-900/20' : 'border-gray-600 hover:border-gray-500'}
+                          ${gameState === 'playing' ? 'hover:scale-105' : 'cursor-default'}
+                        `}
+                      >
+                        {/* Rank Badge */}
+                        {rank && (
+                          <div className="absolute -top-2 -right-2 bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-lg">
+                            {rank}
+                          </div>
+                        )}
+                        
+                        {/* Country Silhouette */}
+                        <div className="h-32 flex items-center justify-center mb-4">
+                          <svg width="100" height="80" viewBox="0 0 100 80" className="text-gray-300">
+                            <path d={country.shape} fill="currentColor" />
+                          </svg>
+                        </div>
+                        
+                        {/* Country Name */}
+                        <h3 className="text-xl font-semibold text-center">{country.name}</h3>
+                        
+                        {/* Show metric value when round is finished */}
+                        {(gameState === 'roundFinished' || gameState === 'gameFinished') && (
+                          <p className="text-sm text-gray-400 text-center mt-2">
+                            {formatValue(country[getCurrentRoundData().metric], getCurrentRoundData().metric)}
+                          </p>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* User Ranking Display */}
+                {userRanking.length > 0 && (
+                  <div className="mb-6">
+                    <h3 className="text-lg font-semibold mb-3">Your Ranking:</h3>
+                    <div className="flex gap-4 justify-center">
+                      {userRanking
+                        .sort((a, b) => a.position - b.position)
+                        .map((item, index) => (
+                          <div key={item.country.name} className="text-center">
+                            <div className="text-2xl font-bold text-blue-400">#{item.position}</div>
+                            <div className="text-sm">{item.country.name}</div>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Submit Button */}
+                {gameState === 'playing' && userRanking.length === 3 && (
+                  <div className="text-center mb-6">
+                    <button
+                      onClick={submitRanking}
+                      className="bg-blue-600 hover:bg-blue-700 px-8 py-3 rounded-lg font-semibold transition-colors"
+                    >
+                      Submit Round {currentRound}
+                    </button>
+                  </div>
+                )}
+
+                {/* Round Results */}
+                {gameState === 'roundFinished' && (
+                  <div className="text-center mb-6">
+                    <div className="bg-gray-800 rounded-lg p-6 mb-4">
+                      <h3 className="text-xl font-semibold mb-4">
+                        Round {currentRound} Results - {getCurrentRoundData().title}:
+                      </h3>
+                      <div className="grid grid-cols-3 gap-4 mb-4">
+                        {getCorrectOrder().map((country, index) => (
+                          <div key={country.name} className="text-center">
+                            <div className="text-2xl font-bold text-green-400">#{index + 1}</div>
+                            <div className="font-semibold">{country.name}</div>
+                            <div className="text-sm text-gray-400">
+                              {formatValue(country[getCurrentRoundData().metric], getCurrentRoundData().metric)}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="text-lg font-bold">
+                        {roundScores[roundScores.length - 1]?.correct ? (
+                          <span className="text-green-400">✓ Correct! +{currentRound} points</span>
+                        ) : (
+                          <span className="text-red-400">✗ Incorrect - 0 points</span>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <button
+                      onClick={startNextRound}
+                      className="bg-blue-600 hover:bg-blue-700 px-8 py-3 rounded-lg font-semibold transition-colors"
+                    >
+                      Continue to Round {currentRound + 1}
+                    </button>
+                  </div>
+                )}
+
+                {/* Final Game Results */}
+                {gameState === 'gameFinished' && (
+                  <div className="text-center mb-6">
+                    <div className="bg-gray-800 rounded-lg p-6 mb-4">
+                      <h3 className="text-2xl font-bold mb-4">Game Complete!</h3>
+                      <div className="text-3xl font-bold mb-4">
+                        Final Score: {getTotalGamePoints()}/6 points
+                      </div>
+                      
+                      <div className="grid grid-cols-3 gap-4 mb-6">
+                        {rounds.map((round, index) => (
+                          <div key={round.id} className="text-center p-4 bg-gray-700 rounded-lg">
+                            <div className="text-lg font-semibold">{round.icon} {round.title}</div>
+                            <div className="text-sm text-gray-400 mb-2">{round.points} point{round.points > 1 ? 's' : ''}</div>
+                            <div className={`text-2xl font-bold ${
+                              roundScores[index]?.correct ? 'text-green-400' : 'text-red-400'
+                            }`}>
+                              {roundScores[index]?.correct ? `+${round.points}` : '0'}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <div className="text-lg text-gray-300 mb-4">
+                        {getTotalGamePoints() === 6 ? 'Perfect score! 🎉' : 
+                         getTotalGamePoints() >= 4 ? 'Great job! 👏' :
+                         getTotalGamePoints() >= 2 ? 'Good effort! 👍' : 'Keep trying! 💪'}
+                      </div>
+                    </div>
+                    
+                    <button
+                      onClick={startNewGame}
+                      className="bg-green-600 hover:bg-green-700 px-8 py-3 rounded-lg font-semibold transition-colors"
+                    >
+                      Play New Game
+                    </button>
+                  </div>
+                )}
+
+                {/* Instructions */}
+                {gameState === 'playing' && userRanking.length === 0 && (
+                  <div className="text-center text-gray-400">
+                    <p>Click on the countries to rank them from 1 (highest) to 3 (lowest)</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        }
+
+        // Render the app
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<CountrySizeGame />);
     </script>
 </body>
 </html>
