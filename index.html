@@ -351,8 +351,8 @@
                   </div>
                 </div>
 
-                {/* Country Cards - Mobile First Design */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-6">
+                {/* Country Cards - Always Horizontal */}
+                <div className="grid grid-cols-3 gap-2 sm:gap-6 mb-6">
                   {currentCountries.map((country, index) => {
                     const rank = getRankForCountry(country);
                     const isPressed = pressedCard === country.name;
@@ -361,48 +361,48 @@
                         key={country.name}
                         onClick={() => handleCountryPress(country)}
                         className={`
-                          relative bg-gray-800 rounded-xl p-6 sm:p-6 cursor-pointer transition-all duration-200 border-2
+                          relative bg-gray-800 rounded-xl p-3 sm:p-6 cursor-pointer transition-all duration-200 border-2
                           ${rank ? 'border-blue-500 bg-blue-900/20' : 'border-gray-600'}
                           ${gameState === 'playing' ? 'active:scale-95' : 'cursor-default'}
                           ${isPressed ? 'mobile-press' : ''}
-                          min-h-[180px] sm:min-h-[200px]
+                          min-h-[160px] sm:min-h-[200px]
                         `}
                         style={{
                           transform: isPressed ? 'scale(0.98)' : 'scale(1)',
                           touchAction: 'manipulation'
                         }}
                       >
-                        {/* Rank Badge - Bigger on Mobile */}
+                        {/* Rank Badge - Responsive Size */}
                         {rank && (
-                          <div className="absolute -top-2 -right-2 bg-blue-500 text-white rounded-full w-10 h-10 sm:w-8 sm:h-8 flex items-center justify-center font-bold text-lg sm:text-base shadow-lg">
+                          <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-blue-500 text-white rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center font-bold text-sm sm:text-lg shadow-lg">
                             {rank}
                           </div>
                         )}
                         
-                        {/* Country Flag - Much Larger on Mobile */}
-                        <div className="h-24 sm:h-20 flex items-center justify-center mb-4">
+                        {/* Country Flag - Optimized for Horizontal Layout */}
+                        <div className="h-16 sm:h-20 flex items-center justify-center mb-2 sm:mb-4">
                           <img 
                             src={`https://hatscripts.github.io/circle-flags/flags/${country.flagCode}.svg`}
                             alt={country.name}
-                            className="w-20 h-20 sm:w-16 sm:h-16 rounded-full shadow-lg"
+                            className="w-14 h-14 sm:w-16 sm:h-16 rounded-full shadow-lg"
                             onError={(e) => {
                               e.target.style.display = 'none';
                               e.target.nextSibling.style.display = 'block';
                             }}
                           />
                           <div 
-                            className="w-20 h-20 sm:w-16 sm:h-16 bg-gray-600 rounded-full flex items-center justify-center text-2xl sm:text-xl font-bold hidden"
+                            className="w-14 h-14 sm:w-16 sm:h-16 bg-gray-600 rounded-full flex items-center justify-center text-lg sm:text-xl font-bold hidden"
                           >
                             {country.name.charAt(0)}
                           </div>
                         </div>
                         
-                        {/* Country Name - Bigger Font on Mobile */}
-                        <h3 className="text-xl sm:text-lg font-semibold text-center leading-tight">{country.name}</h3>
+                        {/* Country Name - Compact for Horizontal */}
+                        <h3 className="text-sm sm:text-lg font-semibold text-center leading-tight px-1">{country.name}</h3>
                         
                         {/* Metric Values */}
                         {(gameState === 'roundFinished' || gameState === 'gameFinished') && (
-                          <p className="text-sm text-gray-400 text-center mt-3">
+                          <p className="text-xs sm:text-sm text-gray-400 text-center mt-2 px-1">
                             {formatValue(country[getCurrentRoundData().metric], getCurrentRoundData().metric)}
                           </p>
                         )}
