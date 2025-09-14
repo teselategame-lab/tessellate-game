@@ -27,105 +27,105 @@
             area: 17098242, 
             population: 144104080, 
             gdp: 2240000000000,
-            shape: 'M20,40 Q30,20 60,25 Q80,30 90,45 Q85,55 70,60 Q40,65 20,50 Z' 
+            flagCode: 'ru'
           },
           { 
             name: 'Canada', 
             area: 9984670, 
             population: 38246108, 
             gdp: 2140000000000,
-            shape: 'M10,35 Q20,20 40,25 Q60,20 80,30 Q85,45 75,55 Q50,60 25,55 Q15,45 10,35 Z' 
+            flagCode: 'ca'
           },
           { 
             name: 'United States', 
             area: 9833517, 
             population: 331900000, 
             gdp: 25460000000000,
-            shape: 'M15,45 Q25,35 45,40 Q65,35 80,45 Q85,55 70,60 Q45,65 25,60 Q10,55 15,45 Z' 
+            flagCode: 'us'
           },
           { 
             name: 'China', 
             area: 9596960, 
             population: 1412000000, 
             gdp: 17730000000000,
-            shape: 'M25,35 Q35,25 55,30 Q75,35 85,50 Q80,60 60,65 Q40,60 25,50 Q20,40 25,35 Z' 
+            flagCode: 'cn'
           },
           { 
             name: 'Brazil', 
             area: 8514877, 
             population: 215300000, 
             gdp: 2610000000000,
-            shape: 'M30,45 Q40,35 60,40 Q75,45 80,60 Q70,75 50,80 Q35,75 25,65 Q25,55 30,45 Z' 
+            flagCode: 'br'
           },
           { 
             name: 'Australia', 
             area: 7692024, 
             population: 25690000, 
             gdp: 1550000000000,
-            shape: 'M20,50 Q35,45 55,50 Q75,55 85,65 Q80,75 60,75 Q40,70 25,65 Q15,60 20,50 Z' 
+            flagCode: 'au'
           },
           { 
             name: 'India', 
             area: 3287263, 
             population: 1380000000, 
             gdp: 3740000000000,
-            shape: 'M35,40 Q45,30 60,35 Q70,45 65,60 Q55,70 45,65 Q35,60 30,50 Q30,45 35,40 Z' 
+            flagCode: 'in'
           },
           { 
             name: 'Argentina', 
             area: 2780400, 
             population: 45380000, 
             gdp: 630000000000,
-            shape: 'M40,50 Q45,40 55,45 Q60,50 58,70 Q55,85 50,80 Q45,75 42,65 Q40,55 40,50 Z' 
+            flagCode: 'ar'
           },
           { 
             name: 'Kazakhstan', 
             area: 2724900, 
             population: 19400000, 
             gdp: 220000000000,
-            shape: 'M25,35 Q40,30 65,35 Q80,40 85,50 Q75,55 55,55 Q35,50 25,40 Q20,35 25,35 Z' 
+            flagCode: 'kz'
           },
           { 
             name: 'Algeria', 
             area: 2381741, 
             population: 44700000, 
             gdp: 190000000000,
-            shape: 'M30,40 Q45,35 65,40 Q75,50 70,60 Q60,65 45,60 Q35,55 25,50 Q25,45 30,40 Z' 
+            flagCode: 'dz'
           },
           { 
             name: 'Saudi Arabia', 
             area: 2149690, 
             population: 35000000, 
             gdp: 830000000000,
-            shape: 'M35,45 Q50,40 70,45 Q75,55 65,65 Q50,60 40,55 Q30,50 35,45 Z' 
+            flagCode: 'sa'
           },
           { 
             name: 'Mexico', 
             area: 1964375, 
             population: 128900000, 
             gdp: 1640000000000,
-            shape: 'M20,50 Q30,45 50,48 Q70,50 75,60 Q65,65 45,62 Q25,60 20,55 Q15,52 20,50 Z' 
+            flagCode: 'mx'
           },
           { 
             name: 'Indonesia', 
             area: 1904569, 
             population: 273500000, 
             gdp: 1320000000000,
-            shape: 'M25,55 Q35,50 55,52 Q75,55 85,60 Q80,70 60,68 Q40,65 25,62 Q20,58 25,55 Z' 
+            flagCode: 'id'
           },
           { 
             name: 'Turkey', 
             area: 783562, 
             population: 84340000, 
             gdp: 820000000000,
-            shape: 'M30,45 Q45,42 65,45 Q75,50 70,55 Q55,58 40,55 Q25,52 30,45 Z' 
+            flagCode: 'tr'
           },
           { 
             name: 'Iran', 
             area: 1648195, 
             population: 85000000, 
             gdp: 360000000000,
-            shape: 'M35,42 Q50,38 68,42 Q75,48 68,55 Q50,58 35,55 Q28,48 35,42 Z' 
+            flagCode: 'ir'
           }
         ];
 
@@ -274,7 +274,7 @@
               <div className="max-w-4xl mx-auto">
                 <div className="text-center mb-8">
                   <h1 className="text-4xl font-bold mb-4">Country Knowledge Challenge</h1>
-                  <div className="flex justify-center items-center gap-6 mb-4">
+                  <div className="flex justify-center items-center gap-6 mb-4 flex-wrap">
                     {rounds.map((round, index) => (
                       <div 
                         key={round.id}
@@ -311,7 +311,7 @@
                 </div>
 
                 {/* Country Cards */}
-                <div className="grid grid-cols-3 gap-6 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                   {currentCountries.map((country, index) => {
                     const rank = getRankForCountry(country);
                     return (
@@ -331,11 +331,22 @@
                           </div>
                         )}
                         
-                        {/* Country Silhouette */}
+                        {/* Country Flag */}
                         <div className="h-32 flex items-center justify-center mb-4">
-                          <svg width="100" height="80" viewBox="0 0 100 80" className="text-gray-300">
-                            <path d={country.shape} fill="currentColor" />
-                          </svg>
+                          <img 
+                            src={`https://hatscripts.github.io/circle-flags/flags/${country.flagCode}.svg`}
+                            alt={country.name}
+                            className="w-20 h-20 rounded-full shadow-lg"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                              e.target.nextSibling.style.display = 'block';
+                            }}
+                          />
+                          <div 
+                            className="w-20 h-20 bg-gray-600 rounded-full flex items-center justify-center text-2xl font-bold hidden"
+                          >
+                            {country.name.charAt(0)}
+                          </div>
                         </div>
                         
                         {/* Country Name */}
@@ -355,8 +366,8 @@
                 {/* User Ranking Display */}
                 {userRanking.length > 0 && (
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold mb-3">Your Ranking:</h3>
-                    <div className="flex gap-4 justify-center">
+                    <h3 className="text-lg font-semibold mb-3 text-center">Your Ranking:</h3>
+                    <div className="flex gap-4 justify-center flex-wrap">
                       {userRanking
                         .sort((a, b) => a.position - b.position)
                         .map((item, index) => (
@@ -388,7 +399,7 @@
                       <h3 className="text-xl font-semibold mb-4">
                         Round {currentRound} Results - {getCurrentRoundData().title}:
                       </h3>
-                      <div className="grid grid-cols-3 gap-4 mb-4">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         {getCorrectOrder().map((country, index) => (
                           <div key={country.name} className="text-center">
                             <div className="text-2xl font-bold text-green-400">#{index + 1}</div>
@@ -401,7 +412,7 @@
                       </div>
                       <div className="text-lg font-bold">
                         {roundScores[roundScores.length - 1]?.correct ? (
-                          <span className="text-green-400">✓ Correct! +{currentRound} points</span>
+                          <span className="text-green-400">✓ Correct! +{currentRound} point{currentRound > 1 ? 's' : ''}</span>
                         ) : (
                           <span className="text-red-400">✗ Incorrect - 0 points</span>
                         )}
@@ -426,7 +437,7 @@
                         Final Score: {getTotalGamePoints()}/6 points
                       </div>
                       
-                      <div className="grid grid-cols-3 gap-4 mb-6">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                         {rounds.map((round, index) => (
                           <div key={round.id} className="text-center p-4 bg-gray-700 rounded-lg">
                             <div className="text-lg font-semibold">{round.icon} {round.title}</div>
