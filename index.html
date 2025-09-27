@@ -162,6 +162,11 @@
             cursor: not-allowed;
         }
 
+        .btn-reset {
+            background: #9c27b0;
+            color: white;
+        }
+
         .btn-new {
             background: #81c784;
             color: white;
@@ -191,7 +196,7 @@
 </head>
 <body>
     <div class="game-container">
-        <div class="title">🎋 Color Harmony</div>
+        <div class="title">🌺 Color Harmony</div>
         
         <div class="color-display">
             <div class="color-box" id="targetColor">
@@ -216,10 +221,15 @@
             <span>Steps: <span id="moveCount">0</span></span>
             <span>Best: <span id="bestScore">-</span></span>
         </div>
+        
+        <div style="font-size: 12px; color: #666; margin-bottom: 10px; text-align: center;" id="debugInfo">
+            Solution: Loading...
+        </div>
 
         <div class="color-grid" id="colorGrid"></div>
 
         <div class="controls">
+            <button class="btn btn-reset" id="resetBtn">🔄 Reset</button>
             <button class="btn btn-new" id="newGameBtn">New Harmony</button>
         </div>
 
@@ -236,6 +246,8 @@
                 this.bestScore = localStorage.getItem('colorSwatchBest') || null;
                 this.gameWon = false;
                 this.firstColorPicked = false;
+                this.solutionPath = []; // The colors used to create the target
+                this.solutionSteps = 0;
                 
                 this.initElements();
                 this.newGame();
@@ -250,11 +262,14 @@
                 this.moveCountEl = document.getElementById('moveCount');
                 this.bestScoreEl = document.getElementById('bestScore');
                 this.colorGridEl = document.getElementById('colorGrid');
+                this.resetBtnEl = document.getElementById('resetBtn');
                 this.newGameBtnEl = document.getElementById('newGameBtn');
                 this.successEl = document.getElementById('successMessage');
                 this.harmonyFillEl = document.getElementById('harmonyFill');
                 this.harmonyTextEl = document.getElementById('harmonyText');
+                this.debugInfoEl = document.getElementById('debugInfo');
 
+                this.resetBtnEl.addEventListener('click', () => this.resetPuzzle());
                 this.newGameBtnEl.addEventListener('click', () => this.newGame());
             }
 
@@ -262,7 +277,72 @@
                 return '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
             }
 
+            // NEW: Generate a guaranteed solvable puzzle
+            generateSolvablePuzzle() {
+                // Start with white base
+                let currentColor = '#ffffff';
+                const solutionColors = [];
+                const baseColors = [
+                    '#ff0000', // Red
+                    '#0000ff', // Blue  
+                    '#ffff00', // Yellow
+                    '#00ff00', // Green
+                    '#ff8000', // Orange
+                    '#8000ff', // Purple
+                    '#ff0080', // Pink
+                    '#000000'  // Black
+                ];
+                
+                // Generate 3-5 steps to create target
+                const numSteps = 3 + Math.floor(Math.random() * 3); // 3-5 steps
+                
+                for (let i = 0; i < numSteps; i++) {
+                    const mixColor = baseColors[Math.floor(Math.random() * baseColors.length)];
+                    currentColor = this.blendColors(currentColor, mixColor, 0.5);
+                    solutionColors.push(mixColor);
+                }
+                
+                return {
+                    targetColor: currentColor,
+                    solutionPath: solutionColors,
+                    steps: numSteps
+                };
+            }
+
+            // NEW: Generate strategic palette with solution + distractors
+            generateStrategicPalette(solutionPath) {
+                const palette = [...solutionPath]; // Include all solution colors
+                
+                // Add strategic distractors
+                const distractors = [
+                    '#ff0000', '#0000ff', '#ffff00', '#00ff00', 
+                    '#ff8000', '#8000ff', '#ff0080', '#000000',
+                    '#ffffff', '#808080', '#400040', '#004040'
+                ];
+                
+                // Fill remaining slots with distractors (avoid duplicates)
+                while (palette.length < 12) {
+                    const distractor = distractors[Math.floor(Math.random() * distractors.length)];
+                    if (!palette.includes(distractor)) {
+                        palette.push(distractor);
+                    }
+                }
+                
+                // Shuffle so solution isn't obvious
+                return this.shuffleArray(palette.slice(0, 12));
+            }
+
+            shuffleArray(array) {
+                const shuffled = [...array];
+                for (let i = shuffled.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+                return shuffled;
+            }
+
             generateColorPalette() {
+                // OLD METHOD - no longer used
                 const colors = [];
                 for (let i = 0; i < 12; i++) {
                     colors.push(this.generateRandomColor());
@@ -351,15 +431,48 @@
                 }
             }
 
+            resetPuzzle() {
+                // Reset to starting state but keep same target and palette
+                this.currentColor = '#ffffff';
+                this.moves = 0;
+                this.colorHistory = ['#ffffff'];
+                this.gameWon = false;
+                this.firstColorPicked = false;
+                this.successEl.style.display = 'none';
+                
+                this.updateDisplay();
+            }
+
             showSuccess(accuracy) {
                 let message = "🌸 Perfect harmony achieved";
                 if (this.moves <= 3) message = "✨ Masterful balance in " + this.moves + " steps";
                 else if (this.moves <= 5) message = "🍃 Graceful harmony in " + this.moves + " steps";
                 else message = "🌱 Peaceful completion in " + this.moves + " steps";
                 
+                // Show optimal solution
+                const solutionColors = this.solutionPath.map(color => {
+                    if (color === '#ff0000') return 'Red';
+                    if (color === '#0000ff') return 'Blue';
+                    if (color === '#ffff00') return 'Yellow';
+                    if (color === '#00ff00') return 'Green';
+                    if (color === '#ff8000') return 'Orange';
+                    if (color === '#8000ff') return 'Purple';
+                    if (color === '#ff0080') return 'Pink';
+                    if (color === '#000000') return 'Black';
+                    return color;
+                }).join(' → ');
+                
+                let solutionText = '';
+                if (this.moves === this.solutionSteps) {
+                    solutionText = `<div style="margin-top: 8px; font-size: 12px; color: #4caf50;">⚡ Optimal solution! ${solutionColors}</div>`;
+                } else {
+                    solutionText = `<div style="margin-top: 8px; font-size: 12px; color: #666;">Fastest route (${this.solutionSteps} steps): ${solutionColors}</div>`;
+                }
+                
                 this.successEl.innerHTML = `
                     ${message}
                     <div class="accuracy">${accuracy.toFixed(1)}% harmony</div>
+                    ${solutionText}
                 `;
                 this.successEl.style.display = 'block';
             }
@@ -381,7 +494,12 @@
             }
 
             newGame() {
-                this.targetColor = this.generateRandomColor();
+                // Generate guaranteed solvable puzzle
+                const puzzle = this.generateSolvablePuzzle();
+                this.targetColor = puzzle.targetColor;
+                this.solutionPath = puzzle.solutionPath;
+                this.solutionSteps = puzzle.steps;
+                
                 this.currentColor = '#ffffff';
                 this.moves = 0;
                 this.colorHistory = ['#ffffff'];
@@ -394,7 +512,7 @@
             }
 
             generateNewPalette() {
-                const colors = this.generateColorPalette();
+                const colors = this.generateStrategicPalette(this.solutionPath);
                 this.colorGridEl.innerHTML = '';
                 
                 colors.forEach(color => {
@@ -410,6 +528,20 @@
                 this.targetColorEl.style.backgroundColor = this.targetColor;
                 this.currentColorEl.style.backgroundColor = this.currentColor;
                 this.targetHexEl.textContent = this.targetColor.toUpperCase();
+                
+                // Show debug info (solution path)
+                const solutionColors = this.solutionPath.map(color => {
+                    if (color === '#ff0000') return 'Red';
+                    if (color === '#0000ff') return 'Blue';
+                    if (color === '#ffff00') return 'Yellow';
+                    if (color === '#00ff00') return 'Green';
+                    if (color === '#ff8000') return 'Orange';
+                    if (color === '#8000ff') return 'Purple';
+                    if (color === '#ff0080') return 'Pink';
+                    if (color === '#000000') return 'Black';
+                    return color;
+                }).join(' → ');
+                this.debugInfoEl.textContent = `Solution (${this.solutionSteps} steps): ${solutionColors}`;
                 
                 const harmony = this.calculateHarmony();
                 
