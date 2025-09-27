@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Harmony</title>
+    <title>Color Swatch</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
@@ -225,7 +225,7 @@
         <div class="color-grid" id="colorGrid"></div>
 
         <div class="controls">
-            <button class="btn btn-reset" id="resetBtn">Reset Harmony</button>
+            <button class="btn btn-reset" id="resetBtn">🔄 Reset</button>
             <button class="btn btn-new" id="newGameBtn">New Harmony</button>
         </div>
 
@@ -244,6 +244,7 @@
                 this.firstColorPicked = false;
                 this.solutionPath = []; // The colors used to create the target
                 this.solutionSteps = 0;
+                this.gameStartTime = null; // Track session time
                 
                 this.initElements();
                 this.newGame();
@@ -406,6 +407,15 @@
                 
                 this.colorHistory.push(this.currentColor);
                 
+                // Track color selection
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'color_selected', {
+                        'move_number': this.moves,
+                        'color': color,
+                        'harmony_level': this.calculateHarmony()
+                    });
+                }
+                
                 this.updateDisplay();
                 this.checkWin();
             }
@@ -427,12 +437,21 @@
             }
 
             resetPuzzle() {
+                // Track reset usage
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'game_reset', {
+                        'steps_before_reset': this.moves,
+                        'harmony_before_reset': this.calculateHarmony()
+                    });
+                }
+                
                 // Reset to starting state but keep same target and palette
                 this.currentColor = '#ffffff';
                 this.moves = 0;
                 this.colorHistory = ['#ffffff'];
                 this.gameWon = false;
                 this.firstColorPicked = false;
+                this.gameStartTime = Date.now(); // Reset timer
                 this.successEl.style.display = 'none';
                 
                 this.updateDisplay();
@@ -443,6 +462,30 @@
                 if (this.moves <= 3) message = "✨ Masterful balance in " + this.moves + " steps";
                 else if (this.moves <= 5) message = "🍃 Graceful harmony in " + this.moves + " steps";
                 else message = "🌱 Peaceful completion in " + this.moves + " steps";
+                
+                // Calculate game duration
+                const gameTime = this.gameStartTime ? Math.round((Date.now() - this.gameStartTime) / 1000) : 0;
+                const isOptimal = this.moves === this.solutionSteps;
+                
+                // Track game completion
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'game_complete', {
+                        'steps_taken': this.moves,
+                        'optimal_steps': this.solutionSteps,
+                        'is_optimal': isOptimal,
+                        'accuracy': Math.round(accuracy),
+                        'game_time_seconds': gameTime,
+                        'efficiency': Math.round((this.solutionSteps / this.moves) * 100)
+                    });
+                    
+                    // Track optimal solutions separately
+                    if (isOptimal) {
+                        gtag('event', 'optimal_solution', {
+                            'steps': this.moves,
+                            'time_seconds': gameTime
+                        });
+                    }
+                }
                 
                 // Show optimal solution
                 const solutionColors = this.solutionPath.map(color => {
@@ -458,7 +501,7 @@
                 }).join(' → ');
                 
                 let solutionText = '';
-                if (this.moves === this.solutionSteps) {
+                if (isOptimal) {
                     solutionText = `<div style="margin-top: 8px; font-size: 12px; color: #4caf50;">⚡ Optimal solution! ${solutionColors}</div>`;
                 } else {
                     solutionText = `<div style="margin-top: 8px; font-size: 12px; color: #666;">Fastest route (${this.solutionSteps} steps): ${solutionColors}</div>`;
@@ -500,10 +543,19 @@
                 this.colorHistory = ['#ffffff'];
                 this.gameWon = false;
                 this.firstColorPicked = false;
+                this.gameStartTime = Date.now();
                 this.successEl.style.display = 'none';
                 
                 this.generateNewPalette();
                 this.updateDisplay();
+                
+                // Track new game start
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'game_start', {
+                        'optimal_steps': this.solutionSteps,
+                        'game_type': 'color_harmony'
+                    });
+                }
             }
 
             generateNewPalette() {
