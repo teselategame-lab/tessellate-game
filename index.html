@@ -228,6 +228,13 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
 
+        @media (max-width: 768px) {
+            .rules-btn {
+                position: static;
+                margin: 20px auto 0;
+            }
+        }
+
         .modal-overlay {
             display: none;
             position: fixed;
@@ -349,8 +356,6 @@
     </style>
 </head>
 <body>
-    <button class="rules-btn" id="rulesBtn">?</button>
-
     <div class="modal-overlay" id="rulesModal">
         <div class="modal-content">
             <div class="modal-header">How to Play</div>
@@ -432,6 +437,8 @@
             <button class="btn btn-reset" id="resetBtn">🔄 Reset</button>
             <button class="btn btn-new" id="newGameBtn">New Harmony</button>
         </div>
+
+        <button class="rules-btn" id="rulesBtn">?</button>
 
     </div>
 
